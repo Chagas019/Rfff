@@ -30,7 +30,11 @@ const TITLE = ['The race', 'never', 'stops.'];
 export function Hero({ nextRace }: { nextRace: Race | null }) {
   const reduce = useReducedMotion();
   const { scrollY } = useScroll();
-  const panelY = useTransform(scrollY, [0, 700], [0, reduce ? 0 : 120]);
+  const panelY = useTransform(scrollY, [0, 700], [0, reduce ? 0 : 160]);
+  // ao rolar, o painel gira em 3D e "desce" para a próxima seção
+  const panelRotY = useTransform(scrollY, [0, 700], [0, reduce ? 0 : -24]);
+  const panelRotX = useTransform(scrollY, [0, 700], [0, reduce ? 0 : 12]);
+  const panelScale = useTransform(scrollY, [0, 700], [1, reduce ? 1 : 0.86]);
   const titleY = useTransform(scrollY, [0, 700], [0, reduce ? 0 : -60]);
   const speed = useSpeedometer(!reduce);
   const featured = teams.find((t) => studioImages[t.id]) ?? teams[0];
@@ -98,7 +102,7 @@ export function Hero({ nextRace }: { nextRace: Race | null }) {
         </motion.div>
 
         {/* painel de estúdio com o carro */}
-        <motion.div style={{ y: panelY }} className="relative">
+        <motion.div style={{ y: panelY, rotateY: panelRotY, rotateX: panelRotX, scale: panelScale, transformPerspective: 1400 }} className="relative">
           <motion.div
             initial={reduce ? false : { clipPath: 'inset(0 0 0 100% round 24px)' }}
             animate={{ clipPath: 'inset(0 0 0 0% round 24px)' }}
