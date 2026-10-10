@@ -2,6 +2,7 @@ import { motion } from 'framer-motion';
 import { ArrowRight, CalendarDays, Clock, Cpu, Flag as FlagIcon, Gauge, MapPin, Trophy, Users, Zap } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { CarPhoto } from '../components/CarPhoto';
+import { CinematicScroll } from '../components/CinematicScroll';
 import { FavoriteButton } from '../components/FavoriteButton';
 import { Flag } from '../components/Flag';
 import { Garage } from '../components/Garage';
@@ -55,6 +56,7 @@ export function HomePage() {
   return (
     <>
       <Hero nextRace={next} />
+      <CinematicScroll />
       <Ticker items={ticker} />
       <ScrollShowcase />
 
