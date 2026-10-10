@@ -77,7 +77,7 @@ export function Hero({ nextRace }: { nextRace: Race | null }) {
             <span className="h-2 w-2 animate-pulse rounded-full bg-race" aria-hidden />
             Temporada 2026 · Nova era técnica
           </motion.p>
-          <h1 id="hero-title" className="font-display text-[14vw] font-black uppercase italic leading-[0.85] sm:text-7xl xl:text-8xl">
+          <h1 id="hero-title" className="font-display text-[14vw] font-black uppercase leading-[0.85] sm:text-7xl xl:text-8xl">
             {TITLE.map((w, i) => (
               <span key={w} className="block overflow-hidden pb-1 pr-4">
                 <motion.span

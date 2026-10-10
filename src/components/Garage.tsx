@@ -69,7 +69,7 @@ export function Garage({ initialTeam }: { initialTeam?: string }) {
                 {lineup.map((d) => (
                   <li key={d.id}>
                     <Link to={`/pilotos/${d.id}`} className="group flex items-center gap-3 text-sm text-zinc-300 hover:text-white">
-                      <span className="w-9 font-display font-black italic" style={{ color: team.color }}>#{d.number}</span>
+                      <span className="w-9 font-display font-black " style={{ color: team.color }}>#{d.number}</span>
                       {d.firstName} <strong className="uppercase">{d.lastName}</strong>
                       <ArrowRight className="h-3.5 w-3.5 opacity-0 transition group-hover:translate-x-1 group-hover:opacity-100" aria-hidden />
                     </Link>

@@ -15,7 +15,7 @@ export function DriverCard({ driver, onOpen }: { driver: Driver; onOpen: () => v
       <div className="absolute -right-10 -top-10 h-40 w-40 rounded-full opacity-20 blur-3xl transition group-hover:opacity-50" style={{ background: team.color }} aria-hidden />
       <button type="button" onClick={onOpen} className="block w-full text-left" aria-label={`Abrir perfil de ${driver.firstName} ${driver.lastName}`}>
         <div className="relative h-48 overflow-hidden">
-          <span className="absolute left-4 top-3 font-display text-6xl font-black italic leading-none" style={{ color: team.color, opacity: 0.85 }}>{driver.number}</span>
+          <span className="absolute left-4 top-3 font-display text-6xl font-black leading-none" style={{ color: team.color, opacity: 0.85 }}>{driver.number}</span>
           {driver.photoUrl ? (
             <img src={driver.photoUrl} alt={`${driver.firstName} ${driver.lastName}`} className="absolute bottom-0 right-0 h-full object-contain" loading="lazy" />
           ) : (

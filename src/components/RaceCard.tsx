@@ -21,7 +21,7 @@ export function RaceCard({ race, status, view = 'grid' }: Props) {
     return (
       <motion.article layout className={`panel panel-hover group flex flex-col gap-4 p-4 sm:flex-row sm:items-center ${muted ? 'opacity-70' : ''}`}>
         <div className="flex items-center gap-4 sm:w-64">
-          <span className="font-display text-2xl font-black italic text-race">{roundLabel}</span>
+          <span className="font-display text-2xl font-black text-race">{roundLabel}</span>
           <Flag code={race.countryCode} country={race.country} className="text-3xl" />
           <div className="min-w-0">
             <h3 className="truncate text-base font-bold uppercase">{race.name}</h3>
@@ -49,7 +49,7 @@ export function RaceCard({ race, status, view = 'grid' }: Props) {
     <motion.article layout className={`panel panel-hover group flex h-full flex-col ${muted ? 'opacity-75' : ''}`}>
       <div className="relative flex items-start justify-between gap-3 p-5 pb-0">
         <div>
-          <span className="font-display text-4xl font-black italic leading-none text-white/10 transition group-hover:text-race/40">{roundLabel}</span>
+          <span className="font-display text-4xl font-black leading-none text-white/10 transition group-hover:text-race/40">{roundLabel}</span>
           <h3 className="mt-2 text-lg font-bold uppercase leading-tight">{race.name}</h3>
           <p className="mt-1 flex items-center gap-1.5 text-sm text-zinc-400">
             <Flag code={race.countryCode} country={race.country} /> {race.city}, {race.country}

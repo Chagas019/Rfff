@@ -57,7 +57,7 @@ export function StudioCar({ team, className = '', tilt = 10, showCredit = true, 
       <motion.div aria-hidden className="pointer-events-none absolute -top-1/3 h-[90%] w-[70%] -translate-x-1/2 rounded-full bg-white opacity-40 blur-3xl" style={{ left: lightX }} />
       {/* faixa de cor da equipe */}
       <div aria-hidden className="absolute inset-x-0 bottom-0 h-1.5" style={{ background: `linear-gradient(90deg, ${team.color}, ${team.accent})` }} />
-      <div aria-hidden className="absolute bottom-6 left-6 font-display text-[18vw] font-black italic leading-none text-black/[0.04] sm:text-[9rem]">{team.car}</div>
+      <div aria-hidden className="absolute bottom-6 left-6 font-display text-[18vw] font-black leading-none text-black/[0.04] sm:text-[9rem]">{team.car}</div>
 
       {/* sombra no chão */}
       <motion.div aria-hidden className="pointer-events-none absolute bottom-[12%] left-1/2 h-[10%] w-[70%] -translate-x-1/2 rounded-[50%] bg-black/25 blur-2xl" style={{ x: shadowX }} />

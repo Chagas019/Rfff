@@ -149,7 +149,7 @@ function eyePortMask() {
   return t;
 }
 
-function buildHelmet(drv, M) {
+export function buildHelmet(drv, M) {
   const theta = (y) => Math.acos(y); // polar angle for a given unit-sphere height
   // plain white shell
   addMesh(drv, helmetPatch(0), M.helmet);

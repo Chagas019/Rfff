@@ -9,7 +9,9 @@ export default {
         telemetry: { cyan: '#22d3ee', green: '#22c55e', yellow: '#facc15', purple: '#a855f7' },
       },
       fontFamily: {
-        display: ['"Orbitron"', '"Titillium Web"', 'system-ui', 'sans-serif'],
+        // Big Shoulders Display ≈ "Growth" (ultracondensada); Oswald ≈ "TT Burn" (condensada, variável)
+        display: ['"Big Shoulders Display"', '"Oswald Variable"', 'Impact', 'sans-serif'],
+        condensed: ['"Oswald Variable"', '"Big Shoulders Display"', 'Impact', 'sans-serif'],
         sans: ['"Titillium Web"', 'system-ui', 'sans-serif'],
         mono: ['"JetBrains Mono"', 'ui-monospace', 'monospace'],
       },

@@ -91,7 +91,7 @@ export function RaceDetailPage() {
         <Link to="/calendario" className="inline-flex items-center gap-2 text-sm text-zinc-400 hover:text-white"><ArrowLeft className="h-4 w-4" aria-hidden />Calendário</Link>
 
         <motion.header initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="relative mt-6 overflow-hidden">
-          <span className="pointer-events-none absolute -top-6 right-0 font-display text-[9rem] font-black italic leading-none text-white/[0.04] sm:text-[14rem]" aria-hidden>
+          <span className="pointer-events-none absolute -top-6 right-0 font-display text-[9rem] font-black leading-none text-white/[0.04] sm:text-[14rem]" aria-hidden>
             {race.round ? String(race.round).padStart(2, '0') : '✕'}
           </span>
           <div className="flex flex-wrap items-center gap-2">

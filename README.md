@@ -10,9 +10,18 @@ Uma plataforma interativa para fãs da Fórmula 1 (temporada 2026), feita com **
 - **Pilotos**: galeria dos 22 titulares, busca, filtro por equipe, ordenação e perfil (`/pilotos/:id`) com biografia, trajetória e estatísticas da temporada **em tempo real**.
 - **Equipes**: 11 equipes com cores, pilotos, história e **foto real do carro de 2026** (Wikimedia Commons, com crédito), com zoom e animação.
 - **Classificação**: pilotos e construtores (posição, pontos, vitórias e pódios) vindos de uma API real.
-- **Interatividade**: vitrine guiada pela rolagem com **carro de F1 2026 em 3D real (three.js/WebGL)**: a câmera gira ao redor do carro, sobe até a vista aérea e as asas móveis abrem; no fim, o capacete de Leclerc vem da profundidade. Modelo procedural do projeto [F1 Rules Explorer](https://github.com/MatthewDelong/formula1) (licença ISC), em `src/three/`, hero com painel de estúdio em 3D, garagem em carrossel (setas, teclado, arrastar e troca automática), cards com inclinação 3D e reflexo, transição de página com "cortina de velocidade" e barra de progresso de rolagem.
+- **Interatividade**: vitrine guiada pela rolagem com **carro de F1 2026 em 3D real (three.js/WebGL)**: a câmera gira ao redor do carro, sobe até a vista aérea e as asas móveis abrem; no fim, um capacete 3D surge como holograma, é "materializado" por um anel de varredura e gira 360°. Modelo procedural do projeto [F1 Rules Explorer](https://github.com/MatthewDelong/formula1) (licença ISC), em `src/three/`, hero com painel de estúdio em 3D, garagem em carrossel (setas, teclado, arrastar e troca automática), cards com inclinação 3D e reflexo, transição de página com "cortina de velocidade" e barra de progresso de rolagem.
 - **Favoritos** de corridas, circuitos, pilotos e equipes (salvos no `localStorage`).
 - **Pesquisa global** (`Ctrl/⌘ + K` ou `/`), menu para celular, botão de voltar ao topo, animações ao rolar, estados de carregamento, erro e vazio, navegação por teclado (foco preso nos modais, Esc para fechar, link "pular para o conteúdo") e respeito a `prefers-reduced-motion`.
+
+## Tipografia
+
+Inspirada em **Growth** (Broworks Studio) e **TT Burn** (TrueType), que são fontes pagas. Como o projeto não tem a licença delas, usa alternativas gratuitas (OFL) com o mesmo estilo, hospedadas no próprio site via Fontsource:
+- **Big Shoulders Display** (títulos, ultracondensada) no lugar da Growth;
+- **Oswald Variable** (rótulos, botões e subtítulos, condensada e variável) no lugar da TT Burn;
+- **Titillium Web** para textos corridos.
+
+Para usar as fontes originais licenciadas, coloque os arquivos `.woff2` em `public/fonts/`, declare-os com `@font-face` em `src/index.css` e troque os nomes em `tailwind.config.js` (`display` e `condensed`).
 
 ## Como executar
 

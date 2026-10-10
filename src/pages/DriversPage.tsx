@@ -106,7 +106,7 @@ export function DriversPage() {
         {selected && selTeam && (
           <div>
             <div className="relative overflow-hidden p-6 sm:p-8" style={{ background: `linear-gradient(120deg, ${selTeam.color}33, transparent 60%)` }}>
-              <span className="pointer-events-none absolute -right-4 -top-8 font-display text-[10rem] font-black italic leading-none opacity-15" style={{ color: selTeam.color }} aria-hidden>{selected.number}</span>
+              <span className="pointer-events-none absolute -right-4 -top-8 font-display text-[10rem] font-black leading-none opacity-15" style={{ color: selTeam.color }} aria-hidden>{selected.number}</span>
               <div className="relative flex flex-col gap-6 sm:flex-row sm:items-center">
                 <motion.div initial={{ rotate: -10, scale: 0.8, opacity: 0 }} animate={{ rotate: 0, scale: 1, opacity: 1 }} transition={{ type: 'spring', damping: 14 }}>
                   <DriverHelmet driver={selected} team={selTeam} className="h-40 w-40" />
