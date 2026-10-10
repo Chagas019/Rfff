@@ -73,6 +73,8 @@ export function ScrollShowcase() {
   const carProgress = useTransform(p, [0, 0.64], [0, 1], { clamp: true });
   const carOpacity = useTransform(p, [0.6, 0.68], [1, 0]);
   const carScale = useTransform(p, [0.6, 0.68], [1, 0.9]);
+  const carVisibility = useTransform(carOpacity, (o) => (o < 0.01 ? 'hidden' : 'visible'));
+  const helmetVisibility = useTransform(p, (v) => (v < 0.6 ? 'hidden' : 'visible'));
 
   const hOpacity = useTransform(p, [0.64, 0.72], [0, 1]);
   const hScale = useTransform(p, [0.62, 0.72], [0.85, 1]);
@@ -98,12 +100,13 @@ export function ScrollShowcase() {
     <section ref={ref} className="relative h-[420vh]" aria-label="Vitrine 3D: carro de F1 2026 e o capacete de Leclerc">
       <div className="sticky top-0 h-[100svh] overflow-hidden bg-carbon-950">
         {/* carro 3D em tela cheia */}
-        <motion.div className="absolute inset-0" style={{ opacity: carOpacity, scale: carScale }}>
+        <motion.div className="absolute inset-0" style={{ opacity: carOpacity, scale: carScale, visibility: carVisibility }}>
           <Car3DCanvas progress={carProgress} className="h-full w-full" shiftRight />
+          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_50%_50%,transparent_55%,rgba(0,0,0,0.45)_100%)]" aria-hidden />
         </motion.div>
 
         {/* capacete (ato 3) — holograma que se materializa */}
-        <motion.div className="pointer-events-none absolute inset-0 flex items-start justify-center pt-24 lg:items-center lg:justify-end lg:pr-[14%] lg:pt-0" style={{ opacity: hOpacity, scale: hScale }}>
+        <motion.div className="pointer-events-none absolute inset-0 flex items-start justify-center pt-24 lg:items-center lg:justify-end lg:pr-[14%] lg:pt-0" style={{ opacity: hOpacity, scale: hScale, visibility: helmetVisibility, isolation: 'isolate' }}>
           <div className="relative flex h-full w-full max-w-[640px] items-start justify-center pt-4 lg:items-center lg:pt-0">
             <HelmetHolo progress={helmetProgress} />
           </div>

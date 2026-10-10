@@ -37,9 +37,9 @@ export function Garage({ initialTeam }: { initialTeam?: string }) {
   };
 
   const variants = {
-    enter: (d: number) => ({ x: d >= 0 ? '60%' : '-60%', opacity: 0, filter: 'blur(16px)', skewX: d >= 0 ? -8 : 8 }),
-    center: { x: '0%', opacity: 1, filter: 'blur(0px)', skewX: 0 },
-    exit: (d: number) => ({ x: d >= 0 ? '-60%' : '60%', opacity: 0, filter: 'blur(16px)', skewX: d >= 0 ? 8 : -8 }),
+    enter: (d: number) => ({ x: d >= 0 ? '60%' : '-60%', opacity: 0, skewX: d >= 0 ? -8 : 8 }),
+    center: { x: '0%', opacity: 1, skewX: 0 },
+    exit: (d: number) => ({ x: d >= 0 ? '-60%' : '60%', opacity: 0, skewX: d >= 0 ? 8 : -8 }),
   };
 
   return (

@@ -23,7 +23,14 @@ export function Car3DCanvas({ progress, className = '', shiftRight = false }: { 
     const io = new IntersectionObserver(([e]) => { visible = e.isIntersecting; if (e.isIntersecting) startLoad(); }, { rootMargin: '150% 0px' });
     io.observe(canvas);
 
+    // espera o navegador ficar ocioso (depois das animações de abertura) para montar o 3D
+    const idle = () => new Promise<void>((res) => {
+      const w = window as Window & { requestIdleCallback?: (cb: () => void, o?: { timeout: number }) => number };
+      if (w.requestIdleCallback) w.requestIdleCallback(() => res(), { timeout: 2500 });
+      else setTimeout(res, 1200);
+    });
     near
+      .then(idle)
       .then(() => import('../three/carScene'))
       .then((m) => m.createCarScene(canvas, { shiftRight }))
       .then((sc) => {
@@ -34,17 +41,24 @@ export function Car3DCanvas({ progress, className = '', shiftRight = false }: { 
         let smooth = progress.get();
         // qualidade adaptativa: se os quadros ficarem lentos, reduz o custo
         let last = 0, slow = 0, count = 0;
+        let needsFinal = true;
         // só redesenha quando a rolagem muda (economiza GPU/bateria)
         const loop = (now: number) => {
           raf = requestAnimationFrame(loop);
           if (!visible) { last = 0; return; }
           const target = progress.get();
           const delta = target - smooth;
-          if (Math.abs(delta) < 1e-4 && !dirty) { last = 0; return; }
+          if (Math.abs(delta) < 1e-4 && !dirty) {
+            // parou de rolar: um quadro final em qualidade máxima
+            if (needsFinal) { needsFinal = false; sc.frame(now / 1000, true); }
+            last = 0;
+            return;
+          }
           smooth = Math.abs(delta) < 2e-4 ? target : smooth + delta * 0.18;
           dirty = false;
+          needsFinal = true;
           sc.setProgress(smooth);
-          sc.frame(now / 1000);
+          sc.frame(now / 1000, false);
           if (last) {
             count++;
             if (now - last > 28) slow++;

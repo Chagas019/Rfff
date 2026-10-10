@@ -175,17 +175,12 @@ function createContactShadows(
 /* ------------------------------------------------------------------ */
 
 // The floor reflection is blurred, so it is rendered well below screen resolution
-const REFLECTION_SCALE = 0.35;
+// GRID F1: resolução do reflexo limitada (era 0.35 × DPR) — o reflexo é desfocado, então não perde qualidade
+const REFLECTION_SCALE = 0.22;
+const REFLECTION_MAX = 640;
 
 function createFloor(contact, bg) {
-  const reflRes = Math.min(
-    2048,
-    Math.round(
-      window.innerWidth *
-        Math.min(window.devicePixelRatio, 2) *
-        REFLECTION_SCALE,
-    ),
-  );
+  const reflRes = Math.min(REFLECTION_MAX, Math.round(window.innerWidth * REFLECTION_SCALE));
   const floor = new Reflector(new THREE.CircleGeometry(60, 96), {
     textureWidth: reflRes,
     textureHeight: Math.round(
@@ -283,16 +278,17 @@ function createFloor(contact, bg) {
   floor.onBeforeRender = function (renderer, scene, camera, ...rest) {
     if (scene.overrideMaterial) return;
     if (!dirty && lastCam.equals(camera.matrixWorld)) return;
+    // GRID F1: em movimento, atualiza o reflexo (desfocado) só a cada 3 quadros
+    if (!dirty && floor.throttle && (skip = (skip + 1) % 3) !== 0) return;
     lastCam.copy(camera.matrixWorld);
     dirty = false;
     renderReflection.call(this, renderer, scene, camera, ...rest);
   };
+  let skip = 0;
+  floor.throttle = false;
   floor.invalidate = () => (dirty = true);
   floor.resizeReflection = (w, h) => {
-    const rw = Math.min(
-      2048,
-      Math.round(w * Math.min(window.devicePixelRatio, 2) * REFLECTION_SCALE),
-    );
+    const rw = Math.min(REFLECTION_MAX, Math.round(w * REFLECTION_SCALE));
     floor.getRenderTarget().setSize(rw, Math.round((rw * h) / w));
     dirty = true;
   };

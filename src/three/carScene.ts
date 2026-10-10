@@ -3,7 +3,6 @@ import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer
 import { GTAOPass } from 'three/examples/jsm/postprocessing/GTAOPass.js';
 import { OutputPass } from 'three/examples/jsm/postprocessing/OutputPass.js';
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
-import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass.js';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { MeshoptDecoder } from 'three/examples/jsm/libs/meshopt_decoder.module.js';
 // Modelo do F1 Rules Explorer (ver ./README.md), pré-gerado em public/models/f1-2026.glb
@@ -43,7 +42,8 @@ export interface CarScene {
   /** Reduz a qualidade quando o aparelho não acompanha (sem AO, menos pixels). */
   degrade(): boolean;
   resize(): void;
-  frame(time: number): void;
+  /** `settled`: rolagem parada — renderiza o quadro em qualidade máxima (com AO). */
+  frame(time: number, settled?: boolean): void;
   dispose(): void;
 }
 
@@ -74,7 +74,10 @@ export async function createCarScene(canvas: HTMLCanvasElement, opts: { livery?:
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: 'high-performance' });
   const coarse = window.matchMedia('(pointer: coarse)').matches; // celulares/tablets
   let maxDpr = coarse ? 1.25 : 1.5;
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, maxDpr));
+  // orçamento de pixels: telas grandes (tablet/computador) não renderizam mais que ~1,6 milhão de pixels
+  const PIXEL_BUDGET = 1.3e6;
+  const dprFor = (w: number, h: number) => Math.max(0.75, Math.min(window.devicePixelRatio || 1, maxDpr, Math.sqrt(PIXEL_BUDGET / Math.max(1, w * h))));
+  renderer.setPixelRatio(1);
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.toneMapping = THREE.NeutralToneMapping;
   renderer.toneMappingExposure = 0.95;
@@ -111,19 +114,11 @@ export async function createCarScene(canvas: HTMLCanvasElement, opts: { livery?:
   gtao.updateGtaoMaterial({ radius: 0.35, distanceExponent: 1.5, thickness: 1, scale: 1.2, samples: 8 });
   gtao.updatePdMaterial({ lumaPhi: 10, depthPhi: 2, normalPhi: 3, radius: 6, rings: 2, samples: 8 });
   gtao.blendIntensity = 0.9;
-  gtao.enabled = !coarse; // pesado demais para a maioria dos celulares
+  let aoAllowed = !coarse; // pesado demais para a maioria dos celulares
+  gtao.enabled = false; // ligado só no quadro final, quando a rolagem para
   composer.addPass(gtao);
   composer.addPass(new OutputPass());
-  const grade = new ShaderPass({
-    uniforms: { tDiffuse: { value: null }, uAspect: { value: 1 } },
-    vertexShader: 'varying vec2 vUv; void main(){ vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0); }',
-    fragmentShader: `uniform sampler2D tDiffuse; uniform float uAspect; varying vec2 vUv;
-      float hash(vec2 p){ return fract(sin(dot(p, vec2(12.9898,78.233))) * 43758.5453); }
-      void main(){ vec4 c = texture2D(tDiffuse, vUv); vec2 d = (vUv-0.5)*vec2(uAspect,1.0);
-        c.rgb *= mix(0.6, 1.0, smoothstep(1.25, 0.35, length(d)));
-        c.rgb += (hash(gl_FragCoord.xy)-0.5)/255.0; gl_FragColor = c; }`,
-  });
-  composer.addPass(grade);
+  // (vinheta feita em CSS sobre o canvas, igual nos dois caminhos de renderização)
   const target = new THREE.Vector3(0, 0.4, 0);
   let progress = 0;
   let aero = 0;
@@ -135,10 +130,10 @@ export async function createCarScene(canvas: HTMLCanvasElement, opts: { livery?:
 
   const resize = () => {
     const w = canvas.clientWidth || 1, h = canvas.clientHeight || 1;
+    renderer.setPixelRatio(dprFor(w, h));
     renderer.setSize(w, h, false);
     composer.setPixelRatio(renderer.getPixelRatio());
     composer.setSize(w, h);
-    grade.uniforms.uAspect.value = w / h;
     camera.aspect = w / h;
     // em telas largas, desloca o carro para a direita (texto fica à esquerda)
     camera.filmOffset = opts.shiftRight && w / h > 1.2 ? -2.6 : 0;
@@ -148,16 +143,17 @@ export async function createCarScene(canvas: HTMLCanvasElement, opts: { livery?:
   resize();
   // compila os shaders em paralelo (sem travar a página) antes do primeiro quadro
   try { await renderer.compileAsync(scene, camera); } catch { /* navegador sem suporte: compila no 1º quadro */ }
+  try { renderer.setRenderTarget(rt); await renderer.compileAsync(scene, camera); } catch { /* idem */ } finally { renderer.setRenderTarget(null); }
 
-  return {
+  const api: CarScene = {
     setProgress(u) { progress = u; },
     degrade() {
-      if (gtao.enabled) { gtao.enabled = false; return true; }
-      if (maxDpr > 1) { maxDpr = 1; renderer.setPixelRatio(1); resize(); return true; }
+      if (aoAllowed) { aoAllowed = false; return true; }
+      if (maxDpr > 0.85) { maxDpr = 0.85; resize(); return true; }
       return false;
     },
     resize,
-    frame(time) {
+    frame(time, settled = false) {
       const k = sample(progress);
       const aspect = camera.aspect;
       const dist = k.dist * (aspect < 1.2 ? Math.min(2.5, 1.12 / Math.max(aspect, 0.4)) : 1.4);
@@ -181,7 +177,16 @@ export async function createCarScene(canvas: HTMLCanvasElement, opts: { livery?:
         renderer.shadowMap.needsUpdate = true;
       }
       studio.update();
-      composer.render();
+      (studio.floor as unknown as { throttle: boolean }).throttle = !settled;
+      if (settled && aoAllowed) {
+        // quadro parado: qualidade máxima (MSAA 4x + oclusão de ambiente)
+        gtao.enabled = true;
+        composer.render();
+      } else {
+        // em movimento: caminho leve, direto na tela (MSAA nativo do canvas)
+        renderer.setRenderTarget(null);
+        renderer.render(scene, camera);
+      }
     },
     dispose() {
       composer.dispose();
@@ -195,4 +200,12 @@ export async function createCarScene(canvas: HTMLCanvasElement, opts: { livery?:
       });
     },
   };
+  // aquecimento: desenha os dois caminhos (movimento e parado) e o reflexo uma vez
+  // agora, antes de o carro aparecer — evita o engasgo do 1º quadro ao rolar.
+  api.frame(0, false);
+  api.setProgress(0.002);
+  api.frame(0, false);
+  api.frame(0, true);
+  api.setProgress(0);
+  return api;
 }
