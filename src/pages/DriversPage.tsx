@@ -5,7 +5,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { DriverCard } from '../components/DriverCard';
 import { FavoriteButton } from '../components/FavoriteButton';
 import { Flag } from '../components/Flag';
-import { HelmetAvatar } from '../components/HelmetAvatar';
+import { DriverHelmet } from '../components/DriverHelmet';
 import { Modal } from '../components/Modal';
 import { PageHeader } from '../components/PageHeader';
 import { Reveal } from '../components/Reveal';
@@ -109,7 +109,7 @@ export function DriversPage() {
               <span className="pointer-events-none absolute -right-4 -top-8 font-display text-[10rem] font-black italic leading-none opacity-15" style={{ color: selTeam.color }} aria-hidden>{selected.number}</span>
               <div className="relative flex flex-col gap-6 sm:flex-row sm:items-center">
                 <motion.div initial={{ rotate: -10, scale: 0.8, opacity: 0 }} animate={{ rotate: 0, scale: 1, opacity: 1 }} transition={{ type: 'spring', damping: 14 }}>
-                  <HelmetAvatar color={selTeam.color} accent={selTeam.accent} number={selected.number} code={selected.code} className="h-40 w-40" />
+                  <DriverHelmet driver={selected} team={selTeam} className="h-40 w-40" />
                 </motion.div>
                 <div>
                   <p className="label" style={{ color: selTeam.color }}>#{selected.number} · {selTeam.name}</p>

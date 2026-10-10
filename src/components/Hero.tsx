@@ -37,7 +37,7 @@ export function Hero({ nextRace }: { nextRace: Race | null }) {
   const panelScale = useTransform(scrollY, [0, 700], [1, reduce ? 1 : 0.86]);
   const titleY = useTransform(scrollY, [0, 700], [0, reduce ? 0 : -60]);
   const speed = useSpeedometer(!reduce);
-  const featured = teams.find((t) => studioImages[t.id]) ?? teams[0];
+  const featured = teams.find((t) => t.id === 'audi' && studioImages[t.id]) ?? teams.find((t) => studioImages[t.id]) ?? teams[0];
 
   // holofote vermelho que segue o cursor no fundo
   const mx = useMotionValue(50);

@@ -6,14 +6,6 @@ import { teamPhotoQuery } from '../services/carPhotos';
 import type { Team } from '../types';
 import { CarPhoto } from './CarPhoto';
 
-/** Esfuma as bordas da imagem para ela se fundir ao fundo do estúdio. */
-const EDGE_FADE = {
-  WebkitMaskImage: 'linear-gradient(to right, transparent, #000 7%, #000 93%, transparent), linear-gradient(to bottom, transparent, #000 7%, #000 93%, transparent)',
-  WebkitMaskComposite: 'source-in',
-  maskImage: 'linear-gradient(to right, transparent, #000 7%, #000 93%, transparent), linear-gradient(to bottom, transparent, #000 7%, #000 93%, transparent)',
-  maskComposite: 'intersect',
-} as const;
-
 interface Props {
   team: Team;
   className?: string;
@@ -70,7 +62,7 @@ export function StudioCar({ team, className = '', tilt = 10, showCredit = true, 
       {/* sombra no chão */}
       <motion.div aria-hidden className="pointer-events-none absolute bottom-[12%] left-1/2 h-[10%] w-[70%] -translate-x-1/2 rounded-[50%] bg-black/25 blur-2xl" style={{ x: shadowX }} />
 
-      <div className="absolute inset-0 transition-transform duration-700 ease-out group-hover:scale-[1.04]">
+      <div className="absolute inset-0 flex items-center justify-center p-[6%] transition-transform duration-700 ease-out group-hover:scale-[1.04]">
       <motion.img
         src={studio.src}
         alt={`${team.name} ${team.car} — ${studio.caption}`}
@@ -81,8 +73,8 @@ export function StudioCar({ team, className = '', tilt = 10, showCredit = true, 
         initial={{ opacity: 0, x: 80, filter: 'blur(12px)' }}
         animate={loaded ? { opacity: 1, x: 0, filter: 'blur(0px)' } : {}}
         transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
-        style={{ rotateX: rx, rotateY: ry, translateX: carX, ...EDGE_FADE }}
-        className="mx-auto h-full w-auto max-w-full select-none object-contain"
+        style={{ rotateX: rx, rotateY: ry, translateX: carX }}
+        className="max-h-full max-w-full select-none object-contain drop-shadow-[0_25px_25px_rgba(0,0,0,0.25)]"
       />
       </div>
 

@@ -7,7 +7,7 @@
  *
  * Use apenas imagens com direito de uso (próprias, licenciadas ou kits de
  * imprensa que permitam o uso) e informe a origem em `credit`.
- * Fundo ideal: cinza-claro/branco liso, como em um estúdio fotográfico.
+ * Prefira PNG com fundo transparente (recortado).
  */
 export interface StudioImage {
   src: string;
@@ -23,11 +23,28 @@ export interface StudioImage {
 
 export const studioImages: Partial<Record<string, StudioImage>> = {
   audi: {
-    src: '/cars/audi.webp',
+    src: '/cars/audi.png',
     credit: 'Render enviado pelo responsável do site',
     kind: 'render',
-    caption: 'Audi #27 — render de estúdio',
+    caption: 'Audi #27 — render de estúdio (fundo removido)',
+  },
+  ferrari: {
+    src: '/cars/ferrari-top.png',
+    credit: 'Render enviado pelo responsável do site',
+    kind: 'render',
+    caption: 'Ferrari #16 — vista aérea (fundo removido)',
   },
 };
 
 export const studioImageFor = (teamId: string) => studioImages[teamId];
+
+/** Arte de capacete com fundo transparente (substitui o capacete ilustrado). */
+export interface HelmetImage { src: string; credit: string; caption: string }
+
+export const helmetImages: Partial<Record<string, HelmetImage>> = {
+  leclerc: {
+    src: '/helmets/leclerc.png',
+    credit: 'Arte: DaiMOnDesign',
+    caption: 'Capacete de Charles Leclerc — arte digital (fundo removido)',
+  },
+};

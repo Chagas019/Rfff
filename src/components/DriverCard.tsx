@@ -4,7 +4,7 @@ import type { Driver } from '../types';
 import { FavoriteButton } from './FavoriteButton';
 import { Flag } from './Flag';
 import { TiltCard } from './TiltCard';
-import { HelmetAvatar } from './HelmetAvatar';
+import { DriverHelmet } from './DriverHelmet';
 
 export function DriverCard({ driver, onOpen }: { driver: Driver; onOpen: () => void }) {
   const team = teamById(driver.teamId)!;
@@ -19,7 +19,7 @@ export function DriverCard({ driver, onOpen }: { driver: Driver; onOpen: () => v
           {driver.photoUrl ? (
             <img src={driver.photoUrl} alt={`${driver.firstName} ${driver.lastName}`} className="absolute bottom-0 right-0 h-full object-contain" loading="lazy" />
           ) : (
-            <HelmetAvatar color={team.color} accent={team.accent} number={driver.number} code={driver.code} className="absolute -bottom-4 right-0 h-52 w-52 transition duration-500 group-hover:scale-110 group-hover:-rotate-3" />
+            <DriverHelmet driver={driver} team={team} className="absolute -bottom-4 right-0 h-52 w-52 transition duration-500 group-hover:scale-110 group-hover:-rotate-3" />
           )}
         </div>
         <div className="border-t border-white/5 p-5 pr-16">

@@ -9,7 +9,6 @@ import { Hero } from '../components/Hero';
 import { RaceCard } from '../components/RaceCard';
 import { RaceCountdown } from '../components/RaceCountdown';
 import { ScrollShowcase } from '../components/ScrollShowcase';
-import { studioImages } from '../data/carImages';
 import { Reveal } from '../components/Reveal';
 import { SectionHeader } from '../components/SectionHeader';
 import { ShareButton } from '../components/ShareButton';
@@ -42,8 +41,6 @@ export function HomePage() {
   const completed = races.filter((r) => getRaceStatus(r, races, now) === 'completed').length;
   const total = races.filter((r) => !r.cancelled).length;
 
-  const featuredTeam = teams.find((t) => studioImages[t.id]);
-
   const ticker = [
     `Temporada 2026 · ${total} Grandes Prêmios`,
     `${completed} de ${total} etapas concluídas`,
@@ -59,7 +56,7 @@ export function HomePage() {
     <>
       <Hero nextRace={next} />
       <Ticker items={ticker} />
-      {featuredTeam && <ScrollShowcase team={featuredTeam} />}
+      <ScrollShowcase />
 
       {/* Próximo Grande Prêmio */}
       <section id="proxima" className="container-grid scroll-mt-24 py-20" aria-labelledby="next-title">

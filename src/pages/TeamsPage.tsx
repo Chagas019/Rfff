@@ -7,7 +7,7 @@ import { FavoriteButton } from '../components/FavoriteButton';
 import { Garage } from '../components/Garage';
 import { StudioCar } from '../components/StudioCar';
 import { studioImageFor } from '../data/carImages';
-import { HelmetAvatar } from '../components/HelmetAvatar';
+import { DriverHelmet } from '../components/DriverHelmet';
 import { Modal } from '../components/Modal';
 import { PageHeader } from '../components/PageHeader';
 import { Reveal } from '../components/Reveal';
@@ -78,7 +78,7 @@ export function TeamsPage() {
                   {lineup.map((d) => (
                     <li key={d.id}>
                       <Link to={`/pilotos/${d.id}`} className="panel-hover flex items-center gap-3 rounded-xl border border-white/10 bg-white/[0.03] p-2 pr-4">
-                        <HelmetAvatar color={selected.color} accent={selected.accent} number={d.number} code={d.code} className="h-14 w-14" />
+                        <DriverHelmet driver={d} team={selected} className="h-14 w-14" />
                         <span className="flex-1"><span className="block text-xs text-zinc-400">#{d.number}</span><span className="font-bold text-white">{d.firstName} {d.lastName}</span></span>
                       </Link>
                     </li>
