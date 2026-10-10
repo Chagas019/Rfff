@@ -1,28 +1,28 @@
 import { motion, useReducedMotion, useScroll, useSpring, useTransform, type MotionValue } from 'framer-motion';
-import { ArrowRight, BatteryCharging, Camera, Cpu, Fuel, Wind } from 'lucide-react';
+import { ArrowRight, BatteryCharging, Box, Camera, Cpu, Fuel, Wind } from 'lucide-react';
 import { useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { helmetImages, studioImages } from '../data/carImages';
+import { helmetImages } from '../data/carImages';
+import { Car3DCanvas } from './Car3DCanvas';
 
 /**
- * Vitrine guiada pela rolagem (3 atos), no estilo "objeto que muda de ângulo":
- *  1. Audi em 3/4 gira no espaço, com selos flutuando em profundidade;
- *  2. Ferrari passa da vista rasante (deitada na pista) para a vista aérea;
- *  3. O capacete de Leclerc vem do fundo e gira.
- * Imagens: PNG com fundo transparente (src/data/carImages.ts).
+ * Vitrine guiada pela rolagem:
+ *  1–2. carro de F1 2026 em 3D real (WebGL): a câmera gira ao redor dele,
+ *       sobe até a vista aérea e as asas móveis abrem;
+ *  3.   o capacete de Leclerc vem da profundidade.
  */
 
 const ACTS = [
-  { kicker: '01 · Ângulo 3/4', title: 'Nova era. Novo carro.', text: 'Mais curto, mais leve e com aerodinâmica ativa: o regulamento de 2026 redesenhou o carro de Fórmula 1.', range: [0, 0.33] },
-  { kicker: '02 · Vista aérea', title: 'Do chão ao céu.', text: 'Do ângulo rasante à vista de cima: asa dianteira, assoalho e difusor desenhados para a nova era.', range: [0.33, 0.66] },
+  { kicker: '01 · Modelo 3D', title: 'Gire o carro.', text: 'Role a página e a câmera dá a volta no carro de 2026: mais curto, mais leve e com aerodinâmica ativa.', range: [0, 0.33] },
+  { kicker: '02 · Vista aérea', title: 'Asas móveis abertas.', text: 'Do alto, veja as asas dianteira e traseira abrindo no "modo reta", que substituiu o DRS em 2026.', range: [0.33, 0.66] },
   { kicker: '03 · O piloto', title: 'Por trás da viseira.', text: 'Charles Leclerc, número 16 da Ferrari, chega a 2026 em sua oitava temporada pela Scuderia.', range: [0.66, 1] },
 ] as const;
 
 const CHIPS = [
-  { icon: Cpu, label: 'V6 1.6 turbo híbrido', left: '2%', top: '8%', z: 160 },
-  { icon: BatteryCharging, label: '~50% elétrico', left: '70%', top: '2%', z: 220 },
-  { icon: Wind, label: 'Aerodinâmica ativa', left: '74%', top: '78%', z: 120 },
-  { icon: Fuel, label: 'Combustível sustentável', left: '0%', top: '80%', z: 190 },
+  { icon: Cpu, label: 'V6 1.6 turbo híbrido', left: '58%', top: '20%' },
+  { icon: BatteryCharging, label: '~50% elétrico', left: '78%', top: '32%' },
+  { icon: Wind, label: 'Aerodinâmica ativa', left: '74%', top: '70%' },
+  { icon: Fuel, label: 'Combustível sustentável', left: '52%', top: '78%' },
 ];
 
 function ActText({ p, i }: { p: MotionValue<number>; i: number }) {
@@ -36,15 +36,14 @@ function ActText({ p, i }: { p: MotionValue<number>; i: number }) {
   const pointerEvents = useTransform(opacity, (o) => (o > 0.5 ? 'auto' : 'none'));
   const act = ACTS[i];
   return (
-    <motion.div style={{ opacity, y, filter, pointerEvents }} className="absolute inset-x-0 top-0">
+    <motion.div style={{ opacity, y, filter, pointerEvents }} className="absolute inset-x-0 bottom-0 lg:bottom-auto lg:top-0">
       <p className="label text-race-400">{act.kicker}</p>
       <h3 className="mt-3 text-3xl font-black uppercase leading-none sm:text-5xl">{act.title}</h3>
-      <p className="mt-4 max-w-md text-zinc-400">{act.text}</p>
-      {i === 1 && <Link to="/equipes/ferrari" className="btn-ghost mt-5">Conhecer a Ferrari <ArrowRight className="h-4 w-4" aria-hidden /></Link>}
+      <p className="mt-4 max-w-md text-zinc-300">{act.text}</p>
       {i === 2 && (
         <div className="mt-5 flex flex-wrap gap-2">
           <Link to="/pilotos/leclerc" className="btn-primary">Perfil de Leclerc <ArrowRight className="h-4 w-4" aria-hidden /></Link>
-          <Link to="/pilotos" className="btn-ghost">Todos os pilotos</Link>
+          <Link to="/equipes" className="btn-ghost">Ver as equipes</Link>
         </div>
       )}
     </motion.div>
@@ -52,132 +51,87 @@ function ActText({ p, i }: { p: MotionValue<number>; i: number }) {
 }
 
 function Chip({ chip, p, i }: { chip: (typeof CHIPS)[number]; p: MotionValue<number>; i: number }) {
-  const opacity = useTransform(p, [0.02 + i * 0.03, 0.08 + i * 0.03, 0.26, 0.31], [0, 1, 1, 0]);
-  const y = useTransform(p, [0, 0.31], [0, (i % 2 ? -1 : 1) * 50]);
+  const opacity = useTransform(p, [0.03 + i * 0.03, 0.09 + i * 0.03, 0.26, 0.31], [0, 1, 1, 0]);
+  const y = useTransform(p, [0, 0.31], [20, (i % 2 ? -1 : 1) * 30]);
   return (
     <motion.div
-      className="glass absolute flex items-center gap-2 whitespace-nowrap rounded-full border border-white/15 px-3 py-2 text-xs font-semibold text-white shadow-2xl"
-      style={{ left: chip.left, top: chip.top, opacity, y, translateZ: chip.z }}
+      className="glass absolute hidden items-center gap-2 whitespace-nowrap rounded-full border border-white/15 px-3 py-2 text-xs font-semibold text-white shadow-2xl lg:flex"
+      style={{ left: chip.left, top: chip.top, opacity, y }}
     >
       <chip.icon className="h-4 w-4 text-race" aria-hidden /> {chip.label}
     </motion.div>
   );
 }
 
-function Credit({ p, range, text }: { p: MotionValue<number>; range: readonly [number, number]; text: string }) {
-  const [a, b] = range;
-  const opacity = useTransform(p, [a, a + 0.04, b - 0.04, b], [0, 1, 1, 0]);
-  return (
-    <motion.p style={{ opacity }} className="absolute bottom-24 right-4 flex items-center gap-1 text-[10px] text-zinc-500 sm:bottom-16 sm:right-8">
-      <Camera className="h-3 w-3" aria-hidden /> {text}
-    </motion.p>
-  );
-}
-
 export function ScrollShowcase() {
   const ref = useRef<HTMLElement>(null);
   const reduce = useReducedMotion();
-  const audi = studioImages.audi;
-  const ferrari = studioImages.ferrari;
   const helmet = helmetImages.leclerc;
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end end'] });
   const p = useSpring(scrollYProgress, { stiffness: 90, damping: 22, mass: 0.4 });
 
-  // Ato 1 — Audi gira em 3/4 e sai pela esquerda
-  const aOpacity = useTransform(p, [0, 0.27, 0.33], [1, 1, 0]);
-  const aRotY = useTransform(p, [0, 0.15, 0.27, 0.33], [-30, 0, 22, 55]);
-  const aRotX = useTransform(p, [0, 0.27], [16, 4]);
-  const aRotZ = useTransform(p, [0, 0.15, 0.27], [-5, 0, 3]);
-  const aScale = useTransform(p, [0, 0.15, 0.27, 0.33], [0.78, 1, 1.08, 0.9]);
-  const aX = useTransform(p, [0, 0.27, 0.33], ['8%', '-2%', '-45%']);
-  const aBlur = useTransform(p, [0.27, 0.33], ['blur(0px)', 'blur(14px)']);
+  // 0–0.66 da rolagem controla a câmera 3D (0–1)
+  const carProgress = useTransform(p, [0, 0.64], [0, 1], { clamp: true });
+  const carOpacity = useTransform(p, [0.6, 0.68], [1, 0]);
+  const carScale = useTransform(p, [0.6, 0.68], [1, 0.9]);
 
-  // Ato 2 — Ferrari: deitada na pista (ângulo rasante) → vista aérea
-  const fOpacity = useTransform(p, [0.28, 0.35, 0.6, 0.66], [0, 1, 1, 0]);
-  const fRotX = useTransform(p, [0.3, 0.52], [68, 0]);
-  const fRotZ = useTransform(p, [0.3, 0.52, 0.62], [-18, 0, 4]);
-  const fScale = useTransform(p, [0.3, 0.52, 0.66], [0.7, 1, 0.6]);
-  const fX = useTransform(p, [0.28, 0.36, 0.6, 0.66], ['60%', '0%', '0%', '-10%']);
-  const fY = useTransform(p, [0.6, 0.66], ['0%', '-30%']);
-  const fBlur = useTransform(p, [0.28, 0.35, 0.6, 0.66], ['blur(16px)', 'blur(0px)', 'blur(0px)', 'blur(14px)']);
-
-  // Ato 3 — capacete vem da profundidade e gira
-  const hOpacity = useTransform(p, [0.62, 0.7], [0, 1]);
-  const hScale = useTransform(p, [0.62, 0.74, 1], [0.35, 1, 1.05]);
-  const hRotY = useTransform(p, [0.62, 0.8, 1], [-40, 0, 22]);
-  const hRotX = useTransform(p, [0.62, 0.8, 1], [20, 0, -6]);
-  const hZ = useTransform(p, [0.62, 0.74], [-600, 0]);
-
-  const glow = useTransform(p, [0, 0.33, 0.66, 1], ['#e1060018', '#e1060040', '#e1060030', '#e1060055']);
-  const bg = useTransform(glow, (c) => `radial-gradient(55% 55% at 62% 50%, ${c}, transparent 70%)`);
-  const shadowScale = useTransform(p, [0, 0.15, 0.3, 0.52, 0.66, 0.74], [0.7, 1, 0.9, 1.1, 0.6, 0.8]);
+  const hOpacity = useTransform(p, [0.64, 0.72], [0, 1]);
+  const hScale = useTransform(p, [0.64, 0.76, 1], [0.35, 1, 1.05]);
+  const hRotY = useTransform(p, [0.64, 0.82, 1], [-40, 0, 22]);
+  const hRotX = useTransform(p, [0.64, 0.82, 1], [20, 0, -6]);
+  const hCredit = useTransform(p, [0.66, 0.72], [0, 1]);
+  const carCredit = useTransform(p, [0.6, 0.66], [1, 0]);
   const barWidth = useTransform(p, [0, 1], ['0%', '100%']);
-
-  if (!audi || !ferrari || !helmet) return null;
 
   if (reduce) {
     return (
-      <section className="container-grid grid gap-10 py-20 md:grid-cols-3" aria-label="Vitrine: carros e capacete">
-        {[[audi.src, ACTS[0]], [ferrari.src, ACTS[1]], [helmet.src, ACTS[2]]].map(([src, act]) => {
-          const a = act as (typeof ACTS)[number];
-          return (
-            <div key={a.title}>
-              <img src={src as string} alt="" className="mx-auto max-h-64 object-contain" />
-              <p className="label mt-4 text-race-400">{a.kicker}</p>
-              <h3 className="mt-2 text-2xl font-black uppercase">{a.title}</h3>
-              <p className="mt-2 text-sm text-zinc-400">{a.text}</p>
-            </div>
-          );
-        })}
+      <section className="container-grid grid items-center gap-10 py-20 lg:grid-cols-2" aria-label="Vitrine: carro 3D e capacete">
+        <Car3DCanvas progress={carProgress} className="aspect-[4/3] w-full overflow-hidden rounded-3xl" />
+        <div>
+          <p className="label text-race-400">{ACTS[0].kicker}</p>
+          <h3 className="mt-2 text-3xl font-black uppercase">Carro de F1 2026 em 3D</h3>
+          <p className="mt-2 text-zinc-400">{ACTS[1].text}</p>
+        </div>
       </section>
     );
   }
 
   return (
-    <section ref={ref} className="relative h-[420vh]" aria-label="Vitrine 3D: Audi, Ferrari e o capacete de Leclerc">
-      <div className="sticky top-0 flex h-[100svh] items-center overflow-hidden">
-        <motion.div className="pointer-events-none absolute inset-0" style={{ background: bg }} aria-hidden />
-        <div className="grid-bg pointer-events-none absolute inset-0 opacity-40 [mask-image:radial-gradient(ellipse_at_center,black,transparent_70%)]" aria-hidden />
-        {/* linhas de velocidade do ato 2 */}
-        <motion.div className="pointer-events-none absolute inset-0" style={{ opacity: fOpacity }} aria-hidden>
-          {Array.from({ length: 7 }).map((_, i) => (
-            <span key={i} className="absolute h-px w-1/2 animate-speedline bg-gradient-to-r from-transparent via-race/60 to-transparent" style={{ top: `${20 + i * 9}%`, animationDelay: `${i * 0.2}s` }} />
-          ))}
+    <section ref={ref} className="relative h-[420vh]" aria-label="Vitrine 3D: carro de F1 2026 e o capacete de Leclerc">
+      <div className="sticky top-0 h-[100svh] overflow-hidden bg-carbon-950">
+        {/* carro 3D em tela cheia */}
+        <motion.div className="absolute inset-0" style={{ opacity: carOpacity, scale: carScale }}>
+          <Car3DCanvas progress={carProgress} className="h-full w-full" shiftRight />
         </motion.div>
 
-        <div className="container-grid relative grid w-full items-center gap-4 pt-16 lg:grid-cols-[0.85fr_1.4fr]">
-          <div className="relative order-2 h-56 sm:h-64 lg:order-1 lg:h-80">
+        {/* capacete (ato 3) */}
+        <div className="pointer-events-none absolute inset-0 flex items-center justify-center lg:justify-end lg:pr-[10%]" style={{ perspective: 1300 }}>
+          <motion.div className="relative flex h-[55%] items-center justify-center lg:h-[70%]" style={{ opacity: hOpacity, scale: hScale, rotateY: hRotY, rotateX: hRotX }}>
+            <div className="absolute h-[70%] w-[70%] rounded-full bg-race/30 blur-3xl" aria-hidden />
+            {helmet && <img src={helmet.src} alt={helmet.caption} className="relative h-full select-none object-contain drop-shadow-[0_40px_50px_rgba(0,0,0,0.6)]" draggable={false} />}
+          </motion.div>
+        </div>
+
+        <div className="pointer-events-none absolute inset-x-0 top-0 h-40 bg-gradient-to-b from-carbon-950 to-transparent" aria-hidden />
+        {CHIPS.map((c, i) => <Chip key={c.label} chip={c} p={p} i={i} />)}
+
+        {/* textos */}
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-carbon-950 via-carbon-950/70 to-transparent lg:hidden" aria-hidden />
+        <div className="pointer-events-none absolute inset-y-0 left-0 hidden w-1/2 bg-gradient-to-r from-carbon-950/90 to-transparent lg:block" aria-hidden />
+        <div className="container-grid relative flex h-full items-end pb-24 lg:items-center lg:pb-0">
+          <div className="relative h-56 w-full sm:h-64 lg:h-80 lg:w-[42%]">
             {ACTS.map((_, i) => <ActText key={i} p={p} i={i} />)}
-          </div>
-
-          {/* palco 3D */}
-          <div className="relative order-1 aspect-[4/3] lg:order-2" style={{ perspective: 1300 }}>
-            <motion.div aria-hidden className="absolute bottom-[8%] left-1/2 h-10 w-[65%] -translate-x-1/2 rounded-[50%] bg-black/80 blur-2xl" style={{ scaleX: shadowScale }} />
-
-            {/* Ato 1 */}
-            <motion.div className="absolute inset-0 flex items-center justify-center [transform-style:preserve-3d]" style={{ opacity: aOpacity, rotateY: aRotY, rotateX: aRotX, rotateZ: aRotZ, scale: aScale, x: aX, filter: aBlur }}>
-              <img src={audi.src} alt="Carro da Audi visto em ângulo 3/4" className="w-[92%] select-none drop-shadow-[0_40px_50px_rgba(0,0,0,0.6)]" draggable={false} />
-              <div className="pointer-events-none absolute inset-0 hidden sm:block [transform-style:preserve-3d]">
-                {CHIPS.map((c, i) => <Chip key={c.label} chip={c} p={p} i={i} />)}
-              </div>
-            </motion.div>
-
-            {/* Ato 2 */}
-            <motion.div className="absolute inset-0 flex items-center justify-center" style={{ opacity: fOpacity, rotateX: fRotX, rotateZ: fRotZ, scale: fScale, x: fX, y: fY, filter: fBlur }}>
-              <img src={ferrari.src} alt="Ferrari número 16 vista de cima" className="w-full select-none drop-shadow-[0_30px_40px_rgba(0,0,0,0.7)]" draggable={false} />
-            </motion.div>
-
-            {/* Ato 3 */}
-            <motion.div className="absolute inset-0 flex items-center justify-center" style={{ opacity: hOpacity, scale: hScale, rotateY: hRotY, rotateX: hRotX, z: hZ }}>
-              <div className="absolute h-[70%] w-[50%] rounded-full bg-race/30 blur-3xl" aria-hidden />
-              <img src={helmet.src} alt={helmet.caption} className="relative h-[88%] select-none object-contain drop-shadow-[0_40px_50px_rgba(0,0,0,0.6)]" draggable={false} />
-            </motion.div>
           </div>
         </div>
 
-        <Credit p={p} range={[0, 0.33]} text={`Audi: ${audi.credit}`} />
-        <Credit p={p} range={[0.33, 0.66]} text={`Ferrari: ${ferrari.credit}`} />
-        <Credit p={p} range={[0.66, 1.01]} text={helmet.credit} />
+        <motion.p style={{ opacity: carCredit }} className="absolute right-4 top-20 flex items-center gap-1 text-[10px] text-zinc-500 sm:right-8">
+          <Box className="h-3 w-3" aria-hidden /> Modelo 3D: <a href="https://github.com/MatthewDelong/formula1" target="_blank" rel="noreferrer" className="pointer-events-auto underline">F1 Rules Explorer</a> (ISC)
+        </motion.p>
+        {helmet && (
+          <motion.p style={{ opacity: hCredit }} className="absolute right-4 top-20 flex items-center gap-1 text-[10px] text-zinc-500 sm:right-8">
+            <Camera className="h-3 w-3" aria-hidden /> {helmet.credit}
+          </motion.p>
+        )}
 
         <div className="absolute bottom-6 left-1/2 h-1 w-40 -translate-x-1/2 overflow-hidden rounded-full bg-white/10" aria-hidden>
           <motion.div className="h-full bg-race" style={{ width: barWidth }} />
