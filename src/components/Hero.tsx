@@ -1,6 +1,6 @@
 import { motion, useMotionValue, useReducedMotion, useScroll, useSpring, useTransform } from 'framer-motion';
 import { ArrowRight, Flag as FlagIcon, Timer, Users } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { studioImages } from '../data/carImages';
 import { teams } from '../data/teams';
@@ -8,21 +8,29 @@ import type { Race } from '../types';
 import { formatWeekend } from '../utils/format';
 import { StudioCar } from './StudioCar';
 
+/** Velocímetro: anima direto no DOM por ~2 s e para (sem re-renderizar o React a cada quadro). */
 function useSpeedometer(active: boolean) {
-  const [speed, setSpeed] = useState(0);
+  const numRef = useRef<HTMLSpanElement>(null);
+  const barsRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
-    if (!active) { setSpeed(338); return; }
+    const paint = (v: number) => {
+      if (numRef.current) numRef.current.textContent = String(v);
+      barsRef.current?.querySelectorAll<HTMLSpanElement>('span').forEach((el, i) => {
+        el.style.background = i / 16 < v / 360 ? (i > 12 ? '#e10600' : i > 9 ? '#facc15' : '#22c55e') : 'rgba(255,255,255,0.08)';
+      });
+    };
+    if (!active) { paint(338); return; }
     let raf = 0;
     const start = performance.now();
     const tick = (t: number) => {
       const p = Math.min(1, (t - start) / 2200);
-      setSpeed(Math.round(338 * (1 - Math.pow(1 - p, 3)) + (p === 1 ? Math.sin(t / 250) * 3 : 0)));
-      raf = requestAnimationFrame(tick);
+      paint(Math.round(338 * (1 - Math.pow(1 - p, 3))));
+      if (p < 1) raf = requestAnimationFrame(tick);
     };
     raf = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(raf);
   }, [active]);
-  return speed;
+  return { numRef, barsRef };
 }
 
 const TITLE = ['The race', 'never', 'stops.'];
@@ -36,29 +44,30 @@ export function Hero({ nextRace }: { nextRace: Race | null }) {
   const panelRotX = useTransform(scrollY, [0, 700], [0, reduce ? 0 : 12]);
   const panelScale = useTransform(scrollY, [0, 700], [1, reduce ? 1 : 0.86]);
   const titleY = useTransform(scrollY, [0, 700], [0, reduce ? 0 : -60]);
-  const speed = useSpeedometer(!reduce);
+  const { numRef, barsRef } = useSpeedometer(!reduce);
   const featured = teams.find((t) => t.id === 'audi' && studioImages[t.id]) ?? teams.find((t) => studioImages[t.id]) ?? teams[0];
 
   // holofote vermelho que segue o cursor no fundo
-  const mx = useMotionValue(50);
-  const my = useMotionValue(30);
+  // (move um círculo com transform — barato, sem repintar o fundo)
+  const mx = useMotionValue(0);
+  const my = useMotionValue(0);
   const sx = useSpring(mx, { stiffness: 60, damping: 20 });
   const sy = useSpring(my, { stiffness: 60, damping: 20 });
-  const spot = useTransform([sx, sy], ([x, y]) => `radial-gradient(600px circle at ${x}% ${y}%, rgba(225,6,0,0.16), transparent 60%)`);
 
   return (
     <section
       className="relative isolate overflow-hidden pb-16 pt-24 lg:min-h-[100svh]"
       aria-labelledby="hero-title"
       onPointerMove={(e) => {
+        if (e.pointerType !== 'mouse') return;
         const r = e.currentTarget.getBoundingClientRect();
-        mx.set(((e.clientX - r.left) / r.width) * 100);
-        my.set(((e.clientY - r.top) / r.height) * 100);
+        mx.set(e.clientX - r.left - 600);
+        my.set(e.clientY - r.top - 600);
       }}
     >
       {/* cenário */}
       <div className="absolute inset-0 -z-20 bg-carbon-950" aria-hidden />
-      <motion.div className="absolute inset-0 -z-10" style={{ background: reduce ? undefined : spot }} aria-hidden />
+      {!reduce && <motion.div className="pointer-events-none absolute left-0 top-0 -z-10 h-[1200px] w-[1200px] rounded-full bg-[radial-gradient(circle,rgba(225,6,0,0.16),transparent_60%)] will-change-transform" style={{ x: sx, y: sy }} aria-hidden />}
       <div className="absolute inset-x-0 bottom-0 -z-10 h-1/2 [perspective:600px]" aria-hidden>
         <div className="grid-bg absolute inset-0 origin-bottom [transform:rotateX(60deg)] [mask-image:linear-gradient(to_top,black,transparent)]" />
       </div>
@@ -113,11 +122,9 @@ export function Hero({ nextRace }: { nextRace: Race | null }) {
 
           <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 1.2 }} className="glass absolute -bottom-6 -left-2 rounded-2xl border border-white/10 p-4 sm:-left-8">
             <p className="label text-[10px]">Velocidade máxima típica</p>
-            <p className="font-display text-3xl font-black tabular-nums text-white sm:text-4xl" aria-hidden>{speed}<span className="ml-1 text-sm text-race">km/h</span></p>
-            <div className="mt-2 flex gap-1" aria-hidden>
-              {Array.from({ length: 16 }).map((_, i) => (
-                <span key={i} className="h-3 w-1.5 rounded-sm" style={{ background: i / 16 < speed / 360 ? (i > 12 ? '#e10600' : i > 9 ? '#facc15' : '#22c55e') : 'rgba(255,255,255,0.08)' }} />
-              ))}
+            <p className="font-display text-3xl font-black tabular-nums text-white sm:text-4xl" aria-hidden><span ref={numRef}>0</span><span className="ml-1 text-sm text-race">km/h</span></p>
+            <div ref={barsRef} className="mt-2 flex gap-1" aria-hidden>
+              {Array.from({ length: 16 }).map((_, i) => <span key={i} className="h-3 w-1.5 rounded-sm bg-white/10" />)}
             </div>
           </motion.div>
           {nextRace && (

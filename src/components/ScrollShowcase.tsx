@@ -33,11 +33,10 @@ function ActText({ p, i }: { p: MotionValue<number>; i: number }) {
   const last = i === ACTS.length - 1;
   const opacity = useTransform(p, [a - pad, a + pad, b - pad, b + pad], [first ? 1 : 0, 1, 1, last ? 1 : 0]);
   const y = useTransform(p, [a - pad, a + pad, b - pad, b + pad], [first ? 0 : 50, 0, 0, last ? 0 : -50]);
-  const filter = useTransform(opacity, [0, 1], ['blur(12px)', 'blur(0px)']);
   const pointerEvents = useTransform(opacity, (o) => (o > 0.5 ? 'auto' : 'none'));
   const act = ACTS[i];
   return (
-    <motion.div style={{ opacity, y, filter, pointerEvents }} className="absolute inset-x-0 bottom-0 lg:bottom-auto lg:top-0">
+    <motion.div style={{ opacity, y, pointerEvents }} className="absolute inset-x-0 bottom-0 lg:bottom-auto lg:top-0">
       <p className="label text-race-400">{act.kicker}</p>
       <h3 className="mt-3 text-3xl font-black uppercase leading-none sm:text-5xl">{act.title}</h3>
       <p className="mt-4 max-w-md text-zinc-300">{act.text}</p>
@@ -56,7 +55,7 @@ function Chip({ chip, p, i }: { chip: (typeof CHIPS)[number]; p: MotionValue<num
   const y = useTransform(p, [0, 0.31], [20, (i % 2 ? -1 : 1) * 30]);
   return (
     <motion.div
-      className="glass absolute hidden items-center gap-2 whitespace-nowrap rounded-full border border-white/15 px-3 py-2 text-xs font-semibold text-white shadow-2xl lg:flex"
+      className="solid-glass absolute hidden items-center gap-2 whitespace-nowrap rounded-full border border-white/15 px-3 py-2 text-xs font-semibold text-white shadow-2xl lg:flex"
       style={{ left: chip.left, top: chip.top, opacity, y }}
     >
       <chip.icon className="h-4 w-4 text-race" aria-hidden /> {chip.label}

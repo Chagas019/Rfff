@@ -4,9 +4,10 @@ import { GTAOPass } from 'three/examples/jsm/postprocessing/GTAOPass.js';
 import { OutputPass } from 'three/examples/jsm/postprocessing/OutputPass.js';
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
 import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass.js';
-// Modelo procedural do F1 Rules Explorer (ver ./README.md)
-import { buildCar } from './car/build.js';
-import { setLiveryColor } from './car/materials.js';
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+import { MeshoptDecoder } from 'three/examples/jsm/libs/meshopt_decoder.module.js';
+// Modelo do F1 Rules Explorer (ver ./README.md), pré-gerado em public/models/f1-2026.glb
+import { createMaterials, setLiveryColor } from './car/materials.js';
 import { createStudio } from './studio.js';
 
 /**
@@ -39,15 +40,41 @@ function sample(u: number) {
 
 export interface CarScene {
   setProgress(u: number): void;
+  /** Reduz a qualidade quando o aparelho não acompanha (sem AO, menos pixels). */
+  degrade(): boolean;
   resize(): void;
   frame(time: number): void;
   dispose(): void;
 }
 
-export function createCarScene(canvas: HTMLCanvasElement, opts: { livery?: string; shiftRight?: boolean } = {}): CarScene {
+const MODEL_URL = '/models/f1-2026.glb';
+
+/** Carrega o modelo pré-gerado e reaplica os materiais (pintura, carbono, pneus…) pelo nome. */
+async function loadCar() {
+  const loader = new GLTFLoader().setMeshoptDecoder(MeshoptDecoder);
+  const [gltf, M] = await Promise.all([loader.loadAsync(MODEL_URL), Promise.resolve(createMaterials() as Record<string, THREE.Material>)]);
+  const root = gltf.scene;
+  const front: { pv: THREE.Object3D; angle: number }[] = [];
+  const rear: { pv: THREE.Object3D; angle: number }[] = [];
+  root.traverse((o) => {
+    const mesh = o as THREE.Mesh;
+    if (mesh.isMesh) {
+      const name = (mesh.material as THREE.Material).name;
+      if (name && M[name]) mesh.material = M[name];
+      mesh.castShadow = true;
+      mesh.receiveShadow = true;
+    }
+    if (/^fwFlap\d+$/.test(o.name)) front.push({ pv: o, angle: o.userData.flapAngle ?? 0 });
+    if (/^rwFlap\d+$/.test(o.name)) rear.push({ pv: o, angle: o.userData.flapAngle ?? 0 });
+  });
+  return { root, front, rear };
+}
+
+export async function createCarScene(canvas: HTMLCanvasElement, opts: { livery?: string; shiftRight?: boolean } = {}): Promise<CarScene> {
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: 'high-performance' });
   const coarse = window.matchMedia('(pointer: coarse)').matches; // celulares/tablets
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, coarse ? 1.5 : 2));
+  let maxDpr = coarse ? 1.25 : 1.5;
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, maxDpr));
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.toneMapping = THREE.NeutralToneMapping;
   renderer.toneMappingExposure = 0.95;
@@ -66,7 +93,7 @@ export function createCarScene(canvas: HTMLCanvasElement, opts: { livery?: strin
   scene.add(redRim, redRim.target);
 
   setLiveryColor(opts.livery ?? '#9c0e0a');
-  const car = buildCar();
+  const car = await loadCar();
   scene.add(car.root);
 
   const camera = new THREE.PerspectiveCamera(30, 1, 0.05, 100);
@@ -81,8 +108,8 @@ export function createCarScene(canvas: HTMLCanvasElement, opts: { livery?: strin
   gtao.normalMaterial.side = THREE.DoubleSide;
   const gtaoSetSize = gtao.setSize.bind(gtao);
   gtao.setSize = (w: number, h: number) => gtaoSetSize(Math.max(1, Math.round(w * 0.5)), Math.max(1, Math.round(h * 0.5)));
-  gtao.updateGtaoMaterial({ radius: 0.35, distanceExponent: 1.5, thickness: 1, scale: 1.2, samples: 16 });
-  gtao.updatePdMaterial({ lumaPhi: 10, depthPhi: 2, normalPhi: 3, radius: 6, rings: 2, samples: 16 });
+  gtao.updateGtaoMaterial({ radius: 0.35, distanceExponent: 1.5, thickness: 1, scale: 1.2, samples: 8 });
+  gtao.updatePdMaterial({ lumaPhi: 10, depthPhi: 2, normalPhi: 3, radius: 6, rings: 2, samples: 8 });
   gtao.blendIntensity = 0.9;
   gtao.enabled = !coarse; // pesado demais para a maioria dos celulares
   composer.addPass(gtao);
@@ -102,8 +129,8 @@ export function createCarScene(canvas: HTMLCanvasElement, opts: { livery?: strin
   let aero = 0;
 
   const setAero = (a: number) => {
-    car.aero.frontWing.flapPivots.forEach((pv: THREE.Object3D, i: number) => (pv.rotation.z = a * car.aero.frontWing.flapAngles[i]));
-    car.aero.rearWing.flapPivots.forEach((pv: THREE.Object3D, i: number) => (pv.rotation.z = a * car.aero.rearWing.flapAngles[i]));
+    car.front.forEach(({ pv, angle }) => (pv.rotation.z = a * angle));
+    car.rear.forEach(({ pv, angle }) => (pv.rotation.z = a * angle));
   };
 
   const resize = () => {
@@ -119,9 +146,16 @@ export function createCarScene(canvas: HTMLCanvasElement, opts: { livery?: strin
     studio.setSize(w, h);
   };
   resize();
+  // compila os shaders em paralelo (sem travar a página) antes do primeiro quadro
+  try { await renderer.compileAsync(scene, camera); } catch { /* navegador sem suporte: compila no 1º quadro */ }
 
   return {
     setProgress(u) { progress = u; },
+    degrade() {
+      if (gtao.enabled) { gtao.enabled = false; return true; }
+      if (maxDpr > 1) { maxDpr = 1; renderer.setPixelRatio(1); resize(); return true; }
+      return false;
+    },
     resize,
     frame(time) {
       const k = sample(progress);

@@ -6,7 +6,7 @@ import { helmetImages } from '../data/carImages';
  *  1. surge como holograma em linhas, com falhas de sinal (glitch);
  *  2. um anel de varredura sobe e "materializa" o capacete real;
  *  3. inclina em 3D, com anéis orbitando à frente e atrás e marcações de HUD.
- * Imagens: public/helmets/leclerc.png (recorte) e leclerc-holo.png (contornos).
+ * Imagens: public/helmets/leclerc@2x.webp (recorte) e leclerc-holo.png (contornos).
  */
 
 const HUD: { label: string; x: number; y: number; side: 'left' | 'right' }[] = [
@@ -45,7 +45,6 @@ export function HelmetHolo({ progress }: { progress: MotionValue<number> }) {
   const glitchX = useTransform(progress, [0, 0.03, 0.05, 0.07, 0.09, 0.12], [0, 14, -10, 6, -3, 0]);
   const holoGlow = useTransform(progress, [0.55, 0.75], [1, 0.25]);
   const hudOpacity = useTransform(progress, [0.62, 0.75], [0, 1]);
-  const solidGlow = useTransform(progress, [0.55, 0.7], ['drop-shadow(0 0 0px rgba(0,0,0,0))', 'drop-shadow(0 28px 30px rgba(0,0,0,0.55)) drop-shadow(0 4px 6px rgba(0,0,0,0.5))']);
   // realismo: reflexo no chão, sombra de contato e brilho de estúdio passando no casco
   const realOpacity = useTransform(progress, [0.55, 0.72], [0, 1]);
   const sheenPos = useTransform(progress, [0.6, 1], [-60, 160]);
@@ -73,12 +72,11 @@ export function HelmetHolo({ progress }: { progress: MotionValue<number> }) {
 
       <motion.div className="absolute inset-0 [transform-style:preserve-3d]" style={{ scale, rotateY: rotY, rotateX: rotX, x: glitchX, opacity: enter }}>
         {/* capacete real, revelado de baixo para cima */}
-        <motion.img src="/helmets/leclerc@2x.webp" alt={img.caption} draggable={false} className="absolute inset-0 h-full w-full select-none object-contain" style={{ clipPath: solidClip, filter: solidGlow }} />
+        <motion.img src="/helmets/leclerc@2x.webp" alt={img.caption} draggable={false} className="absolute inset-0 h-full w-full select-none object-contain" style={{ clipPath: solidClip }} />
         {/* brilho de luz de estúdio percorrendo o verniz */}
         <motion.div aria-hidden className="absolute inset-0 mix-blend-soft-light" style={{ backgroundImage: sheen, opacity: realOpacity, WebkitMaskImage: 'url(/helmets/leclerc@2x.webp)', maskImage: 'url(/helmets/leclerc@2x.webp)', WebkitMaskSize: 'contain', maskSize: 'contain', WebkitMaskRepeat: 'no-repeat', maskRepeat: 'no-repeat', WebkitMaskPosition: 'center', maskPosition: 'center' }} />
         {/* holograma em linhas (parte ainda não materializada) */}
         <motion.img src="/helmets/leclerc-holo.png" alt="" aria-hidden draggable={false} className="absolute inset-0 h-full w-full select-none object-contain mix-blend-screen" style={{ clipPath: holoClip, opacity: holoGlow }} />
-        <motion.img src="/helmets/leclerc-holo.png" alt="" aria-hidden draggable={false} className="absolute inset-0 h-full w-full select-none object-contain opacity-60 mix-blend-screen blur-[6px]" style={{ clipPath: holoClip }} />
         {/* anel de varredura */}
         <motion.div className="absolute inset-x-[-12%]" style={{ top: scanTop, opacity: scanOpacity }} aria-hidden>
           <div className="h-[2px] w-full bg-gradient-to-r from-transparent via-[#ff6a5f] to-transparent shadow-[0_0_18px_4px_rgba(255,59,48,0.8)]" />
@@ -96,7 +94,7 @@ export function HelmetHolo({ progress }: { progress: MotionValue<number> }) {
           <div key={h.label} className="absolute flex items-center gap-2" style={{ top: `${h.y}%`, ...(h.side === 'left' ? { right: `${100 - h.x}%`, flexDirection: 'row-reverse' } : { left: `${h.x}%` }) }}>
             <span className="h-2 w-2 rounded-full bg-race shadow-[0_0_10px_#e10600]" />
             <span className="h-px w-14 bg-gradient-to-r from-race to-white/40" />
-            <span className="glass whitespace-nowrap rounded-md border border-white/10 px-2 py-1 font-condensed text-xs uppercase tracking-[0.15em] text-white">{h.label}</span>
+            <span className="solid-glass whitespace-nowrap rounded-md border border-white/10 px-2 py-1 font-condensed text-xs uppercase tracking-[0.15em] text-white">{h.label}</span>
           </div>
         ))}
       </motion.div>

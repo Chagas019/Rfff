@@ -4,13 +4,12 @@
 
 @layer base {
   :root { color-scheme: dark; }
-  html { scroll-behavior: smooth; -webkit-tap-highlight-color: transparent; }
+  html { position: relative; scroll-behavior: smooth; -webkit-tap-highlight-color: transparent; }
   body {
     @apply bg-carbon-950 font-sans text-zinc-200 antialiased;
     background-image:
       radial-gradient(1200px 600px at 85% -10%, rgba(225, 6, 0, 0.12), transparent 60%),
       radial-gradient(900px 500px at -10% 30%, rgba(34, 211, 238, 0.05), transparent 60%);
-    background-attachment: fixed;
   }
   ::selection { background: #e10600; color: #fff; }
   :focus-visible { outline: 2px solid #ff2a1f; outline-offset: 3px; border-radius: 6px; }
@@ -24,7 +23,7 @@
 
 @layer components {
   .container-grid { @apply mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8; }
-  .glass { background: linear-gradient(180deg, rgba(24, 24, 32, 0.82), rgba(13, 13, 18, 0.9)); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); }
+  .glass { background: linear-gradient(180deg, rgba(24, 24, 32, 0.82), rgba(13, 13, 18, 0.9)); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
   .panel {
     @apply relative overflow-hidden rounded-2xl border border-white/[0.07];
     background: linear-gradient(160deg, rgba(34, 34, 44, 0.65) 0%, rgba(13, 13, 18, 0.92) 55%);
@@ -49,6 +48,7 @@
     background-size: 48px 48px;
   }
   .skew-tag { clip-path: polygon(8px 0, 100% 0, calc(100% - 8px) 100%, 0 100%); }
+  .solid-glass { background: linear-gradient(180deg, rgba(24, 24, 32, 0.94), rgba(13, 13, 18, 0.96)); }
   .scanlines::after {
     content: ''; position: absolute; inset: 0; pointer-events: none;
     background: repeating-linear-gradient(0deg, rgba(255,255,255,0.025) 0 1px, transparent 1px 3px);

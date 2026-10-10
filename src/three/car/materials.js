@@ -272,7 +272,7 @@ function makeLiveryMaterial() {
       .replace("#include <common>", "#include <common>\nvarying vec3 vLivPos;")
       .replace(
         "#include <begin_vertex>",
-        "#include <begin_vertex>\nvLivPos = position;",
+        "#include <begin_vertex>\nvLivPos = (modelMatrix * vec4(position, 1.0)).xyz; // espaço do mundo = espaço do carro (modelo comprimido)",
       );
     shader.fragmentShader = shader.fragmentShader
       .replace(

@@ -23,13 +23,13 @@ export interface StudioImage {
 
 export const studioImages: Partial<Record<string, StudioImage>> = {
   audi: {
-    src: '/cars/audi.png',
+    src: '/cars/audi.webp',
     credit: 'Render enviado pelo responsável do site',
     kind: 'render',
     caption: 'Audi #27 — render de estúdio (fundo removido)',
   },
   ferrari: {
-    src: '/cars/ferrari-top.png',
+    src: '/cars/ferrari-top.webp',
     credit: 'Render enviado pelo responsável do site',
     kind: 'render',
     caption: 'Ferrari #16 — vista aérea (fundo removido)',
@@ -43,7 +43,7 @@ export interface HelmetImage { src: string; credit: string; caption: string }
 
 export const helmetImages: Partial<Record<string, HelmetImage>> = {
   leclerc: {
-    src: '/helmets/leclerc.png',
+    src: '/helmets/leclerc.webp',
     credit: 'Arte: DaiMOnDesign',
     caption: 'Capacete de Charles Leclerc — arte digital (fundo removido)',
   },
