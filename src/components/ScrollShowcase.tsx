@@ -1,20 +1,22 @@
 import { motion, useReducedMotion, useScroll, useSpring, useTransform, type MotionValue } from 'framer-motion';
-import { ArrowRight, BatteryCharging, Box, Cpu, Fuel, Wind } from 'lucide-react';
+import { ArrowRight, BatteryCharging, Box, Camera, Cpu, Fuel, Wind } from 'lucide-react';
 import { useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { Car3DCanvas } from './Car3DCanvas';
+import { HelmetHolo } from './HelmetHolo';
+import { helmetImages } from '../data/carImages';
 
 /**
  * Vitrine guiada pela rolagem:
  *  1–2. carro de F1 2026 em 3D real (WebGL): a câmera gira ao redor dele,
  *       sobe até a vista aérea e as asas móveis abrem;
- *  3.   capacete 3D surge como holograma e se materializa girando 360°.
+ *  3.   o capacete de Leclerc surge como holograma e se materializa (HelmetHolo).
  */
 
 const ACTS = [
   { kicker: '01 · Modelo 3D', title: 'Gire o carro.', text: 'Role a página e a câmera dá a volta no carro de 2026: mais curto, mais leve e com aerodinâmica ativa.', range: [0, 0.33] },
   { kicker: '02 · Vista aérea', title: 'Asas móveis abertas.', text: 'Do alto, veja as asas dianteira e traseira abrindo no "modo reta", que substituiu o DRS em 2026.', range: [0.33, 0.66] },
-  { kicker: '03 · O capacete', title: 'Por trás da viseira.', text: 'Casco de fibra de carbono, viseira reforçada com faixa de Zylon e homologação FIA 8860. Role e veja o capacete se materializar.', range: [0.66, 1] },
+  { kicker: '03 · O piloto', title: 'Por trás da viseira.', text: 'O capacete de Charles Leclerc se materializa: casco de fibra de carbono, viseira com faixa de Zylon e homologação FIA 8860.', range: [0.66, 1] },
 ] as const;
 
 const CHIPS = [
@@ -41,7 +43,7 @@ function ActText({ p, i }: { p: MotionValue<number>; i: number }) {
       <p className="mt-4 max-w-md text-zinc-300">{act.text}</p>
       {i === 2 && (
         <div className="mt-5 flex flex-wrap gap-2">
-          <Link to="/pilotos" className="btn-primary">Conhecer os pilotos <ArrowRight className="h-4 w-4" aria-hidden /></Link>
+          <Link to="/pilotos/leclerc" className="btn-primary">Perfil de Leclerc <ArrowRight className="h-4 w-4" aria-hidden /></Link>
           <Link to="/equipes" className="btn-ghost">Ver as equipes</Link>
         </div>
       )}
@@ -94,18 +96,18 @@ export function ScrollShowcase() {
   }
 
   return (
-    <section ref={ref} className="relative h-[420vh]" aria-label="Vitrine 3D: carro de F1 2026 e capacete">
+    <section ref={ref} className="relative h-[420vh]" aria-label="Vitrine 3D: carro de F1 2026 e o capacete de Leclerc">
       <div className="sticky top-0 h-[100svh] overflow-hidden bg-carbon-950">
         {/* carro 3D em tela cheia */}
         <motion.div className="absolute inset-0" style={{ opacity: carOpacity, scale: carScale }}>
           <Car3DCanvas progress={carProgress} className="h-full w-full" shiftRight />
         </motion.div>
 
-        {/* capacete 3D (ato 3) — holograma que se materializa */}
-        <motion.div className="pointer-events-none absolute inset-0 lg:left-[30%]" style={{ opacity: hOpacity, scale: hScale }}>
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_45%,rgba(225,6,0,0.18),transparent_55%)]" aria-hidden />
-          <div className="absolute inset-0 opacity-30 [background-image:repeating-linear-gradient(0deg,rgba(255,255,255,0.05)_0_1px,transparent_1px_4px)]" aria-hidden />
-          <Car3DCanvas kind="helmet" progress={helmetProgress} className="h-full w-full" />
+        {/* capacete (ato 3) — holograma que se materializa */}
+        <motion.div className="pointer-events-none absolute inset-0 flex items-start justify-center pt-24 lg:items-center lg:justify-end lg:pr-[14%] lg:pt-0" style={{ opacity: hOpacity, scale: hScale }}>
+          <div className="relative flex h-full w-full max-w-[640px] items-start justify-center pt-4 lg:items-center lg:pt-0">
+            <HelmetHolo progress={helmetProgress} />
+          </div>
         </motion.div>
 
         <div className="pointer-events-none absolute inset-x-0 top-0 h-40 bg-gradient-to-b from-carbon-950 to-transparent" aria-hidden />
@@ -124,7 +126,7 @@ export function ScrollShowcase() {
           <Box className="h-3 w-3" aria-hidden /> Modelo 3D: <a href="https://github.com/MatthewDelong/formula1" target="_blank" rel="noreferrer" className="pointer-events-auto underline">F1 Rules Explorer</a> (ISC)
         </motion.p>
         <motion.p style={{ opacity: hCredit }} className="absolute right-4 top-20 flex items-center gap-1 text-[10px] text-zinc-500 sm:right-8">
-          <Box className="h-3 w-3" aria-hidden /> Capacete 3D: <a href="https://github.com/MatthewDelong/formula1" target="_blank" rel="noreferrer" className="pointer-events-auto underline">F1 Rules Explorer</a> (ISC)
+          <Camera className="h-3 w-3" aria-hidden /> Capacete: {helmetImages.leclerc?.credit}
         </motion.p>
 
         <div className="absolute bottom-6 left-1/2 h-1 w-40 -translate-x-1/2 overflow-hidden rounded-full bg-white/10" aria-hidden>

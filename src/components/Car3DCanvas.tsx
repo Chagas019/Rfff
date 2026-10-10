@@ -6,7 +6,7 @@ import { useEffect, useRef, useState } from 'react';
  * Canvas WebGL com o carro 3D. O three.js é carregado sob demanda (chunk
  * separado) e só renderiza enquanto a seção está visível.
  */
-export function Car3DCanvas({ progress, className = '', shiftRight = false, kind = 'car' }: { progress: MotionValue<number>; className?: string; shiftRight?: boolean; kind?: 'car' | 'helmet' }) {
+export function Car3DCanvas({ progress, className = '', shiftRight = false }: { progress: MotionValue<number>; className?: string; shiftRight?: boolean }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [status, setStatus] = useState<'loading' | 'ready' | 'error'>('loading');
 
@@ -20,9 +20,7 @@ export function Car3DCanvas({ progress, className = '', shiftRight = false, kind
     const io = new IntersectionObserver(([e]) => { visible = e.isIntersecting; }, { rootMargin: '100px' });
     io.observe(canvas);
 
-    const load = kind === 'helmet'
-      ? import('../three/helmetScene').then((m) => () => { const h = m.createHelmetScene(canvas); return { ...h, frame: () => h.frame() }; })
-      : import('../three/carScene').then((m) => () => m.createCarScene(canvas, { shiftRight }));
+    const load = import('../three/carScene').then((m) => () => m.createCarScene(canvas, { shiftRight }));
     load
       .then((create) => {
         if (disposed) return;
@@ -50,11 +48,11 @@ export function Car3DCanvas({ progress, className = '', shiftRight = false, kind
       .catch(() => !disposed && setStatus('error'));
 
     return () => { disposed = true; io.disconnect(); cleanup(); };
-  }, [progress, shiftRight, kind]);
+  }, [progress, shiftRight]);
 
   return (
     <div className={`relative ${className}`}>
-      <canvas ref={canvasRef} className="h-full w-full" role="img" aria-label={kind === 'helmet' ? 'Capacete de Fórmula 1 em 3D se materializando' : 'Carro de Fórmula 1 em 3D girando conforme a rolagem'} />
+      <canvas ref={canvasRef} className="h-full w-full" role="img" aria-label="Carro de Fórmula 1 em 3D girando conforme a rolagem" />
       {status === 'loading' && (
         <div className="absolute inset-0 flex items-center justify-center gap-2 text-sm text-zinc-400" role="status">
           <Loader2 className="h-5 w-5 animate-spin text-race" aria-hidden /> Carregando modelo 3D…
