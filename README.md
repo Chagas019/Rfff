@@ -10,7 +10,7 @@ Uma plataforma interativa para fãs da Fórmula 1 (temporada 2026), feita com **
 - **Pilotos**: galeria dos 22 titulares, busca, filtro por equipe, ordenação e perfil (`/pilotos/:id`) com biografia, trajetória e estatísticas da temporada **em tempo real**.
 - **Equipes**: 11 equipes com cores, pilotos, história e **foto real do carro de 2026** (Wikimedia Commons, com crédito), com zoom e animação.
 - **Classificação**: pilotos e construtores (posição, pontos, vitórias e pódios) vindos de uma API real.
-- **Interatividade**: hero com painel de estúdio, garagem em carrossel (setas, teclado, arrastar e troca automática), cards com inclinação 3D e reflexo, transição de página com "cortina de velocidade" e **som de carro de F1 passando** a cada troca de página (botão de som/mudo no menu; arquivo sintetizado para o projeto em `public/sounds/f1-pass.mp3`), e barra de progresso de rolagem.
+- **Interatividade**: hero com painel de estúdio, garagem em carrossel (setas, teclado, arrastar e troca automática), cards com inclinação 3D e reflexo, transição de página com "cortina de velocidade" e **som de carro de F1 passando** a cada troca de página (botão de som/mudo no menu; arquivo sintetizado por modelo físico em `tools/f1-pass-sound.py` (Python/NumPy/SciPy) e salvo em `public/sounds/f1-pass.mp3`), e barra de progresso de rolagem.
 - **Favoritos** de corridas, circuitos, pilotos e equipes (salvos no `localStorage`).
 - **Pesquisa global** (`Ctrl/⌘ + K` ou `/`), menu para celular, botão de voltar ao topo, animações ao rolar, estados de carregamento, erro e vazio, navegação por teclado (foco preso nos modais, Esc para fechar, link "pular para o conteúdo") e respeito a `prefers-reduced-motion`.
 

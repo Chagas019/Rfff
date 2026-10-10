@@ -2,8 +2,9 @@ import { readStorage, writeStorage } from './storage';
 
 /**
  * Som de carro de F1 passando, tocado na troca de páginas.
- * Arquivo sintetizado para o projeto (public/sounds/f1-pass.mp3): motor V6 em
- * alta rotação com efeito Doppler e panorâmica esquerda → direita.
+ * Arquivo sintetizado por modelo físico (tools/f1-pass-sound.py): pulsos de
+ * combustão do V6 pelo escapamento, turbo, passagem a ~290 km/h com Doppler,
+ * absorção do ar, panorâmica e eco de arquibancada.
  */
 const KEY = 'gridf1:sound';
 const SRC = '/sounds/f1-pass.mp3';
@@ -15,7 +16,7 @@ function getAudio() {
   if (!audio) {
     audio = new Audio(SRC);
     audio.preload = 'auto';
-    audio.volume = 0.55;
+    audio.volume = 0.7;
   }
   return audio;
 }
