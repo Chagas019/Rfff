@@ -8,7 +8,6 @@ import { Garage } from '../components/Garage';
 import { Hero } from '../components/Hero';
 import { RaceCard } from '../components/RaceCard';
 import { RaceCountdown } from '../components/RaceCountdown';
-import { ScrollShowcase } from '../components/ScrollShowcase';
 import { Reveal } from '../components/Reveal';
 import { SectionHeader } from '../components/SectionHeader';
 import { ShareButton } from '../components/ShareButton';
@@ -56,7 +55,6 @@ export function HomePage() {
     <>
       <Hero nextRace={next} />
       <Ticker items={ticker} />
-      <ScrollShowcase />
 
       {/* Próximo Grande Prêmio */}
       <section id="proxima" className="container-grid scroll-mt-24 py-20" aria-labelledby="next-title">

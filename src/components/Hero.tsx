@@ -1,4 +1,4 @@
-import { motion, useMotionValue, useReducedMotion, useScroll, useSpring, useTransform } from 'framer-motion';
+import { motion, useMotionValue, useReducedMotion, useSpring } from 'framer-motion';
 import { ArrowRight, Flag as FlagIcon, Timer, Users } from 'lucide-react';
 import { useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
@@ -37,13 +37,7 @@ const TITLE = ['The race', 'never', 'stops.'];
 
 export function Hero({ nextRace }: { nextRace: Race | null }) {
   const reduce = useReducedMotion();
-  const { scrollY } = useScroll();
-  const panelY = useTransform(scrollY, [0, 700], [0, reduce ? 0 : 160]);
-  // ao rolar, o painel gira em 3D e "desce" para a próxima seção
-  const panelRotY = useTransform(scrollY, [0, 700], [0, reduce ? 0 : -24]);
-  const panelRotX = useTransform(scrollY, [0, 700], [0, reduce ? 0 : 12]);
-  const panelScale = useTransform(scrollY, [0, 700], [1, reduce ? 1 : 0.86]);
-  const titleY = useTransform(scrollY, [0, 700], [0, reduce ? 0 : -60]);
+
   const { numRef, barsRef } = useSpeedometer(!reduce);
   const featured = teams.find((t) => t.id === 'audi' && studioImages[t.id]) ?? teams.find((t) => studioImages[t.id]) ?? teams[0];
 
@@ -81,7 +75,7 @@ export function Hero({ nextRace }: { nextRace: Race | null }) {
       </div>
 
       <div className="container-grid relative grid items-center gap-12 lg:min-h-[calc(100svh-10rem)] lg:grid-cols-[1fr_1.15fr]">
-        <motion.div style={{ y: titleY }} className="relative z-10">
+        <div className="relative z-10">
           <motion.p initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} className="label mb-5 flex items-center gap-3 text-race-400">
             <span className="h-2 w-2 animate-pulse rounded-full bg-race" aria-hidden />
             Temporada 2026 · Nova era técnica
@@ -108,10 +102,10 @@ export function Hero({ nextRace }: { nextRace: Race | null }) {
             <Link to={nextRace ? `/calendario/${nextRace.id}` : '/calendario'} className="btn-ghost"><Timer className="h-4 w-4" aria-hidden />Ver próxima corrida</Link>
             <Link to="/pilotos" className="btn-ghost"><Users className="h-4 w-4" aria-hidden />Conhecer os pilotos<ArrowRight className="h-4 w-4" aria-hidden /></Link>
           </motion.div>
-        </motion.div>
+        </div>
 
         {/* painel de estúdio com o carro */}
-        <motion.div style={{ y: panelY, rotateY: panelRotY, rotateX: panelRotX, scale: panelScale, transformPerspective: 1400 }} className="relative">
+        <div className="relative">
           <motion.div
             initial={reduce ? false : { clipPath: 'inset(0 0 0 100% round 24px)' }}
             animate={{ clipPath: 'inset(0 0 0 0% round 24px)' }}
@@ -138,7 +132,7 @@ export function Hero({ nextRace }: { nextRace: Race | null }) {
               </Link>
             </motion.div>
           )}
-        </motion.div>
+        </div>
       </div>
     </section>
   );

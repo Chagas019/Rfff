@@ -4,6 +4,7 @@ import { Route, Routes, useLocation } from 'react-router-dom';
 import { BackToTop } from './components/BackToTop';
 import { Footer } from './components/Footer';
 import { Navbar } from './components/Navbar';
+import { playPassSound, preloadPassSound } from './services/sound';
 import { PageTransition } from './components/PageTransition';
 import { SearchBar } from './components/SearchBar';
 import { CalendarPage } from './pages/CalendarPage';
@@ -31,11 +32,16 @@ export default function App() {
   const location = useLocation();
   const [searchOpen, setSearchOpen] = useState(false);
   const section = sectionOf(location.pathname);
-  const initialSection = useRef(section);
+  const prevSection = useRef(section);
   const [navigated, setNavigated] = useState(false);
   useEffect(() => {
-    if (section !== initialSection.current) setNavigated(true);
+    if (section !== prevSection.current) {
+      prevSection.current = section;
+      setNavigated(true);
+      playPassSound(); // som do carro passando na troca de página
+    }
   }, [section]);
+  useEffect(() => { preloadPassSound(); }, []);
 
   useEffect(() => {
     window.scrollTo({ top: 0 });

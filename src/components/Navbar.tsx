@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { Link, NavLink, useLocation } from 'react-router-dom';
 import { useFavorites } from '../hooks/useFavorites';
 import { Logo } from './Logo';
+import { SoundToggle } from './SoundToggle';
 
 export const NAV_LINKS = [
   { to: '/', label: 'Início' },
@@ -65,6 +66,7 @@ export function Navbar({ onSearch }: { onSearch: () => void }) {
             <Search className="h-4 w-4" aria-hidden />
             <kbd className="hidden rounded border border-white/10 px-1.5 font-mono text-[10px] text-zinc-500 md:inline">Ctrl K</kbd>
           </button>
+          <SoundToggle />
           <Link to="/favoritos" className="btn-icon relative" aria-label={`Favoritos (${count})`}>
             <Heart className="h-4 w-4" aria-hidden />
             {count > 0 && <span className="absolute -right-1.5 -top-1.5 flex h-5 min-w-5 items-center justify-center rounded-full bg-race px-1 text-[10px] font-bold text-white">{count}</span>}
