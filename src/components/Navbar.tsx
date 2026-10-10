@@ -1,4 +1,4 @@
-import { AnimatePresence, motion } from 'framer-motion';
+import { AnimatePresence, motion, useScroll, useSpring } from 'framer-motion';
 import { Heart, Menu, Search, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { Link, NavLink, useLocation } from 'react-router-dom';
@@ -19,6 +19,8 @@ export function Navbar({ onSearch }: { onSearch: () => void }) {
   const [scrolled, setScrolled] = useState(false);
   const { count } = useFavorites();
   const location = useLocation();
+  const { scrollYProgress } = useScroll();
+  const progress = useSpring(scrollYProgress, { stiffness: 200, damping: 30 });
 
   useEffect(() => setOpen(false), [location.pathname]);
   useEffect(() => {
@@ -72,6 +74,7 @@ export function Navbar({ onSearch }: { onSearch: () => void }) {
           </button>
         </div>
       </nav>
+      <motion.div aria-hidden className="absolute inset-x-0 bottom-0 h-0.5 origin-left bg-gradient-to-r from-race via-race-400 to-telemetry-yellow" style={{ scaleX: progress }} />
       <AnimatePresence>
         {open && (
           <motion.div id="mobile-menu" initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="overflow-hidden border-t border-white/10 lg:hidden">

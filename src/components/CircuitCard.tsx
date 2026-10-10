@@ -3,11 +3,13 @@ import { ArrowUpRight, Timer } from 'lucide-react';
 import type { Circuit } from '../types';
 import { FavoriteButton } from './FavoriteButton';
 import { Flag } from './Flag';
+import { TiltCard } from './TiltCard';
 import { TrackMap } from './TrackMap';
 
 export function CircuitCard({ circuit, round, onOpen, cancelled }: { circuit: Circuit; round: number | null; onOpen: () => void; cancelled?: boolean }) {
   return (
-    <motion.article layout whileHover={{ y: -6 }} className={`panel panel-hover group flex h-full flex-col ${cancelled ? 'opacity-60' : ''}`}>
+    <TiltCard className="h-full">
+    <motion.article layout className={`panel panel-hover group flex h-full flex-col ${cancelled ? 'opacity-60' : ''}`}>
       <div className="relative h-52 overflow-hidden border-b border-white/5 bg-gradient-to-br from-carbon-800 to-carbon-950">
         <div className="grid-bg absolute inset-0 opacity-70" aria-hidden />
         <div className="absolute left-4 top-4 z-10 flex gap-2">
@@ -42,5 +44,6 @@ export function CircuitCard({ circuit, round, onOpen, cancelled }: { circuit: Ci
         </button>
       </div>
     </motion.article>
+    </TiltCard>
   );
 }

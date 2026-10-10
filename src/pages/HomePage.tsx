@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { CarPhoto } from '../components/CarPhoto';
 import { FavoriteButton } from '../components/FavoriteButton';
 import { Flag } from '../components/Flag';
+import { Garage } from '../components/Garage';
 import { Hero } from '../components/Hero';
 import { RaceCard } from '../components/RaceCard';
 import { RaceCountdown } from '../components/RaceCountdown';
@@ -104,6 +105,14 @@ export function HomePage() {
         ) : (
           <p className="panel p-8 text-zinc-400">A temporada 2026 foi encerrada. Volte em breve para o calendário de 2027.</p>
         )}
+      </section>
+
+      {/* Garagem */}
+      <section className="container-grid pb-20" aria-labelledby="garage-title">
+        <SectionHeader kicker="Showroom" title={<span id="garage-title">Garagem 2026</span>} action={<Link to="/equipes" className="btn-ghost self-start">Todas as equipes <ArrowRight className="h-4 w-4" aria-hidden /></Link>}>
+          Os carros da nova era, lado a lado. Arraste, use as setas ou deixe a garagem girar sozinha.
+        </SectionHeader>
+        <Reveal><Garage /></Reveal>
       </section>
 
       {/* Pilares */}

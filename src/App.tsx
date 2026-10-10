@@ -1,9 +1,10 @@
 import { AnimatePresence, MotionConfig, motion } from 'framer-motion';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Route, Routes, useLocation } from 'react-router-dom';
 import { BackToTop } from './components/BackToTop';
 import { Footer } from './components/Footer';
 import { Navbar } from './components/Navbar';
+import { PageTransition } from './components/PageTransition';
 import { SearchBar } from './components/SearchBar';
 import { CalendarPage } from './pages/CalendarPage';
 import { CircuitsPage } from './pages/CircuitsPage';
@@ -30,6 +31,11 @@ export default function App() {
   const location = useLocation();
   const [searchOpen, setSearchOpen] = useState(false);
   const section = sectionOf(location.pathname);
+  const initialSection = useRef(section);
+  const [navigated, setNavigated] = useState(false);
+  useEffect(() => {
+    if (section !== initialSection.current) setNavigated(true);
+  }, [section]);
 
   useEffect(() => {
     window.scrollTo({ top: 0 });
@@ -54,16 +60,16 @@ export default function App() {
     <MotionConfig reducedMotion="user">
       <Navbar onSearch={() => setSearchOpen(true)} />
       <SearchBar open={searchOpen} onClose={() => setSearchOpen(false)} />
+      {navigated && <PageTransition key={section} routeKey={section} />}
       <AnimatePresence mode="wait">
         <motion.main
           id="conteudo"
           key={section}
           tabIndex={-1}
           className="min-h-screen outline-none"
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -12 }}
-          transition={{ duration: 0.3 }}
+          initial={{ opacity: 0, x: 40, filter: 'blur(6px)' }}
+          animate={{ opacity: 1, x: 0, filter: 'blur(0px)', transition: { duration: 0.45, delay: 0.1, ease: [0.16, 1, 0.3, 1] } }}
+          exit={{ opacity: 0, x: -40, filter: 'blur(6px)', transition: { duration: 0.3, ease: [0.7, 0, 0.84, 0] } }}
         >
           <Routes location={location}>
             <Route path="/" element={<HomePage />} />

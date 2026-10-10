@@ -4,6 +4,9 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import { CarPhoto } from '../components/CarPhoto';
 import { teamPhotoQuery } from '../services/carPhotos';
 import { FavoriteButton } from '../components/FavoriteButton';
+import { Garage } from '../components/Garage';
+import { StudioCar } from '../components/StudioCar';
+import { studioImageFor } from '../data/carImages';
 import { HelmetAvatar } from '../components/HelmetAvatar';
 import { Modal } from '../components/Modal';
 import { PageHeader } from '../components/PageHeader';
@@ -25,8 +28,9 @@ export function TeamsPage() {
         <p>Onze equipes, cinco fabricantes de motor e um regulamento novo em folha. Passe o mouse nos carros para dar zoom.</p>
       </PageHeader>
       <div className="container-grid py-10">
+        <div className="mb-16"><Garage /></div>
         <p className="mb-6 rounded-xl border border-white/10 bg-white/[0.03] p-4 text-sm text-zinc-400">
-          <strong className="text-white">Sobre as fotos:</strong> são fotos reais dos carros, com licença livre, carregadas do Wikimedia Commons. Cada foto mostra o autor e a licença. Quando ainda não há foto livre de um carro, o card avisa.
+          <strong className="text-white">Sobre as fotos:</strong> os carros aparecem em imagens de estúdio quando há uma cadastrada (com crédito) e, nos demais casos, em fotos reais com licença livre do Wikimedia Commons, com autor e licença. Quando ainda não há foto livre de um carro, o card avisa.
         </p>
         <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
           {teams.map((t, i) => (
@@ -43,7 +47,7 @@ export function TeamsPage() {
               <p className="label" style={{ color: selected.color }}>{selected.fullName}</p>
               <h2 className="pr-10 text-3xl font-black uppercase sm:text-5xl">{selected.name} <span className="text-xl text-zinc-400 sm:text-2xl">{selected.car}</span></h2>
               <motion.div initial={{ y: 30, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ type: 'spring', damping: 20 }} className="mt-4 overflow-hidden rounded-2xl border border-white/10">
-                <CarPhoto photoKey={selected.id} query={teamPhotoQuery(selected.id)} alt={`Foto do carro ${selected.name} ${selected.car} de 2026`} searchTerm={`${selected.name} ${selected.car}`} color={selected.color} className="aspect-[16/9]" />
+                {studioImageFor(selected.id) ? <StudioCar team={selected} className="aspect-[16/9]" /> : <CarPhoto photoKey={selected.id} query={teamPhotoQuery(selected.id)} alt={`Foto do carro ${selected.name} ${selected.car} de 2026`} searchTerm={`${selected.name} ${selected.car}`} color={selected.color} className="aspect-[16/9]" />}
               </motion.div>
             </div>
             <div className="grid gap-6 p-6 sm:p-8 lg:grid-cols-[1.3fr_1fr]">

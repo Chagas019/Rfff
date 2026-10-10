@@ -3,12 +3,14 @@ import { teamById } from '../data/teams';
 import type { Driver } from '../types';
 import { FavoriteButton } from './FavoriteButton';
 import { Flag } from './Flag';
+import { TiltCard } from './TiltCard';
 import { HelmetAvatar } from './HelmetAvatar';
 
 export function DriverCard({ driver, onOpen }: { driver: Driver; onOpen: () => void }) {
   const team = teamById(driver.teamId)!;
   return (
-    <motion.article layout whileHover={{ y: -6 }} className="panel group relative h-full transition" style={{ ['--team' as string]: team.color }}>
+    <TiltCard className="h-full">
+    <motion.article layout className="panel group relative h-full transition" style={{ ['--team' as string]: team.color }}>
       <div className="absolute inset-x-0 top-0 h-1" style={{ background: team.color }} aria-hidden />
       <div className="absolute -right-10 -top-10 h-40 w-40 rounded-full opacity-20 blur-3xl transition group-hover:opacity-50" style={{ background: team.color }} aria-hidden />
       <button type="button" onClick={onOpen} className="block w-full text-left" aria-label={`Abrir perfil de ${driver.firstName} ${driver.lastName}`}>
@@ -33,5 +35,6 @@ export function DriverCard({ driver, onOpen }: { driver: Driver; onOpen: () => v
       </button>
       <div className="absolute bottom-5 right-4"><FavoriteButton kind="driver" id={driver.id} label={`${driver.firstName} ${driver.lastName}`} /></div>
     </motion.article>
+    </TiltCard>
   );
 }

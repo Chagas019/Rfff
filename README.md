@@ -10,6 +10,7 @@ Uma plataforma interativa para fãs da Fórmula 1 (temporada 2026), feita com **
 - **Pilotos**: galeria dos 22 titulares, busca, filtro por equipe, ordenação e perfil (`/pilotos/:id`) com biografia, trajetória e estatísticas da temporada **em tempo real**.
 - **Equipes**: 11 equipes com cores, pilotos, história e **foto real do carro de 2026** (Wikimedia Commons, com crédito), com zoom e animação.
 - **Classificação**: pilotos e construtores (posição, pontos, vitórias e pódios) vindos de uma API real.
+- **Interatividade**: hero com painel de estúdio em 3D, garagem em carrossel (setas, teclado, arrastar e troca automática), cards com inclinação 3D e reflexo, transição de página com "cortina de velocidade" e barra de progresso de rolagem.
 - **Favoritos** de corridas, circuitos, pilotos e equipes (salvos no `localStorage`).
 - **Pesquisa global** (`Ctrl/⌘ + K` ou `/`), menu para celular, botão de voltar ao topo, animações ao rolar, estados de carregamento, erro e vazio, navegação por teclado (foco preso nos modais, Esc para fechar, link "pular para o conteúdo") e respeito a `prefers-reduced-motion`.
 
@@ -43,7 +44,9 @@ VITE_F1_API_BASE=https://seu-proxy.exemplo.com/ergast/f1
 
 Nenhuma chave secreta é usada no frontend.
 
-**Fotos dos carros (reais):** carregadas no navegador do visitante pela API pública do [Wikimedia Commons](https://commons.wikimedia.org) (`src/services/carPhotos.ts`). Só entram fotos com licença livre (CC/domínio público), e cada uma mostra o autor e a licença, com link para o arquivo original. A busca procura a categoria do chassi de 2026 (ex.: *McLaren MCL40*) e, se não achar, o nome do carro ou da equipe com 2026. O resultado fica em cache por 24 h. Se ainda não houver foto livre de um carro, o card avisa e mostra um link para o Commons. Para fixar uma foto específica, coloque o nome do arquivo em `PINNED_PHOTOS`.
+**Imagens de estúdio dos carros:** para mostrar um carro como no showroom (render ou foto em fundo claro, vista 3/4), salve a imagem em `public/cars/<id-da-equipe>.webp` e registre-a em `src/data/carImages.ts` com o crédito. Ela passa a aparecer no hero, na Garagem 2026 e no card da equipe, com inclinação 3D que segue o mouse. Use só imagens com direito de uso. Hoje há uma imagem cadastrada: `audi` (render enviado pelo responsável do site).
+
+**Fotos dos carros (reais):** usadas para as equipes sem imagem de estúdio. carregadas no navegador do visitante pela API pública do [Wikimedia Commons](https://commons.wikimedia.org) (`src/services/carPhotos.ts`). Só entram fotos com licença livre (CC/domínio público), e cada uma mostra o autor e a licença, com link para o arquivo original. A busca procura a categoria do chassi de 2026 (ex.: *McLaren MCL40*) e, se não achar, o nome do carro ou da equipe com 2026. O resultado fica em cache por 24 h. Se ainda não houver foto livre de um carro, o card avisa e mostra um link para o Commons. Para fixar uma foto específica, coloque o nome do arquivo em `PINNED_PHOTOS`.
 
 Fotos oficiais da F1 e das equipes têm direitos autorais e não são usadas. Capacetes dos pilotos e traçados das pistas são ilustrações SVG deste projeto. Para usar fotos de pilotos, preencha `photoUrl` e `photoCredit` em `drivers.ts` com imagens licenciadas.
 

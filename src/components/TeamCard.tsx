@@ -3,12 +3,16 @@ import { ArrowUpRight } from 'lucide-react';
 import { drivers } from '../data/drivers';
 import type { Team } from '../types';
 import { teamPhotoQuery } from '../services/carPhotos';
+import { studioImageFor } from '../data/carImages';
 import { CarPhoto } from './CarPhoto';
+import { StudioCar } from './StudioCar';
+import { TiltCard } from './TiltCard';
 import { FavoriteButton } from './FavoriteButton';
 
 export function TeamCard({ team, onOpen }: { team: Team; onOpen: () => void }) {
   const lineup = drivers.filter((d) => d.teamId === team.id);
   return (
+    <TiltCard className="h-full" max={5}>
     <motion.article layout className="panel group relative h-full overflow-hidden">
       <div className="absolute inset-0 opacity-30 transition duration-500 group-hover:opacity-60" style={{ background: `radial-gradient(600px 200px at 70% 0%, ${team.color}55, transparent 70%)` }} aria-hidden />
       <div className="relative flex items-start justify-between p-6 pb-0">
@@ -20,6 +24,9 @@ export function TeamCard({ team, onOpen }: { team: Team; onOpen: () => void }) {
         <FavoriteButton kind="team" id={team.id} label={team.name} />
       </div>
       <div className="relative mx-6 mt-4 overflow-hidden rounded-xl border border-white/10">
+        {studioImageFor(team.id) ? (
+          <StudioCar team={team} className="aspect-[16/9] !rounded-none" tilt={8} />
+        ) : (
         <CarPhoto
           photoKey={team.id}
           query={teamPhotoQuery(team.id)}
@@ -29,7 +36,8 @@ export function TeamCard({ team, onOpen }: { team: Team; onOpen: () => void }) {
           className="aspect-[16/9]"
           imgClassName="transition duration-700 ease-out group-hover:scale-110"
         />
-        <span className="chip absolute left-3 top-3 border-white/20 bg-black/60 backdrop-blur">{team.car}</span>
+        )}
+        {!studioImageFor(team.id) && <span className="chip absolute left-3 top-3 border-white/20 bg-black/60 backdrop-blur">{team.car}</span>}
       </div>
       <div className="relative flex items-center justify-between gap-3 border-t border-white/5 p-6 pt-4">
         <ul className="text-sm">
@@ -49,5 +57,6 @@ export function TeamCard({ team, onOpen }: { team: Team; onOpen: () => void }) {
         <span className="flex-1" style={{ background: team.accent }} />
       </div>
     </motion.article>
+    </TiltCard>
   );
 }
