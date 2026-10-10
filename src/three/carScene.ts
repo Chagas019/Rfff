@@ -1,4 +1,9 @@
 import * as THREE from 'three';
+import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
+import { GTAOPass } from 'three/examples/jsm/postprocessing/GTAOPass.js';
+import { OutputPass } from 'three/examples/jsm/postprocessing/OutputPass.js';
+import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
+import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass.js';
 // Modelo procedural do F1 Rules Explorer (ver ./README.md)
 import { buildCar } from './car/build.js';
 import { setLiveryColor } from './car/materials.js';
@@ -41,7 +46,8 @@ export interface CarScene {
 
 export function createCarScene(canvas: HTMLCanvasElement, opts: { livery?: string; shiftRight?: boolean } = {}): CarScene {
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: 'high-performance' });
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5));
+  const coarse = window.matchMedia('(pointer: coarse)').matches; // celulares/tablets
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, coarse ? 1.5 : 2));
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.toneMapping = THREE.NeutralToneMapping;
   renderer.toneMappingExposure = 0.95;
@@ -64,6 +70,33 @@ export function createCarScene(canvas: HTMLCanvasElement, opts: { livery?: strin
   scene.add(car.root);
 
   const camera = new THREE.PerspectiveCamera(30, 1, 0.05, 100);
+
+  // ---------- pós-processamento (realismo) ----------
+  // MSAA 4x + oclusão de ambiente (frestas e passagens de roda escurecem) +
+  // saída com tone mapping + vinheta/dither suaves.
+  const rt = new THREE.WebGLRenderTarget(1, 1, { samples: 4, type: THREE.HalfFloatType });
+  const composer = new EffectComposer(renderer, rt);
+  composer.addPass(new RenderPass(scene, camera));
+  const gtao = new GTAOPass(scene, camera, 1, 1);
+  gtao.normalMaterial.side = THREE.DoubleSide;
+  const gtaoSetSize = gtao.setSize.bind(gtao);
+  gtao.setSize = (w: number, h: number) => gtaoSetSize(Math.max(1, Math.round(w * 0.5)), Math.max(1, Math.round(h * 0.5)));
+  gtao.updateGtaoMaterial({ radius: 0.35, distanceExponent: 1.5, thickness: 1, scale: 1.2, samples: 16 });
+  gtao.updatePdMaterial({ lumaPhi: 10, depthPhi: 2, normalPhi: 3, radius: 6, rings: 2, samples: 16 });
+  gtao.blendIntensity = 0.9;
+  gtao.enabled = !coarse; // pesado demais para a maioria dos celulares
+  composer.addPass(gtao);
+  composer.addPass(new OutputPass());
+  const grade = new ShaderPass({
+    uniforms: { tDiffuse: { value: null }, uAspect: { value: 1 } },
+    vertexShader: 'varying vec2 vUv; void main(){ vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0); }',
+    fragmentShader: `uniform sampler2D tDiffuse; uniform float uAspect; varying vec2 vUv;
+      float hash(vec2 p){ return fract(sin(dot(p, vec2(12.9898,78.233))) * 43758.5453); }
+      void main(){ vec4 c = texture2D(tDiffuse, vUv); vec2 d = (vUv-0.5)*vec2(uAspect,1.0);
+        c.rgb *= mix(0.6, 1.0, smoothstep(1.25, 0.35, length(d)));
+        c.rgb += (hash(gl_FragCoord.xy)-0.5)/255.0; gl_FragColor = c; }`,
+  });
+  composer.addPass(grade);
   const target = new THREE.Vector3(0, 0.4, 0);
   let progress = 0;
   let aero = 0;
@@ -76,6 +109,9 @@ export function createCarScene(canvas: HTMLCanvasElement, opts: { livery?: strin
   const resize = () => {
     const w = canvas.clientWidth || 1, h = canvas.clientHeight || 1;
     renderer.setSize(w, h, false);
+    composer.setPixelRatio(renderer.getPixelRatio());
+    composer.setSize(w, h);
+    grade.uniforms.uAspect.value = w / h;
     camera.aspect = w / h;
     // em telas largas, desloca o carro para a direita (texto fica à esquerda)
     camera.filmOffset = opts.shiftRight && w / h > 1.2 ? -2.6 : 0;
@@ -111,9 +147,11 @@ export function createCarScene(canvas: HTMLCanvasElement, opts: { livery?: strin
         renderer.shadowMap.needsUpdate = true;
       }
       studio.update();
-      renderer.render(scene, camera);
+      composer.render();
     },
     dispose() {
+      composer.dispose();
+      rt.dispose();
       renderer.dispose();
       scene.traverse((o) => {
         const m = o as THREE.Mesh;

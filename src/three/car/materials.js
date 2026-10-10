@@ -258,10 +258,11 @@ function makeLiveryMaterial() {
   // satin paint: mostly matte, with a faint, soft clear-coat sheen
   const mat = new THREE.MeshPhysicalMaterial({
     color: 0xffffff,
-    metalness: 0,
-    roughness: 0.58,
-    clearcoat: 0.3,
-    clearcoatRoughness: 0.42,
+    // GRID F1: pintura com verniz brilhante (original: roughness 0.58, clearcoat 0.3)
+    metalness: 0.12,
+    roughness: 0.34,
+    clearcoat: 1,
+    clearcoatRoughness: 0.06,
     side: THREE.DoubleSide,
   });
   mat.userData.livery = true;
@@ -281,16 +282,20 @@ function makeLiveryMaterial() {
          uniform vec3 uPrimary; uniform vec3 uDark;
          
          vec3 liveryColor(vec3 p, vec3 n) {
-           vec3 col = uPrimary; // The rest of the car is light blue
-           
-           vec3 white = vec3(0.98, 0.98, 0.98);
-           
-           // Make ONLY the airbox (intake scoop above driver's head) white
-           // p.x ranges from 0.2 (front of airbox) to -0.6 (back of airbox)
-           // p.y > 0.55 restricts it entirely above the sidepods and engine cover base
-           if (p.x < 0.2 && p.x > -0.6 && p.y > 0.55 && abs(p.z) < 0.18) {
-             col = white;
-           }
+           // GRID F1: pintura vermelha, parte baixa em fibra de carbono e filete branco
+           vec3 col = uPrimary;
+           vec3 carbon = vec3(0.035, 0.035, 0.04);
+           vec3 white = vec3(0.92, 0.92, 0.92);
+           // tomada de ar acima do piloto em preto
+           if (p.x < 0.2 && p.x > -0.6 && p.y > 0.55 && abs(p.z) < 0.18) col = carbon;
+           // laterais baixas (sidepods, assoalho visível) em carbono, com transição suave
+           float low = 1.0 - smoothstep(0.24, 0.30, p.y);
+           col = mix(col, carbon, low * step(abs(p.z), 0.95));
+           // filete branco acompanhando a linha da carroceria
+           float pin = 1.0 - smoothstep(0.004, 0.009, abs(p.y - 0.315));
+           col = mix(col, white, pin * step(-1.9, p.x) * step(p.x, 1.2));
+           // ponta do bico em carbono
+           col = mix(col, carbon, smoothstep(2.35, 2.5, p.x));
 
            // downward-facing undersides are left as dark bare carbon
            float dark = 1.0 - smoothstep(-0.7, -0.45, n.y);

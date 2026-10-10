@@ -45,23 +45,37 @@ export function HelmetHolo({ progress }: { progress: MotionValue<number> }) {
   const glitchX = useTransform(progress, [0, 0.03, 0.05, 0.07, 0.09, 0.12], [0, 14, -10, 6, -3, 0]);
   const holoGlow = useTransform(progress, [0.55, 0.75], [1, 0.25]);
   const hudOpacity = useTransform(progress, [0.62, 0.75], [0, 1]);
-  const solidGlow = useTransform(progress, [0.55, 0.7], ['drop-shadow(0 0 0px rgba(225,6,0,0))', 'drop-shadow(0 30px 40px rgba(0,0,0,0.6)) drop-shadow(0 0 40px rgba(225,6,0,0.35))']);
+  const solidGlow = useTransform(progress, [0.55, 0.7], ['drop-shadow(0 0 0px rgba(0,0,0,0))', 'drop-shadow(0 28px 30px rgba(0,0,0,0.55)) drop-shadow(0 4px 6px rgba(0,0,0,0.5))']);
+  // realismo: reflexo no chão, sombra de contato e brilho de estúdio passando no casco
+  const realOpacity = useTransform(progress, [0.55, 0.72], [0, 1]);
+  const sheenPos = useTransform(progress, [0.6, 1], [-60, 160]);
+  const sheen = useTransform(sheenPos, (x) => `linear-gradient(115deg, transparent ${x - 22}%, rgba(255,255,255,0.0) ${x - 12}%, rgba(255,255,255,0.55) ${x}%, rgba(255,255,255,0.0) ${x + 12}%, transparent ${x + 22}%)`);
 
   if (!img) return null;
 
   return (
     <div className="pointer-events-none relative mx-auto aspect-[510/611] h-[46%] max-h-[560px] sm:h-[52%] lg:h-[62%]" style={{ perspective: 1200 }}>
       {/* brilho e grade de fundo */}
-      <motion.div style={{ opacity: enter }} className="absolute -inset-[30%] rounded-full bg-[radial-gradient(circle,rgba(225,6,0,0.28),transparent_60%)] blur-2xl" aria-hidden />
+      <motion.div style={{ opacity: enter }} className="absolute -inset-[30%] rounded-full bg-[radial-gradient(circle,rgba(225,6,0,0.22),transparent_60%)] blur-2xl" aria-hidden />
+      {/* luz de estúdio suave atrás do capacete (aparece quando ele se materializa) */}
+      <motion.div style={{ opacity: realOpacity }} className="absolute -inset-[18%] rounded-full bg-[radial-gradient(circle_at_50%_35%,rgba(255,255,255,0.10),transparent_55%)]" aria-hidden />
       <motion.div style={{ opacity: enter }} className="absolute -inset-[20%] [background-image:linear-gradient(rgba(255,60,48,0.12)_1px,transparent_1px),linear-gradient(90deg,rgba(255,60,48,0.12)_1px,transparent_1px)] [background-size:28px_28px] [mask-image:radial-gradient(circle,black,transparent_65%)]" aria-hidden />
 
       {/* anéis — metade de trás */}
       <Ring p={progress} tilt={72} size={150} color="#ff3b30" dur={30} front={false} />
       <Ring p={progress} tilt={64} size={175} color="#60a5fa" dur={14} reverse front={false} />
 
+      {/* sombra de contato e reflexo no piso */}
+      <motion.div style={{ opacity: realOpacity }} className="absolute -bottom-[4%] left-1/2 h-[9%] w-[78%] -translate-x-1/2 rounded-[50%] bg-black/80 blur-xl" aria-hidden />
+      <motion.div style={{ opacity: realOpacity, rotateY: rotY }} className="absolute inset-x-0 top-full h-[45%] overflow-hidden [mask-image:linear-gradient(to_bottom,rgba(0,0,0,0.35),transparent_70%)]" aria-hidden>
+        <img src="/helmets/leclerc@2x.webp" alt="" className="h-[222%] w-full -scale-y-100 object-contain object-bottom opacity-60 blur-[2px]" />
+      </motion.div>
+
       <motion.div className="absolute inset-0 [transform-style:preserve-3d]" style={{ scale, rotateY: rotY, rotateX: rotX, x: glitchX, opacity: enter }}>
         {/* capacete real, revelado de baixo para cima */}
-        <motion.img src={img.src} alt={img.caption} draggable={false} className="absolute inset-0 h-full w-full select-none object-contain" style={{ clipPath: solidClip, filter: solidGlow }} />
+        <motion.img src="/helmets/leclerc@2x.webp" alt={img.caption} draggable={false} className="absolute inset-0 h-full w-full select-none object-contain" style={{ clipPath: solidClip, filter: solidGlow }} />
+        {/* brilho de luz de estúdio percorrendo o verniz */}
+        <motion.div aria-hidden className="absolute inset-0 mix-blend-soft-light" style={{ backgroundImage: sheen, opacity: realOpacity, WebkitMaskImage: 'url(/helmets/leclerc@2x.webp)', maskImage: 'url(/helmets/leclerc@2x.webp)', WebkitMaskSize: 'contain', maskSize: 'contain', WebkitMaskRepeat: 'no-repeat', maskRepeat: 'no-repeat', WebkitMaskPosition: 'center', maskPosition: 'center' }} />
         {/* holograma em linhas (parte ainda não materializada) */}
         <motion.img src="/helmets/leclerc-holo.png" alt="" aria-hidden draggable={false} className="absolute inset-0 h-full w-full select-none object-contain mix-blend-screen" style={{ clipPath: holoClip, opacity: holoGlow }} />
         <motion.img src="/helmets/leclerc-holo.png" alt="" aria-hidden draggable={false} className="absolute inset-0 h-full w-full select-none object-contain opacity-60 mix-blend-screen blur-[6px]" style={{ clipPath: holoClip }} />
