@@ -1,7 +1,8 @@
 import { motion } from 'framer-motion';
 import { Building2, Cpu, Trophy, User } from 'lucide-react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { CarIllustration } from '../components/CarIllustration';
+import { CarPhoto } from '../components/CarPhoto';
+import { teamPhotoQuery } from '../services/carPhotos';
 import { FavoriteButton } from '../components/FavoriteButton';
 import { HelmetAvatar } from '../components/HelmetAvatar';
 import { Modal } from '../components/Modal';
@@ -21,11 +22,11 @@ export function TeamsPage() {
   return (
     <>
       <PageHeader kicker="Construtores 2026" title={<>Equipes &amp; <span className="text-race">carros</span></>}>
-        <p>Onze equipes, cinco fabricantes de motor e um regulamento novo em folha. Passe o mouse para acelerar.</p>
+        <p>Onze equipes, cinco fabricantes de motor e um regulamento novo em folha. Passe o mouse nos carros para dar zoom.</p>
       </PageHeader>
       <div className="container-grid py-10">
         <p className="mb-6 rounded-xl border border-white/10 bg-white/[0.03] p-4 text-sm text-zinc-400">
-          <strong className="text-white">Sobre as imagens:</strong> os carros mostrados são ilustrações vetoriais genéricas criadas para este site, pintadas nas cores de cada equipe. Não são fotos nem representações fiéis dos carros oficiais de 2026.
+          <strong className="text-white">Sobre as fotos:</strong> são fotos reais dos carros, com licença livre, carregadas do Wikimedia Commons. Cada foto mostra o autor e a licença. Quando ainda não há foto livre de um carro, o card avisa.
         </p>
         <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
           {teams.map((t, i) => (
@@ -40,9 +41,9 @@ export function TeamsPage() {
           <div>
             <div className="relative overflow-hidden p-6 pb-0 sm:p-8 sm:pb-0" style={{ background: `radial-gradient(700px 260px at 70% 10%, ${selected.color}44, transparent 70%)` }}>
               <p className="label" style={{ color: selected.color }}>{selected.fullName}</p>
-              <h2 className="pr-10 text-3xl font-black uppercase sm:text-5xl">{selected.name}</h2>
-              <motion.div initial={{ x: -120, opacity: 0 }} animate={{ x: 0, opacity: 1 }} transition={{ type: 'spring', damping: 20 }}>
-                <CarIllustration color={selected.color} accent={selected.accent} speed title={`Ilustração genérica nas cores da ${selected.name} (não é o carro oficial)`} className="mx-auto w-full max-w-2xl" />
+              <h2 className="pr-10 text-3xl font-black uppercase sm:text-5xl">{selected.name} <span className="text-xl text-zinc-400 sm:text-2xl">{selected.car}</span></h2>
+              <motion.div initial={{ y: 30, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ type: 'spring', damping: 20 }} className="mt-4 overflow-hidden rounded-2xl border border-white/10">
+                <CarPhoto photoKey={selected.id} query={teamPhotoQuery(selected.id)} alt={`Foto do carro ${selected.name} ${selected.car} de 2026`} searchTerm={`${selected.name} ${selected.car}`} color={selected.color} className="aspect-[16/9]" />
               </motion.div>
             </div>
             <div className="grid gap-6 p-6 sm:p-8 lg:grid-cols-[1.3fr_1fr]">

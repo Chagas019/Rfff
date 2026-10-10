@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { CarIllustration } from '../components/CarIllustration';
+import { Flag } from 'lucide-react';
 
 export function NotFoundPage() {
   return (
@@ -7,7 +7,7 @@ export function NotFoundPage() {
       <p className="font-display text-8xl font-black italic text-race">404</p>
       <h1 className="mt-2 text-2xl font-bold uppercase">Saiu da pista!</h1>
       <p className="mt-2 text-zinc-400">A página que você procura não existe ou mudou de endereço.</p>
-      <CarIllustration className="my-8 w-full max-w-md -rotate-6 opacity-70" title="Carro ilustrado rodando fora da pista" />
+      <Flag className="my-8 h-20 w-20 -rotate-12 text-telemetry-yellow" aria-hidden />
       <Link to="/" className="btn-primary">Voltar aos boxes</Link>
     </section>
   );

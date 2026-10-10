@@ -1,15 +1,11 @@
 import { motion, useReducedMotion, useScroll, useTransform } from 'framer-motion';
 import { ArrowRight, Flag as FlagIcon, Timer, Users } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import type { CarPhoto as Photo } from '../services/carPhotos';
 import { Link } from 'react-router-dom';
 import type { Race } from '../types';
-import { CarIllustration } from './CarIllustration';
-
-const CALLOUTS = [
-  { label: 'Unidade de potência', value: 'V6 1.6 turbo híbrido', x: '18%', y: '30%' },
-  { label: 'Aerodinâmica ativa', value: 'Modo reta / curva', x: '62%', y: '20%' },
-  { label: 'Elétrico (MGU-K)', value: '~50% da potência', x: '70%', y: '78%' },
-];
+import { HERO_QUERY } from '../services/carPhotos';
+import { CarPhoto, PhotoCredit } from './CarPhoto';
 
 function useSpeedometer(active: boolean) {
   const [speed, setSpeed] = useState(0);
@@ -32,14 +28,29 @@ function useSpeedometer(active: boolean) {
 export function Hero({ nextRace }: { nextRace: Race | null }) {
   const reduce = useReducedMotion();
   const { scrollY } = useScroll();
-  const carX = useTransform(scrollY, [0, 600], [0, reduce ? 0 : 220]);
+  const photoScale = useTransform(scrollY, [0, 700], [1, reduce ? 1 : 1.12]);
   const titleY = useTransform(scrollY, [0, 600], [0, reduce ? 0 : -80]);
   const speed = useSpeedometer(!reduce);
+  const [photo, setPhoto] = useState<Photo | null>(null);
 
   return (
     <section className="relative isolate flex min-h-[100svh] flex-col justify-center overflow-hidden pb-16 pt-24" aria-labelledby="hero-title">
+      {/* foto real em tela cheia */}
+      <motion.div style={{ scale: photoScale }} className="absolute inset-0 -z-20" aria-hidden={false}>
+        <CarPhoto
+          photoKey="hero"
+          query={HERO_QUERY}
+          alt="Carro de Fórmula 1 da temporada 2026 em pista"
+          searchTerm="Formula 1 2026"
+          className="h-full w-full !bg-transparent"
+          imgClassName="object-[70%_50%]"
+          credit="none"
+          onLoaded={setPhoto}
+        />
+      </motion.div>
       {/* cenário */}
-      <div className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_50%_20%,#1c1c26_0%,#07070a_65%)]" aria-hidden />
+      <div className="absolute inset-0 -z-10 bg-gradient-to-r from-carbon-950 via-carbon-950/75 to-carbon-950/10" aria-hidden />
+      <div className="absolute inset-0 -z-10 bg-gradient-to-t from-carbon-950 via-transparent to-carbon-950/60" aria-hidden />
       <div className="absolute inset-x-0 bottom-0 -z-10 h-1/2 [perspective:600px]" aria-hidden>
         <div className="grid-bg absolute inset-0 origin-bottom [transform:rotateX(60deg)] [mask-image:linear-gradient(to_top,black,transparent)]" />
       </div>
@@ -88,39 +99,21 @@ export function Hero({ nextRace }: { nextRace: Race | null }) {
           </motion.div>
         </motion.div>
 
-        {/* carro + telemetria */}
-        <div className="relative mt-10 lg:mt-2">
-          <motion.div
-            style={{ x: carX }}
-            initial={reduce ? false : { x: '-110%', opacity: 0 }}
-            animate={{ x: 0, opacity: 1 }}
-            transition={{ duration: 1.3, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
-            className="relative ml-auto w-full max-w-5xl drop-shadow-[0_30px_60px_rgba(225,6,0,0.35)]"
-          >
-            <CarIllustration speed color="#e10600" accent="#f5f5f5" number="26" title="Ilustração de um carro de Fórmula 1 em alta velocidade" className="w-full" />
-          </motion.div>
-          <div className="pointer-events-none absolute inset-0 hidden md:block" aria-hidden>
-            {CALLOUTS.map((c, i) => (
-              <motion.div key={c.label} className="absolute" style={{ left: c.x, top: c.y }} initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 1.4 + i * 0.2 }}>
-                <span className="absolute -left-1 -top-1 h-2.5 w-2.5 rounded-full border border-race bg-race/40" />
-                <div className="ml-4 border-l border-race/50 pl-3">
-                  <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-zinc-500">{c.label}</p>
-                  <p className="font-display text-xs font-bold text-white">{c.value}</p>
-                </div>
-              </motion.div>
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 1.1 }} className="glass mt-12 inline-block rounded-2xl border border-white/10 p-4">
+          <p className="label text-[10px]">Velocidade máxima típica · km/h</p>
+          <p className="font-display text-4xl font-black tabular-nums text-white" aria-hidden>{speed}<span className="ml-1 text-sm text-race">km/h</span></p>
+          <div className="mt-2 flex gap-1" aria-hidden>
+            {Array.from({ length: 16 }).map((_, i) => (
+              <span key={i} className="h-3 w-1.5 rounded-sm" style={{ background: i / 16 < speed / 360 ? (i > 12 ? '#e10600' : i > 9 ? '#facc15' : '#22c55e') : 'rgba(255,255,255,0.08)' }} />
             ))}
           </div>
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 1.2 }} className="glass absolute -bottom-6 left-0 hidden rounded-2xl border border-white/10 p-4 sm:block">
-            <p className="label text-[10px]">Velocidade · ilustrativo</p>
-            <p className="font-display text-4xl font-black tabular-nums text-white" aria-hidden>{speed}<span className="ml-1 text-sm text-race">km/h</span></p>
-            <div className="mt-2 flex gap-1" aria-hidden>
-              {Array.from({ length: 16 }).map((_, i) => (
-                <span key={i} className="h-3 w-1.5 rounded-sm" style={{ background: i / 16 < speed / 360 ? (i > 12 ? '#e10600' : i > 9 ? '#facc15' : '#22c55e') : 'rgba(255,255,255,0.08)' }} />
-              ))}
-            </div>
-          </motion.div>
-        </div>
+        </motion.div>
       </div>
+      {photo && (
+        <div className="absolute bottom-3 right-4 max-w-[80vw] rounded-md bg-black/50 px-2 py-1 backdrop-blur">
+          <PhotoCredit photo={photo} />
+        </div>
+      )}
     </section>
   );
 }

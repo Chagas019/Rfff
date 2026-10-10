@@ -2,7 +2,8 @@ import { motion } from 'framer-motion';
 import { ArrowUpRight } from 'lucide-react';
 import { drivers } from '../data/drivers';
 import type { Team } from '../types';
-import { CarIllustration } from './CarIllustration';
+import { teamPhotoQuery } from '../services/carPhotos';
+import { CarPhoto } from './CarPhoto';
 import { FavoriteButton } from './FavoriteButton';
 
 export function TeamCard({ team, onOpen }: { team: Team; onOpen: () => void }) {
@@ -18,10 +19,17 @@ export function TeamCard({ team, onOpen }: { team: Team; onOpen: () => void }) {
         </div>
         <FavoriteButton kind="team" id={team.id} label={team.name} />
       </div>
-      <div className="relative h-40 overflow-hidden">
-        <motion.div className="absolute inset-x-0 bottom-0" whileHover={{ scale: 1.08, x: 10 }} transition={{ type: 'spring', stiffness: 200 }}>
-          <CarIllustration color={team.color} accent={team.accent} title={`Ilustração genérica nas cores da ${team.name} (não é o carro oficial)`} className="w-full transition duration-500 group-hover:scale-105 group-hover:drop-shadow-[0_0_30px_rgba(225,6,0,0.35)]" />
-        </motion.div>
+      <div className="relative mx-6 mt-4 overflow-hidden rounded-xl border border-white/10">
+        <CarPhoto
+          photoKey={team.id}
+          query={teamPhotoQuery(team.id)}
+          alt={`Foto do carro ${team.name} ${team.car} de 2026`}
+          searchTerm={`${team.name} ${team.car}`}
+          color={team.color}
+          className="aspect-[16/9]"
+          imgClassName="transition duration-700 ease-out group-hover:scale-110"
+        />
+        <span className="chip absolute left-3 top-3 border-white/20 bg-black/60 backdrop-blur">{team.car}</span>
       </div>
       <div className="relative flex items-center justify-between gap-3 border-t border-white/5 p-6 pt-4">
         <ul className="text-sm">

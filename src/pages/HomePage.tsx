@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion';
 import { ArrowRight, CalendarDays, Clock, Cpu, Flag as FlagIcon, Gauge, MapPin, Trophy, Users, Zap } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { CarIllustration } from '../components/CarIllustration';
+import { CarPhoto } from '../components/CarPhoto';
 import { FavoriteButton } from '../components/FavoriteButton';
 import { Flag } from '../components/Flag';
 import { Hero } from '../components/Hero';
@@ -18,6 +18,7 @@ import { circuits } from '../data/circuits';
 import { drivers } from '../data/drivers';
 import { teams } from '../data/teams';
 import { useNow } from '../hooks/useNow';
+import { teamPhotoQuery } from '../services/carPhotos';
 import { formatDateTime, formatWeekend, userTimeZone } from '../utils/format';
 import { getNextRace, getRaceStart, getRaceStatus } from '../utils/race';
 
@@ -140,8 +141,8 @@ export function HomePage() {
                     Regulamentos na FIA <ArrowRight className="h-4 w-4" aria-hidden />
                   </a>
                 </div>
-                <motion.div whileHover={{ scale: 1.03 }} className="relative">
-                  <CarIllustration color="#1c1c24" accent="#e10600" title="Ilustração de carro de F1 — não é um carro oficial" className="w-full" />
+                <motion.div whileHover={{ scale: 1.02 }} className="group relative overflow-hidden rounded-2xl border border-white/10">
+                  <CarPhoto photoKey="ferrari" query={teamPhotoQuery('ferrari')} alt="Foto do Ferrari SF-26 de 2026" searchTerm="Ferrari SF-26" className="aspect-[16/9]" imgClassName="transition duration-700 group-hover:scale-105" />
                 </motion.div>
               </div>
             </div>

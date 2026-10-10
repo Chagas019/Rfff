@@ -25,7 +25,7 @@ export function Footer() {
           <p className="label mb-3">Fontes e avisos</p>
           <p>Calendário: <a className="text-zinc-300 hover:text-white" href={CALENDAR_SOURCE.url} target="_blank" rel="noreferrer">{CALENDAR_SOURCE.label}</a>.</p>
           <p className="mt-1">Classificação e resultados: <a className="text-zinc-300 hover:text-white" href={API_SOURCE.url} target="_blank" rel="noreferrer">{API_SOURCE.label}</a>, em tempo real.</p>
-          <p className="mt-1">Carros, capacetes e traçados são ilustrações originais deste projeto, não imagens oficiais.</p>
+          <p className="mt-1">Fotos dos carros: Wikimedia Commons, com autor e licença em cada imagem. Capacetes e traçados são ilustrações deste projeto.</p>
           <p className="mt-3">Site de fãs sem vínculo com a Formula One Group ou a FIA. “Formula 1”, “F1” e marcas relacionadas pertencem aos seus donos.</p>
         </div>
       </div>

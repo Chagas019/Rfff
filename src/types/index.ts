@@ -60,6 +60,8 @@ export interface Circuit {
 
 export interface Team {
   id: string;
+  /** Nome do chassi da temporada (ex.: MCL40). */
+  car: string;
   name: string;
   fullName: string;
   base: string;
