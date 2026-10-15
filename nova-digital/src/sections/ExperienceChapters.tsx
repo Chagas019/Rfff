@@ -6,7 +6,8 @@ import { prefersReducedMotion } from '../hooks/useReducedMotion';
 
 gsap.registerPlugin(ScrollTrigger);
 
-const STATEMENT = 'We connect people, ideas and technology into one living network — from a single city to the entire planet.';
+const STATEMENT =
+  'We turn attention into growth — strategy, content, media and data working as one network, from a local business to a global brand.';
 
 /** Palavras que acendem (cinza → branco) conforme a rolagem. */
 function ScrubStatement() {
@@ -81,16 +82,16 @@ export function ExperienceChapters() {
     <section id="experience" aria-label="Experience" className="relative">
       <Chapter
         index="01"
-        label="Signal"
-        title={['Every point', 'is a story.']}
-        body="Cada ponto de luz é uma cidade conectada. Passe o cursor sobre o globo para descobrir quem está ali e clique para abrir os detalhes e as rotas."
+        label="Audience"
+        title={['Every point', 'is an audience.']}
+        body="Cada ponto de luz é um mercado onde sua marca pode conversar com pessoas reais. Antes de investir um real, mapeamos público, comportamento, concorrência e oportunidade. Clique nos pontos do globo para ver cada mercado."
         align="left"
       />
       <Chapter
         index="02"
-        label="Night shift"
-        title={['When the sun sets,', 'the world lights up.']}
-        body="Do outro lado do terminador, as cidades acendem em âmbar. Enquanto metade do planeta descansa, a outra metade cria — e a rede nunca dorme."
+        label="Always on"
+        title={['When the sun sets,', 'the feed lights up.']}
+        body="Do outro lado do planeta, seu público está online. Campanhas que respeitam fuso, cultura e horário de pico trabalham 24 horas: enquanto uma metade do mundo dorme, a outra está rolando o feed."
         align="right"
       />
       <div className="flex min-h-[100svh] items-end pb-[12svh] md:items-center md:pb-0">
@@ -99,7 +100,7 @@ export function ExperienceChapters() {
             <FadeUp className="mb-8 flex items-center justify-center gap-4">
               <span className="font-mono text-[11px] text-amber-glow">03</span>
               <span className="h-px w-10 bg-white/20" aria-hidden />
-              <span className="eyebrow">Distance disappears</span>
+              <span className="eyebrow">Growth, everywhere</span>
             </FadeUp>
             <ScrubStatement />
           </div>

@@ -188,17 +188,18 @@ export function HeroSection({ quality, reduced, onGlobeReady }: HeroSectionProps
           <div className="container-x grid items-end gap-8 md:grid-cols-[1fr_auto]">
             <div className="max-w-md">
               <p data-intro="hero-sub" className="eyebrow mb-4 text-volt-300">
-                NOVA / DIGITAL — Global experience studio
+                NOVA / DIGITAL — Marketing digital global
               </p>
               <p data-intro="hero-sub" className="text-lg font-light leading-relaxed text-ink-soft sm:text-xl">
-                Conectando pessoas, ideias e tecnologias em uma nova dimensão digital.
+                Marketing que conecta sua marca a pessoas do mundo inteiro: estratégia, conteúdo, mídia paga e dados em uma nova dimensão
+                digital.
               </p>
               <div data-intro="hero-sub" className="pointer-events-auto mt-7 flex flex-wrap items-center gap-3">
                 <a href="#explore" className="btn-primary">
                   Explore the world <ArrowUpRight className="h-4 w-4" aria-hidden />
                 </a>
                 <a href="#experience" className="btn-ghost">
-                  A experiência <ArrowDown className="h-4 w-4" aria-hidden />
+                  Como fazemos <ArrowDown className="h-4 w-4" aria-hidden />
                 </a>
               </div>
             </div>

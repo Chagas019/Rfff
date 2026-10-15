@@ -166,7 +166,7 @@ export function TechnologyCard({ item }: { item: TechItem }) {
 /* ------------------------------------------------------------------ */
 
 export function NeuralVisual() {
-  const nodes: Array<[number, number]> = [
+  const campaigns: Array<[number, number]> = [
     [20, 30],
     [20, 70],
     [20, 110],
@@ -197,10 +197,10 @@ export function NeuralVisual() {
       {edges.map(([a, b], i) => (
         <line
           key={i}
-          x1={nodes[a][0]}
-          y1={nodes[a][1]}
-          x2={nodes[b][0]}
-          y2={nodes[b][1]}
+          x1={campaigns[a][0]}
+          y1={campaigns[a][1]}
+          x2={campaigns[b][0]}
+          y2={campaigns[b][1]}
           stroke="#5b8fff"
           strokeOpacity="0.35"
           strokeWidth="0.8"
@@ -208,7 +208,7 @@ export function NeuralVisual() {
           style={{ animationDelay: `${i * 0.18}s` }}
         />
       ))}
-      {nodes.map(([x, y], i) => (
+      {campaigns.map(([x, y], i) => (
         <circle
           key={i}
           cx={x}

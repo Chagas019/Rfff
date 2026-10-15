@@ -12,7 +12,7 @@ const isNum = (v: unknown): v is number => typeof v === 'number' && Number.isFin
 
 function parseCity(v: unknown): City | null {
   if (!isObj(v)) return null;
-  const { id, name, country, continent, region, lat, lon, timezone, role, nodes, latencyMs } = v;
+  const { id, name, country, continent, region, lat, lon, timezone, role, campaigns, engagement } = v;
   if (!isStr(id) || !isStr(name) || !isStr(country) || !isNum(lat) || !isNum(lon)) return null;
   if (Math.abs(lat) > 90 || Math.abs(lon) > 180) return null;
   if (!CONTINENT_IDS.includes(continent as ContinentId) || !REGION_IDS.includes(region as RegionId)) return null;
@@ -25,22 +25,22 @@ function parseCity(v: unknown): City | null {
     lat,
     lon,
     timezone: isStr(timezone) ? timezone : 'UTC',
-    role: isStr(role) ? role : 'Nó da rede',
-    nodes: isNum(nodes) ? nodes : 0,
-    latencyMs: isNum(latencyMs) ? latencyMs : 0,
+    role: isStr(role) ? role : 'Mercado',
+    campaigns: isNum(campaigns) ? campaigns : 0,
+    engagement: isNum(engagement) ? engagement : 0,
   };
 }
 
 function parseRoute(v: unknown, ids: Set<string>): Route | null {
   if (!isObj(v)) return null;
-  const { from, to, label, capacityGbps, kind } = v;
+  const { from, to, label, reachK, kind } = v;
   if (!isStr(from) || !isStr(to) || !ids.has(from) || !ids.has(to) || from === to) return null;
   return {
     id: isStr(v.id) ? v.id : `${from}--${to}`,
     from,
     to,
     label: isStr(label) ? label : `${from} → ${to}`,
-    capacityGbps: isNum(capacityGbps) ? capacityGbps : 0,
+    reachK: isNum(reachK) ? reachK : 0,
     kind: ROUTE_KINDS.includes(kind as Route['kind']) ? (kind as Route['kind']) : 'backbone',
   };
 }

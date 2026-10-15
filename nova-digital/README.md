@@ -1,6 +1,6 @@
 # NOVA / DIGITAL — The World. Reimagined.
 
-Landing page futurista com um **globo terrestre 3D interativo** (Three.js + React Three Fiber), abertura cinematográfica, storytelling por rolagem (GSAP + ScrollTrigger) e interface responsiva.
+Landing page futurista de um **estúdio de marketing digital**, com um **globo terrestre 3D interativo** (Three.js + React Three Fiber), abertura cinematográfica, storytelling por rolagem (GSAP + ScrollTrigger) e interface responsiva.
 
 Projeto independente dentro deste repositório: tem `package.json`, dependências e testes próprios.
 
@@ -42,7 +42,8 @@ Para não prender a página: no hero o zoom é controlado pela rolagem (storytel
 
 - `src/data/demoNetwork.ts`: **conjunto de demonstração**. Coordenadas, países e fusos são reais; papéis, nós, latências, rotas e capacidades são fictícios e a interface avisa isso.
 - Fonte configurável: defina `VITE_NETWORK_URL` com um JSON no formato `{ demo, cities: City[], routes: Route[] }` (veja `src/data/types.ts`). O JSON é validado; se falhar, o site volta para a demonstração e mostra um aviso.
-- `src/data/site.ts`: indicadores da seção Network (exemplos de interface, **não** estatísticas reais), links e e-mail.
+- `src/data/site.ts`: indicadores da seção Network (campanhas, países, ROAS: exemplos de interface, **não** estatísticas reais), links e e-mail.
+- Na seção Network, a coluna "Fuso" mostra a diferença real de horário entre os mercados (útil para programar posts e anúncios).
 
 ## Configuração (`.env`)
 

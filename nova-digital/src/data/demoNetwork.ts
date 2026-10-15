@@ -4,16 +4,22 @@ import type { City, NetworkDataset, Route } from './types';
  * CONJUNTO DE DADOS DE DEMONSTRAÇÃO
  *
  * Coordenadas, países e fusos horários das cidades são reais.
- * Papéis, nós, latências, rotas e capacidades são FICTÍCIOS e servem apenas para
+ * Papéis, campanhas, engajamento, rotas e alcance são FICTÍCIOS e servem apenas para
  * demonstrar a interface. A interface exibe o aviso "Dados de demonstração".
  *
  * Para usar dados reais, publique um JSON com o formato `NetworkDataset` e defina
  * `VITE_NETWORK_URL` no arquivo `.env` (veja o README).
  */
 
-const ROLES = ['Hub de IA', 'Laboratório criativo', 'Data center', 'Centro de pesquisa', 'Hub de conectividade'] as const;
+const ROLES = [
+  'Polo de creators',
+  'Mercado de mídia paga',
+  'Hub de conteúdo',
+  'Centro de dados e analytics',
+  'Mercado em expansão',
+] as const;
 
-type CitySeed = Omit<City, 'role' | 'nodes' | 'latencyMs'>;
+type CitySeed = Omit<City, 'role' | 'campaigns' | 'engagement'>;
 
 const SEEDS: CitySeed[] = [
   {
@@ -323,8 +329,8 @@ function seeded(id: string, salt: number): number {
 const cities: City[] = SEEDS.map((c) => ({
   ...c,
   role: ROLES[Math.floor(seeded(c.id, 1) * ROLES.length)],
-  nodes: 12 + Math.round(seeded(c.id, 2) * 180),
-  latencyMs: 4 + Math.round(seeded(c.id, 3) * 28),
+  campaigns: 6 + Math.round(seeded(c.id, 2) * 60),
+  engagement: Math.round((1.8 + seeded(c.id, 3) * 6.4) * 10) / 10,
 }));
 
 const PAIRS: Array<[string, string, Route['kind'], string]> = [
@@ -377,7 +383,7 @@ const routes: Route[] = PAIRS.map(([from, to, kind, label]) => ({
   to,
   kind,
   label,
-  capacityGbps: 40 + Math.round(seeded(from + to, 4) * 360),
+  reachK: 80 + Math.round(seeded(from + to, 4) * 920),
 }));
 
 export const DEMO_NETWORK: NetworkDataset = {

@@ -5,7 +5,7 @@ import type { City, Route } from '../data/types';
 import { useCountries } from '../hooks/useCountries';
 import { prefersReducedMotion } from '../hooks/useReducedMotion';
 import { drawLand, type CountryFeature } from '../lib/continents';
-import { greatCircleKm, projectEquirect } from '../lib/geo';
+import { projectEquirect } from '../lib/geo';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -184,7 +184,7 @@ export function NetworkMap({ cities, routes, byId, selectedRoute, focusCity, onS
                     />
                     {!reduced && (
                       <circle r={isSel ? 3.2 : 2.2} fill={isSel ? '#ffe2b0' : '#eaf1ff'} filter="url(#glow)">
-                        <animateMotion dur={`${3 + (r.capacityGbps % 7) * 0.4}s`} repeatCount="indefinite" rotate="auto">
+                        <animateMotion dur={`${3 + (r.reachK % 7) * 0.4}s`} repeatCount="indefinite" rotate="auto">
                           <mpath href={`#route-${r.id}-${i}`} />
                         </animateMotion>
                       </circle>
@@ -227,9 +227,4 @@ export function NetworkMap({ cities, routes, byId, selectedRoute, focusCity, onS
       </svg>
     </div>
   );
-}
-
-/** Estimativa teórica de latência só de ida, com a luz na fibra a ~200.000 km/s. */
-export function fiberLatencyMs(a: City, b: City): number {
-  return greatCircleKm(a, b) / 200;
 }

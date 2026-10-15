@@ -25,9 +25,9 @@ export const NAV_LINKS = [
 export const NETWORK_STATS: { demo: boolean; items: StatItem[] } = {
   demo: true,
   items: [
-    { value: 120, suffix: '+', label: 'cidades conectadas' },
+    { value: 120, suffix: '+', label: 'campanhas lançadas' },
     { value: 48, label: 'países alcançados' },
-    { value: 99.9, decimals: 1, suffix: '%', label: 'de disponibilidade' },
+    { value: 3.2, decimals: 1, suffix: '×', label: 'retorno médio sobre mídia (ROAS)' },
   ],
 };
 

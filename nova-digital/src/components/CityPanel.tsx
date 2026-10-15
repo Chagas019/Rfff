@@ -72,11 +72,11 @@ export function CityPanel({ city, onClose, onSelect, variant = 'floating', class
             <Stat label="Latitude" value={formatCoord(city.lat, 'N', 'S')} />
             <Stat label="Longitude" value={formatCoord(city.lon, 'L', 'O')} />
             <Stat
-              label={demo ? 'Nós ativos · demo' : 'Nós ativos'}
-              value={String(city.nodes)}
+              label={demo ? 'Campanhas · demo' : 'Campanhas'}
+              value={String(city.campaigns)}
               icon={<Radio className="h-3.5 w-3.5" aria-hidden />}
             />
-            <Stat label={demo ? 'Latência · demo' : 'Latência'} value={`${city.latencyMs} ms`} />
+            <Stat label={demo ? 'Engajamento · demo' : 'Engajamento'} value={`${city.engagement.toLocaleString('pt-BR')}%`} />
           </div>
 
           <div className="min-h-0 flex-1 overflow-y-auto p-5">
@@ -109,7 +109,7 @@ export function CityPanel({ city, onClose, onSelect, variant = 'floating', class
             )}
             {demo && (
               <p className="mt-5 border-t border-white/[0.06] pt-4 text-[11px] leading-relaxed text-ink-mute">
-                Coordenadas e hora local são reais. Papel, nós, latência e rotas são dados de demonstração.
+                Coordenadas e hora local são reais. Papel, campanhas, engajamento e rotas são dados de demonstração.
               </p>
             )}
           </div>

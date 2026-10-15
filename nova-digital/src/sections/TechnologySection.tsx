@@ -11,41 +11,42 @@ const ITEMS: TechItem[] = [
   {
     id: 'ai',
     index: '01',
-    tag: 'Cognition',
-    title: 'Artificial Intelligence',
-    short: 'Modelos que entendem contexto e transformam dados em decisões.',
-    details: 'Assistentes, recomendação e automação desenhados para pessoas, com transparência sobre como cada resposta é gerada.',
-    specs: ['Modelos multimodais', 'Inferência na borda', 'Privacidade por padrão'],
+    tag: 'Intelligence',
+    title: 'AI-Powered Marketing',
+    short: 'IA para segmentar, prever e personalizar cada campanha.',
+    details: 'Modelos que encontram o público certo, sugerem criativos e automatizam funis, com uma pessoa revisando cada decisão.',
+    specs: ['Segmentação preditiva', 'Criativos com IA', 'Automação de funis'],
     visual: <NeuralVisual />,
   },
   {
     id: 'spatial',
     index: '02',
-    tag: 'Dimension',
-    title: 'Spatial Computing',
-    short: 'Interfaces que saem da tela e ocupam o espaço ao seu redor.',
-    details: 'Experiências para headsets, celulares e telas imersivas que respondem ao corpo, ao olhar e ao ambiente.',
-    specs: ['WebXR', 'Rastreamento de mãos', 'Mapeamento espacial'],
+    tag: 'Attention',
+    title: 'Social & Content',
+    short: 'Conteúdo que para o scroll e constrói comunidade.',
+    details: 'Planejamento editorial, Reels, vídeos curtos e parcerias com creators, com a voz da sua marca em cada plataforma.',
+    specs: ['Reels e vídeo curto', 'Calendário editorial', 'Creators e influência'],
     visual: <CubeVisual />,
   },
   {
     id: 'connectivity',
     index: '03',
-    tag: 'Network',
-    title: 'Global Connectivity',
-    short: 'Infraestrutura que aproxima cidades e encurta distâncias.',
-    details: 'Redes de baixa latência e sincronização em tempo real para equipes, produtos e públicos espalhados pelo mundo.',
-    specs: ['Edge global', 'Tempo real', 'Alta disponibilidade'],
+    tag: 'Growth',
+    title: 'Performance Media',
+    short: 'Mídia paga focada em resultado, não em curtida.',
+    details:
+      'Campanhas em Meta, Google e TikTok com testes A/B contínuos, otimizadas por custo de aquisição e retorno sobre o investimento.',
+    specs: ['Meta, Google e TikTok Ads', 'Testes A/B', 'CAC e ROAS'],
     visual: <OrbitVisual />,
   },
   {
     id: 'immersive',
     index: '04',
     tag: 'Emotion',
-    title: 'Immersive Experiences',
-    short: 'Narrativas interativas que o público sente, não apenas vê.',
-    details: 'Instalações, lançamentos e produtos digitais com 3D em tempo real, som espacial e direção cinematográfica.',
-    specs: ['3D em tempo real', 'Áudio espacial', 'Direção de arte'],
+    title: 'Brand Experiences',
+    short: 'Marcas e sites que as pessoas lembram e compartilham.',
+    details: 'Identidade visual, landing pages que convertem e lançamentos com experiências interativas e 3D.',
+    specs: ['Branding', 'Landing pages', 'Experiências 3D'],
     visual: <LayersVisual />,
   },
 ];
@@ -79,7 +80,7 @@ export function TechnologySection() {
       <div className="container-x">
         <div className="grid gap-10 lg:grid-cols-[1.2fr_1fr] lg:items-end">
           <div>
-            <FadeUp className="eyebrow mb-6">Technology — Capabilities</FadeUp>
+            <FadeUp className="eyebrow mb-6">Technology — Marketing services</FadeUp>
             <MaskTitle
               id="technology-title"
               lines={['Beyond the', 'expected.']}
@@ -89,7 +90,7 @@ export function TechnologySection() {
           </div>
           <FadeUp delay={0.1}>
             <p className="max-w-md text-lg leading-relaxed text-ink-soft lg:ml-auto">
-              Quatro frentes que trabalham juntas para transformar ideias em experiências que funcionam em qualquer lugar do planeta.
+              Quatro frentes de marketing que trabalham juntas para transformar atenção em clientes, em qualquer lugar do planeta.
               <span className="mt-3 block text-sm text-ink-mute">
                 Passe o cursor para explorar. Toque ou clique para fixar os detalhes.
               </span>

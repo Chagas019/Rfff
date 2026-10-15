@@ -5,9 +5,9 @@ import * as THREE from 'three';
 import { atmosphereFragment, atmosphereVertex, backdropFragment, earthFragment, earthVertex, uvVertex } from './shaders';
 
 export const TEXTURES = {
-  day: '/textures/earth-day.webp',
-  night: '/textures/earth-night.webp',
-  water: '/textures/earth-water.webp',
+  day: `${import.meta.env.BASE_URL}textures/earth-day.webp`,
+  night: `${import.meta.env.BASE_URL}textures/earth-night.webp`,
+  water: `${import.meta.env.BASE_URL}textures/earth-water.webp`,
 };
 
 /** Parâmetros de luz que a cena altera a cada quadro (storytelling e abertura). */

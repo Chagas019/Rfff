@@ -134,7 +134,7 @@ export function ExploreWorld({ quality, reduced }: ExploreWorldProps) {
       <div className="container-x">
         <div className="grid gap-10 lg:grid-cols-[1.3fr_1fr] lg:items-end">
           <div>
-            <FadeUp className="eyebrow mb-6">Explore — Interactive</FadeUp>
+            <FadeUp className="eyebrow mb-6">Explore — Markets</FadeUp>
             <MaskTitle
               id="explore-title"
               lines={['Explore', 'the planet.']}
@@ -144,8 +144,8 @@ export function ExploreWorld({ quality, reduced }: ExploreWorldProps) {
           </div>
           <FadeUp delay={0.1}>
             <p className="max-w-md text-lg leading-relaxed text-ink-soft lg:ml-auto">
-              Escolha um continente, busque uma cidade ou filtre por região. A câmera viaja até o ponto e o painel mostra os detalhes e as
-              rotas.
+              Descubra onde sua marca pode crescer. Escolha um continente, busque uma cidade ou filtre por região: a câmera viaja até o
+              mercado e o painel mostra hora local, campanhas, engajamento e conexões.
             </p>
           </FadeUp>
         </div>

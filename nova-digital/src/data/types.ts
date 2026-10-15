@@ -12,12 +12,12 @@ export interface City {
   lon: number;
   /** Fuso horário IANA, usado para mostrar a hora local real. */
   timezone: string;
-  /** Papel do nó na rede (dado de demonstração). */
+  /** Papel da cidade na estratégia (dado de demonstração). */
   role: string;
-  /** Quantidade de nós ativos (dado de demonstração). */
-  nodes: number;
-  /** Latência média em ms (dado de demonstração). */
-  latencyMs: number;
+  /** Campanhas ativas (dado de demonstração). */
+  campaigns: number;
+  /** Taxa média de engajamento em % (dado de demonstração). */
+  engagement: number;
 }
 
 export interface Route {
@@ -26,8 +26,8 @@ export interface Route {
   to: string;
   /** Nome da rota exibido no mapa de conexões. */
   label: string;
-  /** Capacidade em Gbps (dado de demonstração). */
-  capacityGbps: number;
+  /** Alcance diário estimado, em milhares de pessoas (dado de demonstração). */
+  reachK: number;
   kind: 'backbone' | 'research' | 'creative';
 }
 

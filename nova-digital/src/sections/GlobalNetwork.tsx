@@ -2,7 +2,8 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { ArrowLeftRight, X } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import { Counter } from '../components/Counter';
-import { fiberLatencyMs, NetworkMap } from '../components/NetworkMap';
+import { NetworkMap } from '../components/NetworkMap';
+import { formatTzDiff } from '../lib/time';
 import { FadeUp, MaskTitle } from '../components/Reveal';
 import { NETWORK_STATS } from '../data/site';
 import type { Route } from '../data/types';
@@ -11,9 +12,9 @@ import { greatCircleKm } from '../lib/geo';
 import { otherEnd, routesOf } from '../lib/network';
 
 const KIND_LABEL: Record<Route['kind'], string> = {
-  backbone: 'Backbone',
-  research: 'Pesquisa',
-  creative: 'Criativa',
+  backbone: 'Mídia paga',
+  research: 'Dados e insights',
+  creative: 'Conteúdo e creators',
 };
 
 export function GlobalNetwork() {
@@ -44,7 +45,7 @@ export function GlobalNetwork() {
       <div className="container-x">
         <div className="grid gap-10 lg:grid-cols-[1.3fr_1fr] lg:items-end">
           <div>
-            <FadeUp className="eyebrow mb-6">Network — Global</FadeUp>
+            <FadeUp className="eyebrow mb-6">Network — Campaign reach</FadeUp>
             <MaskTitle
               id="network-title"
               lines={['One planet.', 'Infinite connections.']}
@@ -54,8 +55,8 @@ export function GlobalNetwork() {
           </div>
           <FadeUp delay={0.1}>
             <p className="max-w-md text-lg leading-relaxed text-ink-soft lg:ml-auto">
-              Cada linha é uma rota entre duas cidades. Clique em uma linha para ver origem, destino e distância, ou em uma cidade para
-              destacar todas as conexões dela.
+              Cada linha é uma rota de campanha entre dois mercados. Clique em uma linha para ver o tipo de ação, a distância, a diferença
+              de fuso e o alcance, ou em uma cidade para destacar todas as campanhas ligadas a ela.
             </p>
           </FadeUp>
         </div>
@@ -120,7 +121,7 @@ export function GlobalNetwork() {
 
         {/* lista acessível por teclado com todas as rotas */}
         <FadeUp className="mt-6">
-          <p className="eyebrow mb-3">Rotas ({routes.length})</p>
+          <p className="eyebrow mb-3">Rotas de campanha ({routes.length})</p>
           <ul className="no-scrollbar -mx-4 flex snap-x gap-2 overflow-x-auto px-4 pb-2 sm:mx-0 sm:px-0" aria-label="Rotas da rede">
             {routes.map((r) => {
               const a = byId.get(r.from);
@@ -191,16 +192,17 @@ function RouteDetails({ route }: { route: Route }) {
           <dd className="mt-1 tabular-nums text-ink">{Math.round(km).toLocaleString('pt-BR')} km</dd>
         </div>
         <div>
-          <dt className="font-mono text-[10px] uppercase tracking-[0.14em] text-ink-mute">Latência mín.*</dt>
-          <dd className="mt-1 tabular-nums text-ink">{fiberLatencyMs(a, b).toFixed(1)} ms</dd>
+          <dt className="font-mono text-[10px] uppercase tracking-[0.14em] text-ink-mute">Fuso*</dt>
+          <dd className="mt-1 tabular-nums text-ink">{formatTzDiff(a.timezone, b.timezone)}</dd>
         </div>
         <div>
-          <dt className="font-mono text-[10px] uppercase tracking-[0.14em] text-ink-mute">Capacidade{demo ? ' · demo' : ''}</dt>
-          <dd className="mt-1 tabular-nums text-ink">{route.capacityGbps} Gbps</dd>
+          <dt className="font-mono text-[10px] uppercase tracking-[0.14em] text-ink-mute">Alcance/dia{demo ? ' · demo' : ''}</dt>
+          <dd className="mt-1 tabular-nums text-ink">{route.reachK.toLocaleString('pt-BR')} mil</dd>
         </div>
       </dl>
       <p className="mt-3 text-[11px] text-ink-mute">
-        * Estimativa física só de ida, pela distância em linha reta com a luz na fibra (~200.000 km/s).
+        * Diferença de horário real de {b.name} em relação a {a.name}, hoje. Ajuda a programar posts e anúncios no horário de pico de cada
+        mercado.
       </p>
     </div>
   );

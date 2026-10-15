@@ -5,7 +5,13 @@ import { parseDataset } from '../network';
 
 describe('geo', () => {
   it('latLonToVec3 e vec3ToLatLon são inversas', () => {
-    for (const [lat, lon] of [[0, 0], [-23.55, -46.63], [35.68, 139.69], [64.15, -21.94], [-33.87, 151.21]]) {
+    for (const [lat, lon] of [
+      [0, 0],
+      [-23.55, -46.63],
+      [35.68, 139.69],
+      [64.15, -21.94],
+      [-33.87, 151.21],
+    ]) {
       const r = vec3ToLatLon(latLonToVec3(lat, lon));
       expect(r.lat).toBeCloseTo(lat, 6);
       expect(r.lon).toBeCloseTo(lon, 6);
@@ -87,5 +93,13 @@ describe('parseDataset', () => {
     expect(ds?.cities.map((c) => c.id)).toEqual(['a']);
     expect(ds?.routes).toEqual([]);
     expect(parseDataset({ nope: true }, 'x')).toBeNull();
+  });
+});
+
+describe('fusos', () => {
+  it('diferença de fuso entre São Paulo e Tóquio é +12 h', async () => {
+    const { formatTzDiff } = await import('../time');
+    expect(formatTzDiff('America/Sao_Paulo', 'Asia/Tokyo', new Date('2026-07-01T12:00:00Z'))).toBe('+12 h');
+    expect(formatTzDiff('Asia/Kolkata', 'Asia/Kolkata')).toBe('mesmo fuso');
   });
 });

@@ -2,16 +2,16 @@ import { FadeUp, MaskTitle } from '../components/Reveal';
 
 const PRINCIPLES = [
   {
-    title: 'Curiosidade como método',
-    body: 'Cada projeto começa com perguntas, não com templates. Investigamos pessoas, contexto e dados antes de desenhar.',
+    title: 'Estratégia antes do post',
+    body: 'Cada projeto começa com diagnóstico: público, concorrência, funil e metas. Só depois vêm conteúdo e anúncios.',
   },
   {
-    title: 'Tecnologia a serviço da emoção',
-    body: '3D, IA e tempo real só entram quando tornam a experiência mais clara, mais humana ou mais memorável.',
+    title: 'Criatividade guiada por dados',
+    body: 'Ideias ousadas, testadas e medidas. O que funciona escala; o que não funciona vira aprendizado rápido.',
   },
   {
-    title: 'Feito para durar',
-    body: 'Performance, acessibilidade e código limpo desde o primeiro protótipo, para funcionar em qualquer tela e conexão.',
+    title: 'Resultado que dá para medir',
+    body: 'Relatórios claros com as métricas que importam para o negócio: leads, vendas, custo por cliente e retorno.',
   },
 ];
 
@@ -22,7 +22,7 @@ export function AboutSection() {
       <div className="container-x">
         <div className="grid gap-14 lg:grid-cols-[1fr_1.1fr]">
           <div>
-            <FadeUp className="eyebrow mb-6">About — Studio</FadeUp>
+            <FadeUp className="eyebrow mb-6">About — Marketing studio</FadeUp>
             <MaskTitle
               id="about-title"
               lines={['Nova', '/ Digital']}
@@ -33,14 +33,14 @@ export function AboutSection() {
           <div className="flex flex-col justify-end">
             <FadeUp>
               <p className="text-balance text-[clamp(1.4rem,2.6vw,2.2rem)] font-light leading-snug tracking-tight text-ink">
-                Somos um estúdio de experiências digitais que une direção criativa, engenharia e tecnologia 3D para aproximar pessoas,
-                marcas e ideias — em qualquer ponto do planeta.
+                Somos um estúdio de marketing digital que une estratégia, conteúdo, mídia paga e tecnologia para conectar marcas a pessoas —
+                do bairro ao mundo inteiro.
               </p>
             </FadeUp>
             <FadeUp delay={0.1}>
               <p className="mt-6 max-w-xl text-base leading-relaxed text-ink-soft">
-                Trabalhamos com equipes que querem lançar algo que ainda não existe: produtos, plataformas e experiências interativas que
-                contam uma história e funcionam de verdade.
+                Trabalhamos com empresas, criadores e marcas que querem crescer com método: mais alcance, mais clientes e uma presença
+                digital que vale a pena seguir.
               </p>
             </FadeUp>
           </div>

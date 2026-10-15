@@ -14,7 +14,7 @@ interface FormState {
   message: string;
 }
 
-const TOPICS = ['Experiência imersiva', 'Produto digital', 'Inteligência artificial', 'Outro assunto'];
+const TOPICS = ['Estratégia de marketing', 'Social media e conteúdo', 'Tráfego pago', 'Branding e site', 'Outro assunto'];
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 
 function validate(f: FormState) {
@@ -97,7 +97,7 @@ export function ContactSection() {
             />
             <FadeUp delay={0.1}>
               <p className="mt-8 max-w-md text-lg leading-relaxed text-ink-soft">
-                Conte o que você quer criar. Respondemos com perguntas, referências e um caminho possível.
+                Conte seu objetivo de marketing. Respondemos com um diagnóstico inicial, perguntas certas e um plano possível.
               </p>
               <a href={`mailto:${SITE.contactEmail}`} className="group mt-8 inline-flex items-center gap-3 text-lg text-ink">
                 <Mail className="h-5 w-5 text-ink-mute" aria-hidden />
