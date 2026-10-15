@@ -22,7 +22,7 @@ export function AboutSection() {
       <div className="container-x">
         <div className="grid gap-14 lg:grid-cols-[1fr_1.1fr]">
           <div>
-            <FadeUp className="eyebrow mb-6">About — Marketing studio</FadeUp>
+            <FadeUp className="eyebrow mb-6">Sobre — Estúdio de marketing</FadeUp>
             <MaskTitle
               id="about-title"
               lines={['Nova', '/ Digital']}

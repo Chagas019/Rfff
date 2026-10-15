@@ -182,7 +182,7 @@ export function Navbar() {
             </ul>
             <div className="container-x pb-10">
               <a href="#explore" onClick={() => setOpen(false)} className="btn-primary w-full">
-                Explore the world <ArrowUpRight className="h-4 w-4" aria-hidden />
+                Explorar o mundo <ArrowUpRight className="h-4 w-4" aria-hidden />
               </a>
             </div>
           </motion.div>

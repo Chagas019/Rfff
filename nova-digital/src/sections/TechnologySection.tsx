@@ -11,8 +11,8 @@ const ITEMS: TechItem[] = [
   {
     id: 'ai',
     index: '01',
-    tag: 'Intelligence',
-    title: 'AI-Powered Marketing',
+    tag: 'Inteligência',
+    title: 'Marketing com IA',
     short: 'IA para segmentar, prever e personalizar cada campanha.',
     details: 'Modelos que encontram o público certo, sugerem criativos e automatizam funis, com uma pessoa revisando cada decisão.',
     specs: ['Segmentação preditiva', 'Criativos com IA', 'Automação de funis'],
@@ -21,8 +21,8 @@ const ITEMS: TechItem[] = [
   {
     id: 'spatial',
     index: '02',
-    tag: 'Attention',
-    title: 'Social & Content',
+    tag: 'Atenção',
+    title: 'Redes sociais e conteúdo',
     short: 'Conteúdo que para o scroll e constrói comunidade.',
     details: 'Planejamento editorial, Reels, vídeos curtos e parcerias com creators, com a voz da sua marca em cada plataforma.',
     specs: ['Reels e vídeo curto', 'Calendário editorial', 'Creators e influência'],
@@ -31,8 +31,8 @@ const ITEMS: TechItem[] = [
   {
     id: 'connectivity',
     index: '03',
-    tag: 'Growth',
-    title: 'Performance Media',
+    tag: 'Crescimento',
+    title: 'Mídia de performance',
     short: 'Mídia paga focada em resultado, não em curtida.',
     details:
       'Campanhas em Meta, Google e TikTok com testes A/B contínuos, otimizadas por custo de aquisição e retorno sobre o investimento.',
@@ -42,8 +42,8 @@ const ITEMS: TechItem[] = [
   {
     id: 'immersive',
     index: '04',
-    tag: 'Emotion',
-    title: 'Brand Experiences',
+    tag: 'Emoção',
+    title: 'Branding e experiências',
     short: 'Marcas e sites que as pessoas lembram e compartilham.',
     details: 'Identidade visual, landing pages que convertem e lançamentos com experiências interativas e 3D.',
     specs: ['Branding', 'Landing pages', 'Experiências 3D'],
@@ -77,10 +77,10 @@ export function TechnologySection() {
       <div className="container-x">
         <div className="grid gap-10 lg:grid-cols-[1.2fr_1fr] lg:items-end">
           <div>
-            <FadeUp className="eyebrow mb-6">Technology — Marketing services</FadeUp>
+            <FadeUp className="eyebrow mb-6">Serviços de marketing</FadeUp>
             <MaskTitle
               id="technology-title"
-              lines={['Beyond the', 'expected.']}
+              lines={['Além do', 'esperado.']}
               className="display text-[clamp(2.4rem,3.6vw,3.2rem)]"
               lineClassName={(i) => (i === 1 ? 'text-ink-mute' : 'text-ink')}
             />

@@ -45,10 +45,10 @@ export function GlobalNetwork() {
       <div className="container-x">
         <div className="grid gap-10 lg:grid-cols-[1.3fr_1fr] lg:items-end">
           <div>
-            <FadeUp className="eyebrow mb-6">Network — Campaign reach</FadeUp>
+            <FadeUp className="eyebrow mb-6">Rede — Alcance das campanhas</FadeUp>
             <MaskTitle
               id="network-title"
-              lines={['One planet.', 'Infinite connections.']}
+              lines={['Um planeta.', 'Conexões infinitas.']}
               className="display text-[clamp(2.4rem,3.6vw,3.2rem)]"
               lineClassName={(i) => (i === 1 ? 'text-ink-mute' : 'text-ink')}
             />

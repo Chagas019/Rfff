@@ -136,10 +136,10 @@ export function ExploreWorld({ quality, reduced }: ExploreWorldProps) {
       <div className="container-x">
         <div className="grid gap-10 lg:grid-cols-[1.3fr_1fr] lg:items-end">
           <div>
-            <FadeUp className="eyebrow mb-6">Explore — Markets</FadeUp>
+            <FadeUp className="eyebrow mb-6">Explorar — Mercados</FadeUp>
             <MaskTitle
               id="explore-title"
-              lines={['Explore', 'the planet.']}
+              lines={['Explore', 'o planeta.']}
               className="display text-[clamp(2.4rem,3.6vw,3.2rem)]"
               lineClassName={(i) => (i === 1 ? 'text-ink-mute' : 'text-ink')}
             />

@@ -126,7 +126,7 @@ export function LoadingScreen({ ready, onDone }: LoadingScreenProps) {
         aria-hidden
       />
       <p ref={label} className="eyebrow absolute top-[calc(50%+22px)] opacity-0">
-        {waitingLong && !ready ? 'Carregando o planeta…' : 'Initializing world'}
+        {waitingLong && !ready ? 'Carregando o planeta…' : 'Preparando o planeta'}
       </p>
     </div>
   );

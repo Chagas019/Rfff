@@ -55,7 +55,7 @@ interface StoryFrame {
 }
 
 const STORY: StoryFrame[] = [
-  // topo: o globo é o objeto, à direita e abaixo do wordmark; "Reimagined." aparece atrás dele
+  // topo: o globo é o objeto, à direita e abaixo do wordmark; "Sem fronteiras." aparece atrás dele
   { p: 0.0, x: 0.42, y: -0.5, dist: 4.4, sunAz: 0.9, sunEl: 0.45, warm: 0.2, night: 1.1, exposure: 1 },
   // capítulos em "void mode": globo centralizado; muda só rotação de luz e distância
   { p: 0.33, x: 0.0, y: 0.0, dist: 4.9, sunAz: 0.55, sunEl: 0.4, warm: 0.25, night: 1.0, exposure: 1 },

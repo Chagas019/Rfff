@@ -30,7 +30,7 @@ interface HeroSectionProps {
   onGlobeReady: () => void;
 }
 
-/** Topo da página + capítulos "Experience": o globo fica fixo enquanto a narrativa rola por cima. */
+/** Topo da página + capítulos da experiência: o globo fica fixo enquanto a narrativa rola por cima. */
 export function HeroSection({ quality, reduced, onGlobeReady }: HeroSectionProps) {
   const { cities, routes, byId } = useNetwork();
   const controller = useGlobeController({ x: START.x, y: START.y, distance: 4.5 });
@@ -163,7 +163,7 @@ export function HeroSection({ quality, reduced, onGlobeReady }: HeroSectionProps
           className="pointer-events-none absolute right-[18px] top-1/2 z-20 hidden -translate-y-1/2 rotate-180 text-[12px] uppercase text-ink-mute [writing-mode:vertical-rl] md:block"
           aria-hidden
         >
-          Nº 001 — NOVA / DIGITAL — Marketing studio
+          Nº 001 — NOVA / DIGITAL — Estúdio de marketing
         </p>
 
         <AnimatePresence>
@@ -192,7 +192,7 @@ export function HeroSection({ quality, reduced, onGlobeReady }: HeroSectionProps
           className="relative flex min-h-[100svh] flex-col justify-end pb-8 pt-[calc(var(--nav-h)+2rem)] sm:pb-10"
         >
           <h1 id="hero-title" className="sr-only">
-            The world. Reimagined.
+            Sua marca. Sem fronteiras.
           </h1>
           <div className="container-x grid items-end gap-6 md:grid-cols-[minmax(0,420px)_1fr]">
             {/* cartão de atribuição: subordinado ao objeto, com divisória tracejada */}
@@ -205,7 +205,7 @@ export function HeroSection({ quality, reduced, onGlobeReady }: HeroSectionProps
               </p>
               <div className="mt-6 flex flex-wrap items-center gap-x-6 gap-y-3">
                 <a href="#explore" className="btn-primary">
-                  Explore the world
+                  Explorar o mundo
                 </a>
                 <a href="#experience" className="link-underline">
                   Como fazemos <ArrowDown className="h-3.5 w-3.5" aria-hidden />
@@ -243,21 +243,21 @@ export function HeroSection({ quality, reduced, onGlobeReady }: HeroSectionProps
 
 /* ------------------------------------------------------------------ */
 
-const TITLE_CLASS = 'display text-[clamp(3.2rem,10.5vw,10.5rem)]';
+const TITLE_CLASS = 'display text-[clamp(2.4rem,8.6vw,8.6rem)]';
 
 /**
- * Wordmark no canto superior esquerdo, em duas camadas idênticas: "Reimagined." fica atrás do globo
- * e "The world." passa na frente dele. O texto acessível está no h1 sr-only.
+ * Wordmark no canto superior esquerdo, em duas camadas idênticas: "Sem fronteiras." fica atrás do globo
+ * e "Sua marca." passa na frente dele. O texto acessível está no h1 sr-only.
  */
 function HeroTitle({ front }: { front: boolean }) {
   return (
     <div className="container-x flex h-full flex-col items-start pt-[calc(var(--nav-h)+4svh)]">
       <div data-intro="hero-title" className={TITLE_CLASS}>
         <span className="mask-line">
-          <span className={front ? 'text-ink' : 'invisible'}>The world.</span>
+          <span className={front ? 'text-ink' : 'invisible'}>Sua marca.</span>
         </span>
         <span className="mask-line">
-          <span className={front ? 'invisible' : 'text-driftwood'}>Reimagined.</span>
+          <span className={front ? 'invisible' : 'text-driftwood'}>Sem fronteiras.</span>
         </span>
       </div>
     </div>

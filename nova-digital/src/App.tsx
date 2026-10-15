@@ -10,6 +10,7 @@ import { AboutSection } from './sections/AboutSection';
 import { ContactSection } from './sections/ContactSection';
 import { ExploreWorld } from './sections/ExploreWorld';
 import { GlobalNetwork } from './sections/GlobalNetwork';
+import { ProcessSection } from './sections/ProcessSection';
 import { TechnologySection } from './sections/TechnologySection';
 
 export default function App() {
@@ -39,6 +40,7 @@ export default function App() {
       <main id="main">
         <HeroSection quality={quality} reduced={reduced} onGlobeReady={onGlobeReady} />
         <TechnologySection />
+        <ProcessSection />
         <GlobalNetwork />
         <ExploreWorld quality={quality} reduced={reduced} />
         <AboutSection />

@@ -76,19 +76,19 @@ function Chapter({ index, label, title, children }: ChapterProps) {
 /** Capítulos da narrativa. O globo muda de rotação, distância e luz em cada um. */
 export function ExperienceChapters() {
   return (
-    <section id="experience" aria-label="Experience" className="relative">
-      <Chapter index="01" label="Audience" title={['Every point', 'is an audience.']}>
+    <section id="experience" aria-label="Experiência" className="relative">
+      <Chapter index="01" label="Público" title={['Cada ponto', 'é um público.']}>
         <p className="lede">
           Cada ponto de luz é um mercado onde sua marca pode conversar com pessoas reais. Antes de investir, mapeamos público,
           comportamento, concorrência e oportunidade.
         </p>
       </Chapter>
-      <Chapter index="02" label="Always on" title={['When the sun sets,', 'the feed lights up.']}>
+      <Chapter index="02" label="Sempre ativo" title={['Quando o sol se põe,', 'o feed acende.']}>
         <p className="lede">
           Do outro lado do planeta, seu público está online. Campanhas que respeitam fuso, cultura e horário de pico trabalham 24 horas.
         </p>
       </Chapter>
-      <Chapter index="03" label="Growth" title={['Growth,', 'everywhere.']}>
+      <Chapter index="03" label="Crescimento" title={['Crescimento', 'em todo lugar.']}>
         <ScrubStatement />
       </Chapter>
     </section>

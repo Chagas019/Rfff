@@ -11,20 +11,21 @@ export const SITE = {
 
 /** Navegação mínima: no máximo quatro itens (sistema ORYZO). */
 export const NAV_LINKS = [
-  { id: 'experience', label: 'Experience' },
-  { id: 'technology', label: 'Services' },
-  { id: 'explore', label: 'Explore' },
-  { id: 'contact', label: 'Contact' },
+  { id: 'experience', label: 'Experiência' },
+  { id: 'technology', label: 'Serviços' },
+  { id: 'explore', label: 'Explorar' },
+  { id: 'contact', label: 'Contato' },
 ] as const;
 
 /** Links extras do rodapé (seções que não cabem na navegação principal). */
 export const FOOTER_LINKS = [
-  { id: 'network', label: 'Network' },
-  { id: 'about', label: 'About' },
+  { id: 'process', label: 'Método' },
+  { id: 'network', label: 'Rede' },
+  { id: 'about', label: 'Sobre' },
 ] as const;
 
 /**
- * Indicadores da seção "One planet". São EXEMPLOS de interface, não estatísticas reais.
+ * Indicadores da seção "Um planeta". São EXEMPLOS de interface, não estatísticas reais.
  * Troque pelos números confirmados da empresa antes de publicar.
  */
 export const NETWORK_STATS: { demo: boolean; items: StatItem[] } = {

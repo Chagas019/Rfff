@@ -88,10 +88,10 @@ export function ContactSection() {
       <div className="container-x relative">
         <div className="grid gap-16 lg:grid-cols-[1.1fr_1fr]">
           <div>
-            <FadeUp className="eyebrow mb-6">Contact</FadeUp>
+            <FadeUp className="eyebrow mb-6">Contato</FadeUp>
             <MaskTitle
               id="contact-title"
-              lines={["Let's build", "what's next."]}
+              lines={['Vamos fazer', 'sua marca crescer.']}
               className="display text-[clamp(2.4rem,3.6vw,3.2rem)]"
               lineClassName={(i) => (i === 1 ? 'text-ink-mute' : 'text-ink')}
             />

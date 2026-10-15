@@ -22,7 +22,7 @@ Para testar o modo sem WebGL, abra `/?nowebgl`.
 - Cores: canvas `#100904` (walnut), texto `#ffedd7` (cream), superfície elevada `#382416` (bark), divisórias tracejadas `#40372e` (cork), estrutura `#6c5f51` (driftwood) e `#dc5000` (ember) só em destaques editoriais, nunca em botões.
 - Tipografia: Inter, caixa alta e peso 500 na interface; texto descritivo em caixa mista, peso 400, ~29px no desktop. Títulos com entrelinha 0.90, sem apertar o espaçamento.
 - Sem sombras desfocadas nem brilhos; raio 12px nos cards, pílula de 36px no CTA preenchido, 22,5px no botão contornado, campos só com linha inferior.
-- Navegação com no máximo quatro itens (Experience, Services, Explore, Contact); Network e About ficam no rodapé.
+- Navegação com no máximo quatro itens (Experiência, Serviços, Explorar, Contato); Método, Rede e Sobre ficam no rodapé. Todo o texto da interface está em português.
 - Hero com wordmark no canto superior esquerdo, rótulo vertical na borda direita e cartão de atribuição; capítulos em "void mode" (título à esquerda, globo ao centro, texto à direita).
 - Tokens em `tailwind.config.js` e `src/styles/index.css`.
 
@@ -34,9 +34,10 @@ React 18 + TypeScript, Vite 5, Tailwind CSS 3, Three.js 0.170, React Three Fiber
 
 | Seção | O que faz |
 |---|---|
+| Método | Etapas do trabalho (diagnóstico, estratégia, execução, otimização), canais e um glossário das métricas de marketing (CAC, ROAS, LTV, CTR, conversão). |
 | Abertura | Tela preta → linha luminosa → expansão → partículas → globo surge → atmosfera → título com máscara → textos → navegação. Espera as texturas (máx. 7 s), e qualquer clique, tecla, rolagem ou toque acelera. |
 | Hero + Experience | Globo fixo enquanto a narrativa rola por cima: muda de posição, distância e luz (dia → noite com luzes das cidades em âmbar → visão afastada). Título em duas camadas: "The world." na frente do globo e "Reimagined." atrás. |
-| Technology | Cards com perspectiva que segue o cursor, borda luminosa, texto revelado, onda ao clicar e visual animado próprio. No toque, um toque abre os detalhes. |
+| Serviços | Cards com perspectiva que segue o cursor, borda luminosa, texto revelado, onda ao clicar e visual animado próprio. No toque, um toque abre os detalhes. |
 | Network | Mapa-múndi pontilhado com arcos desenhados pela rolagem e partículas percorrendo as rotas. Clique em uma rota (distância, latência mínima teórica e capacidade) ou em uma cidade. Contadores animados. |
 | Explore | Seletor de continente, busca de cidades (sem acento), filtro por região, zoom, centralizar, rotação automática, tela cheia (quando o navegador permite), limpar e painel lateral. |
 | About / Contact | Princípios do estúdio e formulário validado. |
