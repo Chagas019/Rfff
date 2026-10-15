@@ -1,4 +1,5 @@
 import { clamp, damp, nearestAngle, rotationToFace } from './geo';
+import { rubberbandClamp } from './motion';
 
 export interface GlobeView {
   x: number;
@@ -9,6 +10,8 @@ export interface GlobeView {
 type Listener = () => void;
 
 const MAX_TILT = 1.25;
+/** Quanto (em radianos) o tilt pode "esticar" além do limite antes de travar. */
+const TILT_STRETCH = 0.6;
 
 /**
  * Estado de câmera/rotação do globo, independente de React e de Three.js.
@@ -28,6 +31,8 @@ export class GlobeController {
   private focused = false;
   private dragging = false;
   private lastDragTime = 0;
+  /** Tilt bruto do gesto, antes do rubber-banding. */
+  private rawTilt = 0;
   private hoverPause = false;
   private autoRotate: boolean;
   private readonly listeners = new Set<Listener>();
@@ -92,6 +97,7 @@ export class GlobeController {
     this.focused = false;
     this.velX = 0;
     this.velY = 0;
+    this.rawTilt = this.rotX;
     this.lastDragTime = performance.now();
   }
 
@@ -102,7 +108,9 @@ export class GlobeController {
     const dy = dxPx * k;
     const dx = dyPx * k;
     this.rotY += dy;
-    this.rotX = clamp(this.rotX + dx, -MAX_TILT, MAX_TILT);
+    // além do limite o globo resiste progressivamente, em vez de parar seco
+    this.rawTilt += dx;
+    this.rotX = rubberbandClamp(this.rawTilt, -MAX_TILT, MAX_TILT, TILT_STRETCH);
     const now = performance.now();
     const dt = Math.max(1, now - this.lastDragTime) / 1000;
     this.lastDragTime = now;
@@ -121,6 +129,11 @@ export class GlobeController {
     }
     this.velY = clamp(this.velY, -4, 4);
     this.velX = clamp(this.velX, -3, 3);
+    // soltou esticado: volta com mola a partir da posição atual
+    if (Math.abs(this.rotX) > MAX_TILT) {
+      this.velX = 0;
+      this.targetRot = { x: clamp(this.rotX, -MAX_TILT, MAX_TILT), y: this.rotY };
+    }
   }
 
   /** Giro por teclado (radianos). */
@@ -187,7 +200,9 @@ export class GlobeController {
       } else {
         // inércia
         this.rotY += this.velY * step;
-        this.rotX = clamp(this.rotX + this.velX * step, -MAX_TILT, MAX_TILT);
+        const nextX = this.rotX + this.velX * step;
+        if (Math.abs(nextX) > MAX_TILT) this.velX = 0;
+        this.rotX = clamp(nextX, -MAX_TILT, MAX_TILT);
         const decay = Math.exp(-3.2 * step);
         this.velY *= decay;
         this.velX *= decay;

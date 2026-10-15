@@ -227,3 +227,34 @@
   max-height: calc(100% - 140px);
   display: flex;
 }
+
+/* ---------- Princípios de interface da Apple ---------- */
+/* resposta imediata ao toque: o retorno acontece no pointer-down, sem esperar a transição */
+.btn:active,
+.icon-btn:active {
+  transition-duration: 90ms;
+}
+
+/* materiais: com transparência reduzida, o vidro vira superfície sólida */
+@media (prefers-reduced-transparency: reduce) {
+  .glass {
+    background: #101015;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+  header[data-intro='nav'] {
+    background: #030303 !important;
+    backdrop-filter: none !important;
+  }
+}
+
+/* alto contraste: fundos quase sólidos e bordas definidas */
+@media (prefers-contrast: more) {
+  .glass {
+    background: #0b0b0f;
+    border-color: rgba(255, 255, 255, 0.45);
+  }
+  .eyebrow {
+    color: #d4d4d8;
+  }
+}

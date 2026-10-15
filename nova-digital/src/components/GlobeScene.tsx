@@ -97,6 +97,12 @@ const RIM_AMBER = new THREE.Color('#ffb547');
 /* Controle por ponteiro: arrastar, pinça e roda do mouse              */
 /* ------------------------------------------------------------------ */
 
+/** Distância mínima (px) antes de um toque virar arraste. */
+const DRAG_SLOP = 6;
+
+/* ------------------------------------------------------------------ */
+/* ------------------------------------------------------------------ */
+
 function PointerControls({
   controller,
   allowZoom,
@@ -113,13 +119,16 @@ function PointerControls({
     const pointers = new Map<number, { x: number; y: number }>();
     let pinchStart = 0;
     let pinchZoom = controller.zoomTarget;
+    let dragStart: { x: number; y: number } | null = null;
+    let dragging = false;
 
     const onDown = (e: PointerEvent) => {
       if (e.pointerType === 'mouse' && e.button !== 0) return;
       pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
       if (pointers.size === 1) {
-        controller.beginDrag();
-        el.style.cursor = 'grabbing';
+        // só vira arraste depois de alguns pixels (histerese): toques e cliques não sacodem o globo
+        dragStart = { x: e.clientX, y: e.clientY };
+        dragging = false;
       } else if (pointers.size === 2 && allowZoom) {
         const [a, b] = [...pointers.values()];
         pinchStart = Math.hypot(a.x - b.x, a.y - b.y);
@@ -132,6 +141,12 @@ function PointerControls({
       const next = { x: e.clientX, y: e.clientY };
       pointers.set(e.pointerId, next);
       if (pointers.size === 1) {
+        if (!dragging) {
+          if (!dragStart || Math.hypot(next.x - dragStart.x, next.y - dragStart.y) < DRAG_SLOP) return;
+          dragging = true;
+          controller.beginDrag();
+          el.style.cursor = 'grabbing';
+        }
         controller.drag(next.x - prev.x, next.y - prev.y);
       } else if (pointers.size === 2 && allowZoom && pinchStart > 0) {
         const [a, b] = [...pointers.values()];
@@ -142,6 +157,8 @@ function PointerControls({
     const onUp = (e: PointerEvent) => {
       if (!pointers.delete(e.pointerId)) return;
       if (pointers.size === 0) {
+        dragging = false;
+        dragStart = null;
         controller.endDrag();
         el.style.cursor = '';
       }

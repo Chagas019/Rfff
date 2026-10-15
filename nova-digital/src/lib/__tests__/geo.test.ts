@@ -103,3 +103,34 @@ describe('fusos', () => {
     expect(formatTzDiff('Asia/Kolkata', 'Asia/Kolkata')).toBe('mesmo fuso');
   });
 });
+
+describe('física estilo Apple', () => {
+  it('project segue a fórmula de desaceleração da Apple', async () => {
+    const { project } = await import('../motion');
+    // 1000 px/s com 0.998 → 0.998 / 0.002 = 499 px
+    expect(project(1000)).toBeCloseTo(499, 5);
+    expect(project(0)).toBe(0);
+  });
+
+  it('rubberband resiste cada vez mais e nunca passa da dimensão', async () => {
+    const { rubberband, rubberbandClamp } = await import('../motion');
+    const a = rubberband(50, 100);
+    const b = rubberband(500, 100);
+    expect(a).toBeLessThan(50);
+    expect(b).toBeLessThan(100);
+    expect(b).toBeGreaterThan(a);
+    expect(rubberbandClamp(0.5, -1, 1, 0.6)).toBe(0.5);
+    expect(rubberbandClamp(1.5, -1, 1, 0.6)).toBeLessThan(1.5);
+  });
+
+  it('GlobeController estica o tilt além do limite e volta ao soltar', () => {
+    const c = new GlobeController({ x: 1.2, y: 0, distance: 3.2 }, { autoRotate: false });
+    c.beginDrag();
+    c.drag(0, 400);
+    expect(c.rotX).toBeGreaterThan(1.25);
+    expect(c.rotX).toBeLessThan(1.25 + 0.6);
+    c.endDrag();
+    for (let i = 0; i < 300; i++) c.update(1 / 60);
+    expect(c.rotX).toBeCloseTo(1.25, 3);
+  });
+});

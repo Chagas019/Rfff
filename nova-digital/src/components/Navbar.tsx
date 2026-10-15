@@ -3,6 +3,7 @@ import { ArrowUpRight, Menu, X } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { NAV_LINKS, SITE } from '../data/site';
 import { useActiveSection } from '../hooks/useActiveSection';
+import { SPRING } from '../lib/motion';
 
 // "explore" não tem link próprio: ao passar por ela, o link Network fica ativo
 const IDS = [...NAV_LINKS.map((l) => l.id), 'explore'];
@@ -162,7 +163,7 @@ export function Navbar() {
             initial={{ clipPath: 'inset(0 0 100% 0)' }}
             animate={{ clipPath: 'inset(0 0 0% 0)' }}
             exit={{ clipPath: 'inset(0 0 100% 0)' }}
-            transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+            transition={SPRING.ui}
             className="fixed inset-x-0 bottom-0 top-[var(--nav-h)] z-40 flex flex-col overflow-y-auto bg-void/95 backdrop-blur-xl lg:hidden"
           >
             <ul className="container-x flex flex-1 flex-col justify-center gap-1 py-8">

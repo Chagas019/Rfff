@@ -10,6 +10,7 @@ import { useInView } from '../hooks/useInView';
 import { useNetwork } from '../hooks/useNetwork';
 import { prefersReducedMotion } from '../hooks/useReducedMotion';
 import { rotationToFace } from '../lib/geo';
+import { tick } from '../lib/motion';
 import type { Quality } from '../lib/device';
 import { storyState } from '../lib/sceneState';
 import { CityPanel } from './CityPanel';
@@ -78,6 +79,11 @@ export function HeroSection({ quality, reduced, onGlobeReady }: HeroSectionProps
     };
   }, []);
 
+  // ao sair do hero, o painel fecha (ele fica numa camada fixa)
+  useEffect(() => {
+    if (!active) setSelectedId(null);
+  }, [active]);
+
   useEffect(() => {
     if (!toast) return;
     const id = window.setTimeout(() => setToast(null), 2600);
@@ -88,6 +94,7 @@ export function HeroSection({ quality, reduced, onGlobeReady }: HeroSectionProps
   const onSelectCity = useCallback(
     (city: City) => {
       setSelectedId(city.id);
+      tick(); // retorno tátil no mesmo instante da onda de luz
       setHover(null);
       controller.focus(city.lat, city.lon);
     },
@@ -170,9 +177,6 @@ export function HeroSection({ quality, reduced, onGlobeReady }: HeroSectionProps
           )}
         </AnimatePresence>
 
-        <div className="pointer-events-none absolute inset-x-0 bottom-0 z-40 flex justify-end p-4 sm:p-6 lg:p-10">
-          <CityPanel city={selected} onClose={closePanel} onSelect={onSelectCity} className="w-full max-w-sm sm:max-h-[min(70svh,560px)]" />
-        </div>
       </div>
 
       {/* conteúdo que rola por cima do palco */}
@@ -223,6 +227,10 @@ export function HeroSection({ quality, reduced, onGlobeReady }: HeroSectionProps
         <ExperienceChapters />
       </div>
 
+      {/* camada fixa acima do conteúdo: sheet no celular, cartão no canto superior direito em telas maiores */}
+      <div className="pointer-events-none fixed inset-x-0 bottom-0 z-[45] flex justify-end px-2 pb-[env(safe-area-inset-bottom,0px)] sm:inset-x-auto sm:bottom-auto sm:right-0 sm:top-[calc(var(--nav-h)+16px)] sm:px-6 lg:px-10">
+        <CityPanel city={selected} onClose={closePanel} onSelect={onSelectCity} className="w-full max-w-sm sm:max-h-[min(72svh,600px)]" />
+      </div>
       <CityTooltip hover={hover} />
     </div>
   );

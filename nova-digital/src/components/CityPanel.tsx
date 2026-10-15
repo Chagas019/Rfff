@@ -1,9 +1,12 @@
-import { AnimatePresence, motion } from 'framer-motion';
+import { AnimatePresence, motion, useDragControls, type PanInfo } from 'framer-motion';
 import { ArrowUpRight, Clock, MapPin, Radio, X } from 'lucide-react';
 import { useEffect, useRef, type ReactNode } from 'react';
 import { CONTINENTS, REGIONS } from '../data/site';
 import type { City } from '../data/types';
 import { useLocalTime } from '../hooks/useLocalTime';
+import { useMediaQuery } from '../hooks/useMediaQuery';
+import { useReducedMotion } from '../hooks/useReducedMotion';
+import { project, SPRING } from '../lib/motion';
 import { useNetwork } from '../hooks/useNetwork';
 import { greatCircleKm } from '../lib/geo';
 import { otherEnd, routesOf } from '../lib/network';
@@ -26,6 +29,31 @@ export function CityPanel({ city, onClose, onSelect, variant = 'floating', class
   const { routes, byId, demo } = useNetwork();
   const time = useLocalTime(city?.timezone);
   const closeRef = useRef<HTMLButtonElement>(null);
+  const reduced = useReducedMotion();
+  const narrow = useMediaQuery('(max-width: 639px)');
+  // no celular, o cartão do hero vira uma "sheet" que se fecha arrastando para baixo
+  const sheet = variant === 'floating' && narrow && !reduced;
+  const drag = useDragControls();
+  const sheetRef = useRef<HTMLElement>(null);
+
+  const onDragEnd = (_: unknown, info: PanInfo) => {
+    // decide pelo ponto onde o gesto VAI parar (projeção do impulso), não só por onde soltou
+    const h = sheetRef.current?.offsetHeight ?? 400;
+    const projected = info.offset.y + project(info.velocity.y);
+    if (info.offset.y > h * 0.3 || projected > h * 0.5) onClose();
+  };
+
+  const motionProps = reduced
+    ? { initial: { opacity: 0 }, animate: { opacity: 1 }, exit: { opacity: 0 }, transition: { duration: 0.2 } }
+    : sheet
+      ? { initial: { y: '110%' }, animate: { y: 0 }, exit: { y: '110%' }, transition: SPRING.sheet }
+      : {
+          // entra e sai pelo mesmo caminho; blur + posição juntos "materializam" o vidro
+          initial: { opacity: 0, x: variant === 'docked' ? 24 : 0, y: variant === 'floating' ? 16 : 0, filter: 'blur(6px)' },
+          animate: { opacity: 1, x: 0, y: 0, filter: 'blur(0px)' },
+          exit: { opacity: 0, x: variant === 'docked' ? 24 : 0, y: variant === 'floating' ? 16 : 0, filter: 'blur(6px)' },
+          transition: SPRING.ui,
+        };
 
   useEffect(() => {
     if (!city) return;
@@ -47,13 +75,31 @@ export function CityPanel({ city, onClose, onSelect, variant = 'floating', class
           key={city.id}
           aria-label={`Detalhes de ${city.name}`}
           aria-live="polite"
-          initial={{ opacity: 0, x: variant === 'docked' ? 24 : 0, y: variant === 'floating' ? 16 : 0, filter: 'blur(6px)' }}
-          animate={{ opacity: 1, x: 0, y: 0, filter: 'blur(0px)' }}
-          exit={{ opacity: 0, x: variant === 'docked' ? 16 : 0, y: variant === 'floating' ? 10 : 0, filter: 'blur(4px)' }}
-          transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
-          className={`glass pointer-events-auto flex max-h-full flex-col overflow-hidden rounded-2xl ${className}`}
+          ref={sheetRef}
+          {...motionProps}
+          drag={sheet ? 'y' : false}
+          dragControls={drag}
+          dragListener={false}
+          dragConstraints={{ top: 0, bottom: 0 }}
+          // para cima resiste (rubber-band); para baixo segue o dedo 1:1
+          dragElastic={{ top: 0.06, bottom: 1 }}
+          dragTransition={{ bounceStiffness: 420, bounceDamping: 34 }}
+          onDragEnd={sheet ? onDragEnd : undefined}
+          className={`glass pointer-events-auto flex max-h-full flex-col overflow-hidden rounded-2xl ${sheet ? 'max-h-[72svh] rounded-b-none' : ''} ${className}`}
         >
-          <header className="flex items-start justify-between gap-4 border-b border-white/[0.07] p-5">
+          {sheet && (
+            <div
+              className="flex cursor-grab touch-none justify-center pb-1 pt-3 active:cursor-grabbing"
+              onPointerDown={(e) => drag.start(e)}
+              aria-hidden
+            >
+              <span className="h-1.5 w-10 rounded-full bg-white/25" />
+            </div>
+          )}
+          <header
+            className={`flex items-start justify-between gap-4 border-b border-white/[0.07] p-5 ${sheet ? 'touch-none pt-2' : ''}`}
+            onPointerDown={sheet ? (e) => !(e.target as HTMLElement).closest('button') && drag.start(e) : undefined}
+          >
             <div className="min-w-0">
               <p className="eyebrow text-amber-glow">{city.role}</p>
               <h3 className="mt-2 truncate text-2xl font-light tracking-tight text-ink">{city.name}</h3>
@@ -76,7 +122,7 @@ export function CityPanel({ city, onClose, onSelect, variant = 'floating', class
               value={String(city.campaigns)}
               icon={<Radio className="h-3.5 w-3.5" aria-hidden />}
             />
-            <Stat label={demo ? 'Engajamento · demo' : 'Engajamento'} value={`${city.engagement.toLocaleString('pt-BR')}%`} />
+            <Stat label={demo ? 'Engajamento · demo' : 'Engajamento'} value={`${city.engagement.toLocaleString('pt-BR', { minimumFractionDigits: 1, maximumFractionDigits: 1 })}%`} />
           </div>
 
           <div className="min-h-0 flex-1 overflow-y-auto p-5">

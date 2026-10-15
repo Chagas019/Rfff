@@ -14,6 +14,7 @@ import { useInView } from '../hooks/useInView';
 import { useNetwork } from '../hooks/useNetwork';
 import type { Quality } from '../lib/device';
 import { foldText, rotationToFace } from '../lib/geo';
+import { tick } from '../lib/motion';
 
 const START = rotationToFace(20, -20);
 const CONTINENT_ORDER: ContinentId[] = ['north-america', 'south-america', 'europe', 'africa', 'asia', 'oceania', 'antarctica'];
@@ -64,6 +65,7 @@ export function ExploreWorld({ quality, reduced }: ExploreWorldProps) {
   const selectCity = useCallback(
     (city: City) => {
       setSelectedId(city.id);
+      tick(); // retorno tátil no mesmo instante da onda de luz
       setHover(null);
       controller.focus(city.lat, city.lon, 3.0);
     },
