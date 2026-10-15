@@ -1,116 +1,177 @@
-import { geoGraticule10, geoOrthographic, geoPath } from 'd3-geo';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { geoGraticule10, geoOrthographic, geoPath, type GeoProjection } from 'd3-geo';
+import { useEffect, useRef } from 'react';
 import type { City } from '../data/types';
 import { useCountries } from '../hooks/useCountries';
+import { useInView } from '../hooks/useInView';
 
 interface GlobeFallbackProps {
   cities: City[];
   selectedId: string | null;
-  reduced: boolean;
+  /** Mantido por compatibilidade: o globo vetorial já não tem rotação automática. */
+  reduced?: boolean;
   onSelectCity: (city: City) => void;
   /** Coordenada para centralizar (por exemplo, a cidade selecionada). */
   focus?: { lat: number; lon: number } | null;
 }
 
-const SIZE = 600;
+const COLORS = {
+  sphereFill: '#1a1009',
+  sphereStroke: '#40372e',
+  graticule: 'rgba(255, 237, 215, 0.05)',
+  land: '#3a2a1c',
+  border: 'rgba(255, 237, 215, 0.22)',
+  city: '#ffedd7',
+  selected: '#dc5000',
+};
 
 /**
- * Alternativa sem WebGL: globo vetorial (SVG, projeção ortográfica) que também gira ao arrastar
- * e permite selecionar cidades. Garante que o conteúdo continue acessível em qualquer navegador.
+ * Alternativa sem WebGL: globo vetorial desenhado em canvas 2D (projeção ortográfica).
+ * Pode ser arrastado e permite escolher cidades. É leve de propósito: este modo
+ * aparece justamente em aparelhos e navegadores mais limitados.
  */
-export function GlobeFallback({ cities, selectedId, reduced, onSelectCity, focus }: GlobeFallbackProps) {
+export function GlobeFallback({ cities, selectedId, onSelectCity, focus }: GlobeFallbackProps) {
   const countries = useCountries();
-  const [rotation, setRotation] = useState<[number, number]>([40, -18]);
-  const drag = useRef<{ x: number; y: number } | null>(null);
+  const box = useRef<HTMLDivElement>(null);
+  const canvas = useRef<HTMLCanvasElement>(null);
+  const visible = useInView(box, '100px');
+  const rotation = useRef<[number, number]>([40, -18]);
+  const drag = useRef<{ x: number; y: number; moved: number } | null>(null);
+  const projRef = useRef<GeoProjection | null>(null);
+  const dirty = useRef(true);
 
   useEffect(() => {
-    if (focus) setRotation([-focus.lon, -focus.lat]);
+    if (focus) {
+      rotation.current = [-focus.lon, -focus.lat];
+      dirty.current = true;
+    }
   }, [focus]);
 
   useEffect(() => {
-    if (reduced) return;
+    const el = canvas.current;
+    const wrap = box.current;
+    if (!el || !wrap || !visible) return;
+    const ctx = el.getContext('2d');
+    if (!ctx) return;
+    const graticule = geoGraticule10();
     let raf = 0;
-    let last = performance.now();
-    const tick = (now: number) => {
-      const dt = (now - last) / 1000;
-      last = now;
-      if (!drag.current) setRotation(([l, p]) => [l + dt * 4, p]);
-      raf = requestAnimationFrame(tick);
+
+    const draw = () => {
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      const size = Math.max(120, Math.min(wrap.clientWidth * 0.9, wrap.clientHeight * 0.9, 560));
+      if (el.width !== Math.round(size * dpr)) {
+        el.width = Math.round(size * dpr);
+        el.height = Math.round(size * dpr);
+        el.style.width = `${size}px`;
+        el.style.height = `${size}px`;
+      }
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      ctx.clearRect(0, 0, size, size);
+      const projection = geoOrthographic()
+        .scale(size / 2 - 4)
+        .translate([size / 2, size / 2])
+        .rotate(rotation.current)
+        .clipAngle(90);
+      projRef.current = projection;
+      const path = geoPath(projection, ctx);
+
+      ctx.beginPath();
+      path({ type: 'Sphere' });
+      ctx.fillStyle = COLORS.sphereFill;
+      ctx.fill();
+      ctx.strokeStyle = COLORS.sphereStroke;
+      ctx.lineWidth = 1;
+      ctx.stroke();
+
+      ctx.beginPath();
+      path(graticule);
+      ctx.strokeStyle = COLORS.graticule;
+      ctx.stroke();
+
+      if (countries) {
+        ctx.beginPath();
+        for (const c of countries) path(c);
+        ctx.fillStyle = COLORS.land;
+        ctx.fill();
+        ctx.strokeStyle = COLORS.border;
+        ctx.lineWidth = 0.5;
+        ctx.stroke();
+      }
+
+      const visibility = geoPath(projection);
+      for (const c of cities) {
+        // só desenha cidades do lado visível
+        if (!visibility({ type: 'Point', coordinates: [c.lon, c.lat] })) continue;
+        const p = projection([c.lon, c.lat]);
+        if (!p) continue;
+        const sel = c.id === selectedId;
+        ctx.beginPath();
+        ctx.arc(p[0], p[1], sel ? 5 : 3, 0, Math.PI * 2);
+        ctx.fillStyle = sel ? COLORS.selected : COLORS.city;
+        ctx.fill();
+      }
+      dirty.current = false;
     };
+
+    // Sem rotação automática: aparelhos sem WebGL costumam desenhar a página em software,
+    // e redesenhar o globo continuamente travaria a rolagem. Ele só redesenha ao ser arrastado.
+    const tick = () => {
+      raf = requestAnimationFrame(tick);
+      if (dirty.current) draw();
+    };
+    draw();
     raf = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(raf);
-  }, [reduced]);
+  }, [visible, countries, cities, selectedId]);
 
-  const projection = useMemo(
-    () =>
-      geoOrthographic()
-        .scale(SIZE / 2 - 8)
-        .translate([SIZE / 2, SIZE / 2])
-        .rotate(rotation)
-        .clipAngle(90),
-    [rotation],
-  );
-  const path = useMemo(() => geoPath(projection), [projection]);
-  const graticule = useMemo(() => geoGraticule10(), []);
+  const pickCity = (clientX: number, clientY: number) => {
+    const el = canvas.current;
+    const projection = projRef.current;
+    if (!el || !projection) return;
+    const r = el.getBoundingClientRect();
+    const x = clientX - r.left;
+    const y = clientY - r.top;
+    const visibility = geoPath(projection);
+    let best: { city: City; d: number } | null = null;
+    for (const c of cities) {
+      if (!visibility({ type: 'Point', coordinates: [c.lon, c.lat] })) continue;
+      const p = projection([c.lon, c.lat]);
+      if (!p) continue;
+      const d = Math.hypot(p[0] - x, p[1] - y);
+      if (d < 18 && (!best || d < best.d)) best = { city: c, d };
+    }
+    if (best) onSelectCity(best.city);
+  };
 
   return (
-    <div className="absolute inset-0 grid place-items-center" role="img" aria-label="Globo ilustrado (modo sem WebGL)">
-      <svg
-        viewBox={`0 0 ${SIZE} ${SIZE}`}
-        className="h-auto max-h-full w-[min(90%,560px)] cursor-grab touch-pan-y active:cursor-grabbing"
+    <div ref={box} className="absolute inset-0 grid place-items-center">
+      <canvas
+        ref={canvas}
+        role="img"
+        aria-label="Globo ilustrado (modo sem WebGL)"
+        className="max-h-full max-w-full cursor-grab touch-pan-y active:cursor-grabbing"
         onPointerDown={(e) => {
-          drag.current = { x: e.clientX, y: e.clientY };
-          (e.currentTarget as Element).setPointerCapture(e.pointerId);
+          drag.current = { x: e.clientX, y: e.clientY, moved: 0 };
+          e.currentTarget.setPointerCapture(e.pointerId);
         }}
         onPointerMove={(e) => {
-          if (!drag.current) return;
-          const dx = e.clientX - drag.current.x;
-          const dy = e.clientY - drag.current.y;
-          drag.current = { x: e.clientX, y: e.clientY };
-          setRotation(([l, p]) => [l + dx * 0.4, Math.max(-80, Math.min(80, p - dy * 0.4))]);
+          const d = drag.current;
+          if (!d) return;
+          const dx = e.clientX - d.x;
+          const dy = e.clientY - d.y;
+          d.x = e.clientX;
+          d.y = e.clientY;
+          d.moved += Math.abs(dx) + Math.abs(dy);
+          const [l, p] = rotation.current;
+          rotation.current = [l + dx * 0.4, Math.max(-80, Math.min(80, p - dy * 0.4))];
+          dirty.current = true;
         }}
-        onPointerUp={() => (drag.current = null)}
+        onPointerUp={(e) => {
+          const d = drag.current;
+          drag.current = null;
+          if (d && d.moved < 6) pickCity(e.clientX, e.clientY);
+        }}
         onPointerCancel={() => (drag.current = null)}
-      >
-        <defs>
-          <radialGradient id="fb-sphere" cx="38%" cy="32%" r="75%">
-            <stop offset="0%" stopColor="#0f1d3d" />
-            <stop offset="100%" stopColor="#030303" />
-          </radialGradient>
-          <radialGradient id="fb-glow" r="50%">
-            <stop offset="80%" stopColor="#3d7bff" stopOpacity="0.35" />
-            <stop offset="100%" stopColor="#3d7bff" stopOpacity="0" />
-          </radialGradient>
-        </defs>
-        <circle cx={SIZE / 2} cy={SIZE / 2} r={SIZE / 2} fill="url(#fb-glow)" />
-        <path d={path({ type: 'Sphere' }) ?? ''} fill="url(#fb-sphere)" stroke="#3d7bff" strokeOpacity="0.5" />
-        <path d={path(graticule) ?? ''} fill="none" stroke="#ffffff" strokeOpacity="0.06" />
-        {countries?.map((c, i) => (
-          <path key={i} d={path(c) ?? ''} fill="#1c2a4a" stroke="#5b8fff" strokeOpacity="0.35" strokeWidth="0.6" />
-        ))}
-        {cities.map((c) => {
-          const visible = path({ type: 'Point', coordinates: [c.lon, c.lat] });
-          const p = projection([c.lon, c.lat]);
-          if (!visible || !p) return null;
-          const sel = c.id === selectedId;
-          return (
-            <g key={c.id} transform={`translate(${p[0]},${p[1]})`}>
-              <circle r={sel ? 7 : 4} fill={sel ? '#ffb547' : '#8fb4ff'} />
-              <circle
-                r={14}
-                fill="transparent"
-                className="cursor-pointer"
-                role="button"
-                tabIndex={-1}
-                aria-label={c.name}
-                onClick={() => onSelectCity(c)}
-              >
-                <title>{`${c.name}, ${c.country}`}</title>
-              </circle>
-            </g>
-          );
-        })}
-      </svg>
+      />
     </div>
   );
 }

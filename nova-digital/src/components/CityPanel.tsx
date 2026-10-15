@@ -85,7 +85,7 @@ export function CityPanel({ city, onClose, onSelect, variant = 'floating', class
           dragElastic={{ top: 0.06, bottom: 1 }}
           dragTransition={{ bounceStiffness: 420, bounceDamping: 34 }}
           onDragEnd={sheet ? onDragEnd : undefined}
-          className={`glass pointer-events-auto flex max-h-full flex-col overflow-hidden rounded-2xl ${sheet ? 'max-h-[72svh] rounded-b-none' : ''} ${className}`}
+          className={`glass pointer-events-auto flex max-h-full flex-col overflow-hidden rounded-card ${sheet ? 'max-h-[72svh] rounded-b-none' : ''} ${className}`}
         >
           {sheet && (
             <div
@@ -93,16 +93,16 @@ export function CityPanel({ city, onClose, onSelect, variant = 'floating', class
               onPointerDown={(e) => drag.start(e)}
               aria-hidden
             >
-              <span className="h-1.5 w-10 rounded-full bg-white/25" />
+              <span className="h-1.5 w-10 rounded-full bg-driftwood" />
             </div>
           )}
           <header
-            className={`flex items-start justify-between gap-4 border-b border-white/[0.07] p-5 ${sheet ? 'touch-none pt-2' : ''}`}
+            className={`flex items-start justify-between gap-4 border-b border-cork p-5 ${sheet ? 'touch-none pt-2' : ''}`}
             onPointerDown={sheet ? (e) => !(e.target as HTMLElement).closest('button') && drag.start(e) : undefined}
           >
             <div className="min-w-0">
               <p className="eyebrow text-amber-glow">{city.role}</p>
-              <h3 className="mt-2 truncate text-2xl font-light tracking-tight text-ink">{city.name}</h3>
+              <h3 className="mt-2 truncate text-2xl font-medium text-ink">{city.name}</h3>
               <p className="mt-1 flex items-center gap-1.5 text-sm text-ink-soft">
                 <MapPin className="h-3.5 w-3.5" aria-hidden /> {city.country} · {CONTINENTS[city.continent].label}
               </p>
@@ -112,7 +112,7 @@ export function CityPanel({ city, onClose, onSelect, variant = 'floating', class
             </button>
           </header>
 
-          <div className="grid grid-cols-2 gap-px bg-white/[0.06]">
+          <div className="grid grid-cols-2 gap-px bg-cork">
             <Stat label="Hora local" value={time || '—'} icon={<Clock className="h-3.5 w-3.5" aria-hidden />} />
             <Stat label="Região" value={REGIONS[city.region].split(',')[0]} />
             <Stat label="Latitude" value={formatCoord(city.lat, 'N', 'S')} />
@@ -136,16 +136,16 @@ export function CityPanel({ city, onClose, onSelect, variant = 'floating', class
                     <button
                       type="button"
                       onClick={() => onSelect(to)}
-                      className="group flex w-full items-center justify-between gap-3 rounded-lg px-3 py-2.5 text-left transition-colors hover:bg-white/[0.05] focus-visible:bg-white/[0.05]"
+                      className="group flex w-full items-center justify-between gap-3 rounded-lg px-3 py-2.5 text-left transition-colors hover:bg-cork focus-visible:bg-cork"
                     >
                       <span className="min-w-0">
                         <span className="block truncate text-sm text-ink">{to.name}</span>
-                        <span className="block truncate font-mono text-[10px] uppercase tracking-[0.14em] text-ink-mute">
+                        <span className="block truncate font-mono text-[10px] uppercase text-ink-mute">
                           {route.label} · {Math.round(greatCircleKm(city, to)).toLocaleString('pt-BR')} km
                         </span>
                       </span>
                       <ArrowUpRight
-                        className="h-4 w-4 shrink-0 text-ink-mute transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-amber-glow"
+                        className="h-4 w-4 shrink-0 text-ink-mute transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-ink"
                         aria-hidden
                       />
                     </button>
@@ -154,7 +154,7 @@ export function CityPanel({ city, onClose, onSelect, variant = 'floating', class
               </ul>
             )}
             {demo && (
-              <p className="mt-5 border-t border-white/[0.06] pt-4 text-[11px] leading-relaxed text-ink-mute">
+              <p className="mt-5 border-t border-cork pt-4 text-[11px] leading-relaxed text-ink-mute">
                 Coordenadas e hora local são reais. Papel, campanhas, engajamento e rotas são dados de demonstração.
               </p>
             )}
@@ -168,7 +168,7 @@ export function CityPanel({ city, onClose, onSelect, variant = 'floating', class
 function Stat({ label, value, icon }: { label: string; value: string; icon?: ReactNode }) {
   return (
     <div className="bg-void-900/90 px-5 py-3.5">
-      <p className="flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.16em] text-ink-mute">
+      <p className="flex items-center gap-1.5 font-mono text-[10px] uppercase text-ink-mute">
         {icon}
         {label}
       </p>

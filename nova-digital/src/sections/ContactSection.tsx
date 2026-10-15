@@ -3,7 +3,7 @@ import { ArrowUp, ArrowUpRight, Check, Loader2, Mail } from 'lucide-react';
 import { useState, type FormEvent } from 'react';
 import { Logo } from '../components/Navbar';
 import { FadeUp, MaskTitle } from '../components/Reveal';
-import { NAV_LINKS, SITE } from '../data/site';
+import { FOOTER_LINKS, NAV_LINKS, SITE } from '../data/site';
 
 type Status = 'idle' | 'sending' | 'sent' | 'mailto' | 'error';
 
@@ -92,22 +92,22 @@ export function ContactSection() {
             <MaskTitle
               id="contact-title"
               lines={["Let's build", "what's next."]}
-              className="display text-[clamp(3rem,9vw,8.5rem)] uppercase"
+              className="display text-[clamp(2.4rem,3.6vw,3.2rem)]"
               lineClassName={(i) => (i === 1 ? 'text-ink-mute' : 'text-ink')}
             />
             <FadeUp delay={0.1}>
-              <p className="mt-8 max-w-md text-lg leading-relaxed text-ink-soft">
+              <p className="mt-8 max-w-md text-lg font-normal leading-[1.4] text-ink-soft">
                 Conte seu objetivo de marketing. Respondemos com um diagnóstico inicial, perguntas certas e um plano possível.
               </p>
               <a href={`mailto:${SITE.contactEmail}`} className="group mt-8 inline-flex items-center gap-3 text-lg text-ink">
                 <Mail className="h-5 w-5 text-ink-mute" aria-hidden />
-                <span className="border-b border-white/20 pb-0.5 transition-colors group-hover:border-amber-glow">{SITE.contactEmail}</span>
+                <span className="border-b border-cork pb-0.5 transition-colors group-hover:border-ink">{SITE.contactEmail}</span>
               </a>
             </FadeUp>
           </div>
 
           <FadeUp>
-            <form onSubmit={submit} noValidate className="glass rounded-3xl p-6 sm:p-8" aria-describedby="contact-status">
+            <form onSubmit={submit} noValidate className="surface-outline p-6 sm:p-8" aria-describedby="contact-status">
               <div className="grid gap-4 sm:grid-cols-2">
                 <div>
                   <label htmlFor="contact-name" className="eyebrow mb-2 block">
@@ -194,7 +194,7 @@ export function ContactSection() {
                           <Check className="mt-0.5 h-4 w-4 text-amber-glow" aria-hidden />
                           <span>
                             Abrimos seu aplicativo de e-mail com a mensagem pronta. Se nada abriu,{' '}
-                            <a className="underline decoration-white/30 underline-offset-4 hover:text-ink" href={mailtoHref(form)}>
+                            <a className="underline decoration-ink/40 underline-offset-4 hover:text-ink" href={mailtoHref(form)}>
                               clique aqui
                             </a>
                             .
@@ -204,7 +204,7 @@ export function ContactSection() {
                       {status === 'error' && (
                         <span>
                           Não foi possível enviar agora.{' '}
-                          <a className="underline decoration-white/30 underline-offset-4 hover:text-ink" href={mailtoHref(form)}>
+                          <a className="underline decoration-ink/40 underline-offset-4 hover:text-ink" href={mailtoHref(form)}>
                             Envie por e-mail
                           </a>
                           .
@@ -226,30 +226,25 @@ export function ContactSection() {
 
 function Footer() {
   return (
-    <footer className="relative mt-28 border-t border-white/[0.06]">
+    <footer className="relative mt-28 border-t border-cork">
       <div className="container-x">
         <p
-          className="select-none py-10 text-center text-[clamp(3.5rem,17vw,17rem)] font-extralight uppercase leading-none tracking-tightest text-white/[0.04]"
+          className="select-none py-10 text-center text-[clamp(3.5rem,17vw,17rem)] font-medium uppercase leading-none text-ink/[0.05]"
           aria-hidden
         >
           Nova / Digital
         </p>
-        <div className="flex flex-col gap-8 border-t border-white/[0.06] py-10 md:flex-row md:items-center md:justify-between">
+        <div className="flex flex-col gap-8 border-t border-cork py-10 md:flex-row md:items-center md:justify-between">
           <Logo />
           <nav aria-label="Rodapé">
             <ul className="flex flex-wrap gap-x-6 gap-y-3 text-sm text-ink-mute">
-              {NAV_LINKS.map((l) => (
+              {[...NAV_LINKS, ...FOOTER_LINKS].map((l) => (
                 <li key={l.id}>
                   <a href={`#${l.id}`} className="transition-colors hover:text-ink">
                     {l.label}
                   </a>
                 </li>
               ))}
-              <li>
-                <a href="#explore" className="transition-colors hover:text-ink">
-                  Explore
-                </a>
-              </li>
             </ul>
           </nav>
           <a href="#home" className="btn-ghost min-h-[44px] self-start px-5 md:self-auto">

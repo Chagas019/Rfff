@@ -122,7 +122,7 @@ export function LoadingScreen({ ready, onDone }: LoadingScreenProps) {
     >
       <div
         ref={line}
-        className="absolute left-0 right-0 top-1/2 h-px origin-center bg-gradient-to-r from-transparent via-white to-transparent shadow-[0_0_24px_2px_rgba(143,180,255,0.6)]"
+        className="absolute left-0 right-0 top-1/2 h-px origin-center bg-gradient-to-r from-transparent via-ink to-transparent"
         aria-hidden
       />
       <p ref={label} className="eyebrow absolute top-[calc(50%+22px)] opacity-0">

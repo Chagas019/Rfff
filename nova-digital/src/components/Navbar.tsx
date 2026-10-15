@@ -5,20 +5,19 @@ import { NAV_LINKS, SITE } from '../data/site';
 import { useActiveSection } from '../hooks/useActiveSection';
 import { SPRING } from '../lib/motion';
 
-// "explore" não tem link próprio: ao passar por ela, o link Network fica ativo
-const IDS = [...NAV_LINKS.map((l) => l.id), 'explore'];
+const IDS = ['home', ...NAV_LINKS.map((l) => l.id)];
 
 export function Logo({ className = '' }: { className?: string }) {
   return (
     <a
       href="#home"
-      className={`group inline-flex items-center gap-2.5 text-[13px] font-medium tracking-[0.28em] ${className}`}
+      className={`group inline-flex items-center gap-2.5 text-[13px] font-medium ${className}`}
       aria-label={`${SITE.brand.first} ${SITE.brand.second}, voltar ao início`}
     >
       <span className="relative grid h-7 w-7 place-items-center" aria-hidden>
-        <span className="absolute inset-0 rounded-full border border-white/25 transition-transform duration-700 ease-expo group-hover:rotate-180" />
-        <span className="absolute inset-[6px] rounded-full border border-volt-400/70" />
-        <span className="h-1.5 w-1.5 rounded-full bg-amber-glow shadow-[0_0_10px_#ffb547]" />
+        <span className="absolute inset-0 rounded-full border border-cork transition-transform duration-700 ease-expo group-hover:rotate-180" />
+        <span className="absolute inset-[6px] rounded-full border border-driftwood" />
+        <span className="h-1.5 w-1.5 rounded-full bg-ember" />
       </span>
       <span>
         {SITE.brand.first}
@@ -47,8 +46,7 @@ function RollLink({ label }: { label: string }) {
 export function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
-  const section = useActiveSection(IDS);
-  const active = section === 'explore' ? 'network' : section;
+  const active = useActiveSection(IDS);
   const menuButton = useRef<HTMLButtonElement>(null);
   const panel = useRef<HTMLDivElement>(null);
 
@@ -101,7 +99,7 @@ export function Navbar() {
       <header
         data-intro="nav"
         className={`fixed inset-x-0 top-0 z-50 transition-[background-color,border-color,backdrop-filter] duration-500 ${
-          scrolled || open ? 'border-b border-white/[0.06] bg-void/70 backdrop-blur-xl' : 'border-b border-transparent'
+          scrolled || open ? 'border-b border-cork bg-void/70' : 'border-b border-transparent'
         }`}
       >
         <nav className="container-x flex h-[var(--nav-h)] items-center justify-between gap-6" aria-label="Navegação principal">
@@ -115,13 +113,13 @@ export function Navbar() {
                   <a
                     href={`#${link.id}`}
                     aria-current={isActive ? 'true' : undefined}
-                    className={`group relative block rounded-full px-4 py-2 text-[13px] transition-colors ${isActive ? 'text-ink' : 'text-ink-mute hover:text-ink'}`}
+                    className={`group relative block rounded-full px-4 py-2 text-[13px] uppercase transition-colors ${isActive ? 'text-ink' : 'text-ink-mute hover:text-ink'}`}
                   >
                     <RollLink label={link.label} />
                     {isActive && (
                       <motion.span
                         layoutId="nav-indicator"
-                        className="absolute inset-x-4 -bottom-0.5 mx-auto h-px bg-gradient-to-r from-transparent via-amber-glow to-transparent"
+                        className="absolute inset-x-4 -bottom-0.5 mx-auto border-b border-dashed border-ink"
                         transition={{ type: 'spring', stiffness: 380, damping: 34 }}
                       />
                     )}
@@ -132,10 +130,6 @@ export function Navbar() {
           </ul>
 
           <div className="flex items-center gap-2">
-            <a href="#explore" className="btn-primary hidden min-h-[42px] px-5 text-[11px] sm:inline-flex">
-              Explore the world
-              <ArrowUpRight className="h-3.5 w-3.5" aria-hidden />
-            </a>
             <button
               ref={menuButton}
               type="button"
@@ -164,7 +158,7 @@ export function Navbar() {
             animate={{ clipPath: 'inset(0 0 0% 0)' }}
             exit={{ clipPath: 'inset(0 0 100% 0)' }}
             transition={SPRING.ui}
-            className="fixed inset-x-0 bottom-0 top-[var(--nav-h)] z-40 flex flex-col overflow-y-auto bg-void/95 backdrop-blur-xl lg:hidden"
+            className="fixed inset-x-0 bottom-0 top-[var(--nav-h)] z-40 flex flex-col overflow-y-auto bg-void/95 lg:hidden"
           >
             <ul className="container-x flex flex-1 flex-col justify-center gap-1 py-8">
               {NAV_LINKS.map((link, i) => (
@@ -178,7 +172,7 @@ export function Navbar() {
                     href={`#${link.id}`}
                     onClick={() => setOpen(false)}
                     aria-current={active === link.id ? 'true' : undefined}
-                    className="flex items-baseline justify-between border-b border-white/[0.06] py-4 text-[clamp(2rem,9vw,3.25rem)] font-light tracking-tight text-ink-soft transition-colors hover:text-ink aria-[current=true]:text-ink"
+                    className="flex items-baseline justify-between border-b border-cork py-4 text-[clamp(2rem,9vw,3.2rem)] font-medium uppercase leading-[0.9] text-ink-soft transition-colors hover:text-ink aria-[current=true]:text-ink"
                   >
                     {link.label}
                     <span className="font-mono text-xs text-ink-mute">0{i + 1}</span>

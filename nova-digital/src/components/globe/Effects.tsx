@@ -110,8 +110,8 @@ export function ContinentHighlight({
           uProgress: { value: 0 },
           uOpacity: { value: 0 },
           uTime: { value: 0 },
-          uColorA: { value: new THREE.Color('#3d7bff') },
-          uColorB: { value: new THREE.Color('#ffd08a') },
+          uColorA: { value: new THREE.Color('#b8743c') },
+          uColorB: { value: new THREE.Color('#ffcf9e') },
         },
         transparent: true,
         depthWrite: false,
@@ -227,7 +227,7 @@ export function OrbitRings({ reduced, intensity }: { reduced: boolean; intensity
             <ringGeometry args={[1.418, 1.422, 160]} />
             <meshBasicMaterial
               ref={ringMat}
-              color="#8fb4ff"
+              color="#ffedd7"
               transparent
               opacity={0.22}
               side={THREE.DoubleSide}
@@ -237,13 +237,13 @@ export function OrbitRings({ reduced, intensity }: { reduced: boolean; intensity
           </mesh>
           <mesh ref={sat} raycast={() => null}>
             <sphereGeometry args={[0.012, 12, 12]} />
-            <meshBasicMaterial color="#ffb547" toneMapped={false} />
+            <meshBasicMaterial color="#f07a2c" toneMapped={false} />
           </mesh>
         </group>
       </group>
       <group rotation={[1.9, -0.55, 0.35]}>
         <group ref={b}>
-          <DottedRing radius={1.72} count={220} color="#a1a1aa" opacity={0.35} />
+          <DottedRing radius={1.72} count={220} color="#6c5f51" opacity={0.35} />
         </group>
       </group>
     </group>
@@ -259,9 +259,9 @@ export function Particles({ count, reduced, opacity }: { count: number; reduced:
     const pos = new Float32Array(count * 3);
     const seed = new Float32Array(count);
     const col = new Float32Array(count * 3);
-    const blue = new THREE.Color('#9db9ff');
+    const blue = new THREE.Color('#e9d3b8');
     const white = new THREE.Color('#ffffff');
-    const amber = new THREE.Color('#ffb547');
+    const amber = new THREE.Color('#f07a2c');
     for (let i = 0; i < count; i++) {
       // casca esférica ao redor do planeta
       const r = 1.35 + Math.pow(Math.random(), 1.6) * 3.4;

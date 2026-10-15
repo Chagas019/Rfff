@@ -17,14 +17,14 @@ export function CityTooltip({ hover }: Props) {
           animate={{ opacity: 1, y: 0, scale: 1 }}
           exit={{ opacity: 0, y: 4 }}
           transition={{ duration: 0.18 }}
-          className="pointer-events-none fixed z-[60] -translate-x-1/2 rounded-xl border border-white/10 bg-void-800/85 px-3.5 py-2.5 shadow-[0_18px_40px_-12px_rgba(0,0,0,0.9)] backdrop-blur-md"
+          className="pointer-events-none fixed z-[60] -translate-x-1/2 rounded-xl border border-cork bg-void-800/85 px-3.5 py-2.5"
           style={{ left: hover.x, top: hover.y - 74 }}
         >
           <div className="flex items-center gap-2">
-            <span className="h-1.5 w-1.5 rounded-full bg-amber-glow shadow-[0_0_10px_#ffb547]" />
+            <span className="h-1.5 w-1.5 rounded-full bg-amber-glow" />
             <span className="text-sm font-medium text-ink">{hover.city.name}</span>
           </div>
-          <div className="mt-0.5 font-mono text-[10px] uppercase tracking-[0.18em] text-ink-mute">
+          <div className="mt-0.5 font-mono text-[10px] uppercase text-ink-mute">
             {hover.city.country} · clique para detalhes
           </div>
         </motion.div>

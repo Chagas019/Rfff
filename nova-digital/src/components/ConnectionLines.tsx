@@ -15,8 +15,8 @@ export interface ArcSpec {
 }
 
 const COLORS = {
-  ambient: new THREE.Color('#7fa8ff'),
-  active: new THREE.Color('#ffb547'),
+  ambient: new THREE.Color('#e9d3b8'),
+  active: new THREE.Color('#f07a2c'),
 };
 
 const AMBIENT_PERIOD = 7.5;
@@ -116,7 +116,7 @@ function Arc({ spec, quality, reduced, drawScale, onArrive }: ArcProps) {
       <mesh ref={particle} visible={false} raycast={() => null}>
         <sphereGeometry args={[variant === 'active' ? 0.009 : 0.006, 10, 10]} />
         <meshBasicMaterial
-          color={variant === 'active' ? '#ffe2b0' : '#dbe7ff'}
+          color={variant === 'active' ? '#fff1dd' : '#ffedd7'}
           toneMapped={false}
           transparent
           blending={THREE.AdditiveBlending}

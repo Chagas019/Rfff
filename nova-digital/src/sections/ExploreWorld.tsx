@@ -140,12 +140,12 @@ export function ExploreWorld({ quality, reduced }: ExploreWorldProps) {
             <MaskTitle
               id="explore-title"
               lines={['Explore', 'the planet.']}
-              className="display text-[clamp(3rem,9vw,8.5rem)] uppercase"
+              className="display text-[clamp(2.4rem,3.6vw,3.2rem)]"
               lineClassName={(i) => (i === 1 ? 'text-ink-mute' : 'text-ink')}
             />
           </div>
           <FadeUp delay={0.1}>
-            <p className="max-w-md text-lg leading-relaxed text-ink-soft lg:ml-auto">
+            <p className="max-w-md text-lg font-normal leading-[1.4] text-ink-soft lg:ml-auto">
               Descubra onde sua marca pode crescer. Escolha um continente, busque uma cidade ou filtre por região: a câmera viaja até o
               mercado e o painel mostra hora local, campanhas, engajamento e conexões.
             </p>
@@ -155,7 +155,7 @@ export function ExploreWorld({ quality, reduced }: ExploreWorldProps) {
         <div className="mt-14 grid grid-cols-[minmax(0,1fr)] gap-4 lg:grid-cols-[320px_minmax(0,1fr)]">
           {/* ---------- ferramentas ---------- */}
           <aside
-            className="glass flex min-w-0 flex-col gap-5 rounded-3xl p-5 lg:max-h-[min(82svh,780px)]"
+            className="surface-outline flex min-w-0 flex-col gap-5 rounded-card p-5 lg:max-h-[min(82svh,780px)]"
             aria-label="Ferramentas de exploração"
           >
             <div>
@@ -193,8 +193,8 @@ export function ExploreWorld({ quality, reduced }: ExploreWorldProps) {
                       onClick={() => selectContinent(on ? null : id)}
                       className={`min-h-[40px] whitespace-nowrap rounded-full border px-3.5 text-xs transition-colors ${
                         on
-                          ? 'border-volt-400/70 bg-volt-500/15 text-ink'
-                          : 'border-white/10 text-ink-soft hover:border-white/30 hover:text-ink'
+                          ? 'border-ink bg-bark text-ink'
+                          : 'border-cork text-ink-soft hover:border-ink hover:text-ink'
                       }`}
                     >
                       {CONTINENTS[id].label}
@@ -227,7 +227,7 @@ export function ExploreWorld({ quality, reduced }: ExploreWorldProps) {
                   <button
                     type="button"
                     onClick={clearAll}
-                    className="flex min-h-[32px] items-center gap-1 rounded-full px-2 font-mono text-[10px] uppercase tracking-[0.16em] text-ink-mute hover:text-ink"
+                    className="flex min-h-[32px] items-center gap-1 rounded-full px-2 font-mono text-[10px] uppercase text-ink-mute hover:text-ink"
                   >
                     <X className="h-3 w-3" aria-hidden /> Limpar
                   </button>
@@ -248,11 +248,11 @@ export function ExploreWorld({ quality, reduced }: ExploreWorldProps) {
                         onClick={() => selectCity(c)}
                         aria-current={on ? 'true' : undefined}
                         className={`flex min-h-[44px] w-full items-center justify-between gap-3 rounded-xl px-3 py-2 text-left transition-colors ${
-                          on ? 'bg-amber-glow/10 text-ink' : 'text-ink-soft hover:bg-white/[0.05] hover:text-ink'
+                          on ? 'bg-bark text-ink' : 'text-ink-soft hover:bg-cork hover:text-ink'
                         }`}
                       >
                         <span className="min-w-0 truncate text-sm">{c.name}</span>
-                        <span className="shrink-0 font-mono text-[10px] uppercase tracking-[0.12em] text-ink-mute">{c.country}</span>
+                        <span className="shrink-0 font-mono text-[10px] uppercase text-ink-mute">{c.country}</span>
                       </button>
                     </li>
                   );
@@ -260,7 +260,7 @@ export function ExploreWorld({ quality, reduced }: ExploreWorldProps) {
               </ul>
             </div>
 
-            <p className="flex items-start gap-2 border-t border-white/[0.06] pt-4 text-[11px] leading-relaxed text-ink-mute">
+            <p className="flex items-start gap-2 border-t border-cork pt-4 text-[11px] leading-relaxed text-ink-mute">
               <Database className="mt-0.5 h-3.5 w-3.5 shrink-0" aria-hidden />
               <span>
                 {demo ? 'Dados de demonstração' : 'Fonte de dados'}: <span className="break-all">{source}</span>
@@ -272,7 +272,7 @@ export function ExploreWorld({ quality, reduced }: ExploreWorldProps) {
           <div ref={stage} className="explore-stage relative min-w-0">
             <div
               ref={globeBox}
-              className="explore-globe relative h-[68svh] min-h-[420px] overflow-hidden rounded-3xl border border-white/[0.06] bg-[radial-gradient(60%_60%_at_50%_45%,rgba(61,123,255,0.12),transparent_70%)] outline-none focus-visible:ring-2 focus-visible:ring-amber-glow/70 lg:h-[min(82svh,780px)]"
+              className="explore-globe relative h-[68svh] min-h-[420px] overflow-hidden rounded-card border border-cork outline-none focus-visible:ring-2 focus-visible:ring-amber-glow/70 lg:h-[min(82svh,780px)]"
               tabIndex={0}
               onKeyDown={onKeyDown}
               aria-label="Globo interativo"
@@ -306,7 +306,7 @@ export function ExploreWorld({ quality, reduced }: ExploreWorldProps) {
 
               {!ready && (
                 <div className="pointer-events-none absolute inset-0 grid place-items-center" role="status">
-                  <span className="flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.2em] text-ink-mute">
+                  <span className="flex items-center gap-2 font-mono text-[11px] uppercase text-ink-mute">
                     <Loader2 className="h-4 w-4 animate-spin" aria-hidden /> Carregando o globo
                   </span>
                 </div>
@@ -314,7 +314,7 @@ export function ExploreWorld({ quality, reduced }: ExploreWorldProps) {
 
               <div className="pointer-events-none absolute left-4 top-4 flex flex-wrap gap-2">
                 {continent && (
-                  <span className="glass rounded-full px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.18em] text-ink">
+                  <span className="glass rounded-full px-3 py-1.5 font-mono text-[10px] uppercase text-ink">
                     <span className="mr-2 inline-block h-1.5 w-1.5 rounded-full bg-volt-400 align-middle" />
                     {CONTINENTS[continent].label}
                   </span>

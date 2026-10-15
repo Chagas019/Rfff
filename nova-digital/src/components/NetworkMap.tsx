@@ -92,7 +92,7 @@ export function NetworkMap({ cities, routes, byId, selectedRoute, focusCity, onS
       ctx.clearRect(0, 0, w, h);
       const s = w / MAP_W;
       const r = Math.max(0.7, 1.35 * s);
-      ctx.fillStyle = 'rgba(161,161,170,0.34)';
+      ctx.fillStyle = 'rgba(108,95,81,0.6)';
       for (const [lat, lon] of dots) {
         const p = proj(lat, lon);
         ctx.beginPath();
@@ -142,9 +142,9 @@ export function NetworkMap({ cities, routes, byId, selectedRoute, focusCity, onS
             <rect width={MAP_W} height={MAP_H} />
           </clipPath>
           <linearGradient id="route-grad" x1="0" x2="1">
-            <stop offset="0%" stopColor="#3d7bff" stopOpacity="0.15" />
-            <stop offset="50%" stopColor="#8fb4ff" stopOpacity="0.9" />
-            <stop offset="100%" stopColor="#3d7bff" stopOpacity="0.15" />
+            <stop offset="0%" stopColor="#b8743c" stopOpacity="0.15" />
+            <stop offset="50%" stopColor="#ffedd7" stopOpacity="0.9" />
+            <stop offset="100%" stopColor="#b8743c" stopOpacity="0.15" />
           </linearGradient>
           <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
             <feGaussianBlur stdDeviation="2.4" result="b" />
@@ -175,7 +175,7 @@ export function NetworkMap({ cities, routes, byId, selectedRoute, focusCity, onS
                       pathLength={1}
                       data-draw
                       fill="none"
-                      stroke={isSel ? '#ffb547' : 'url(#route-grad)'}
+                      stroke={isSel ? '#f07a2c' : 'url(#route-grad)'}
                       strokeWidth={isSel || isHover ? 2.2 : 1.1}
                       strokeDasharray="1"
                       strokeDashoffset={reduced ? 0 : 1}
@@ -183,7 +183,7 @@ export function NetworkMap({ cities, routes, byId, selectedRoute, focusCity, onS
                       className="transition-[stroke-width] duration-300"
                     />
                     {!reduced && (
-                      <circle r={isSel ? 3.2 : 2.2} fill={isSel ? '#ffe2b0' : '#eaf1ff'} filter="url(#glow)">
+                      <circle r={isSel ? 3.2 : 2.2} fill={isSel ? '#fff1dd' : '#ffedd7'} filter="url(#glow)">
                         <animateMotion dur={`${3 + (r.reachK % 7) * 0.4}s`} repeatCount="indefinite" rotate="auto">
                           <mpath href={`#route-${r.id}-${i}`} />
                         </animateMotion>
@@ -216,8 +216,8 @@ export function NetworkMap({ cities, routes, byId, selectedRoute, focusCity, onS
           const inSel = sel ? sel.from === c.id || sel.to === c.id : false;
           return (
             <g key={c.id} transform={`translate(${p.x.toFixed(1)} ${p.y.toFixed(1)})`}>
-              {(isFocus || inSel) && <circle r={11} fill="none" stroke="#ffb547" strokeOpacity="0.6" className="map-pulse" />}
-              <circle r={isFocus || inSel ? 4.2 : 3} fill={isFocus || inSel ? '#ffb547' : '#eaf1ff'} />
+              {(isFocus || inSel) && <circle r={11} fill="none" stroke="#f07a2c" strokeOpacity="0.6" className="map-pulse" />}
+              <circle r={isFocus || inSel ? 4.2 : 3} fill={isFocus || inSel ? '#f07a2c' : '#ffedd7'} />
               <circle r={12} fill="transparent" className="cursor-pointer" onClick={() => onSelectCity(c.id)}>
                 <title>{`${c.name}, ${c.country}`}</title>
               </circle>

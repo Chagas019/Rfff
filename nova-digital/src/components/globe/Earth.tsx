@@ -26,8 +26,8 @@ export function createLightState(): LightState {
     exposure: 1,
     nightBoost: 1,
     atmosphere: 1,
-    atmosphereColor: new THREE.Color('#3d7bff'),
-    rim: new THREE.Color('#5b8fff'),
+    atmosphereColor: new THREE.Color('#b8743c'),
+    rim: new THREE.Color('#e8b48a'),
   };
 }
 
@@ -136,7 +136,7 @@ export function Backdrop({ light }: { light: LightState }) {
         fragmentShader: backdropFragment,
         uniforms: {
           uColor: { value: new THREE.Color() },
-          uColor2: { value: new THREE.Color('#ffb547') },
+          uColor2: { value: new THREE.Color('#f07a2c') },
           uIntensity: { value: 1 },
         },
         transparent: true,

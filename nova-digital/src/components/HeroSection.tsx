@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from 'framer-motion';
-import { ArrowDown, ArrowUpRight, MousePointerClick } from 'lucide-react';
+import { ArrowDown, MousePointerClick } from 'lucide-react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
@@ -118,10 +118,6 @@ export function HeroSection({ quality, reduced, onGlobeReady }: HeroSectionProps
     <div ref={wrap} className="relative">
       {/* palco fixo: título ao fundo, globo, título à frente */}
       <div className="sticky top-0 h-[100svh] w-full overflow-hidden">
-        <div
-          className="pointer-events-none absolute inset-0 bg-[radial-gradient(70%_55%_at_50%_60%,rgba(61,123,255,0.10),transparent_70%)]"
-          aria-hidden
-        />
 
         <div ref={titleBack} className="pointer-events-none absolute inset-0" aria-hidden>
           <HeroTitle front={false} />
@@ -161,17 +157,26 @@ export function HeroSection({ quality, reduced, onGlobeReady }: HeroSectionProps
           <HeroTitle front />
         </div>
 
+        {/* rótulo vertical na borda direita */}
+        <p
+          data-intro="hero-sub"
+          className="pointer-events-none absolute right-[18px] top-1/2 z-20 hidden -translate-y-1/2 rotate-180 text-[12px] uppercase text-ink-mute [writing-mode:vertical-rl] md:block"
+          aria-hidden
+        >
+          Nº 001 — NOVA / DIGITAL — Marketing studio
+        </p>
+
         <AnimatePresence>
           {toast && (
             <motion.div
               key={toast + (highlight?.key ?? 0)}
-              initial={{ opacity: 0, y: -10, filter: 'blur(6px)' }}
-              animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -6 }}
-              className="glass pointer-events-none absolute left-1/2 top-[calc(var(--nav-h)+16px)] z-30 -translate-x-1/2 rounded-full px-4 py-2 font-mono text-[11px] uppercase tracking-[0.2em] text-ink"
+              className="glass pointer-events-none absolute left-1/2 top-[calc(var(--nav-h)+16px)] z-30 -translate-x-1/2 !rounded-full px-4 py-2 text-[12px] uppercase text-ink"
               role="status"
             >
-              <span className="mr-2 inline-block h-1.5 w-1.5 rounded-full bg-volt-400 align-middle shadow-[0_0_10px_#5b8fff]" />
+              <span className="mr-2 inline-block h-1.5 w-1.5 rounded-full bg-ember align-middle" />
               {toast}
             </motion.div>
           )}
@@ -189,27 +194,27 @@ export function HeroSection({ quality, reduced, onGlobeReady }: HeroSectionProps
           <h1 id="hero-title" className="sr-only">
             The world. Reimagined.
           </h1>
-          <div className="container-x grid items-end gap-8 md:grid-cols-[1fr_auto]">
-            <div className="max-w-md">
-              <p data-intro="hero-sub" className="eyebrow mb-4 text-volt-300">
-                NOVA / DIGITAL — Marketing digital global
+          <div className="container-x grid items-end gap-6 md:grid-cols-[minmax(0,420px)_1fr]">
+            {/* cartão de atribuição: subordinado ao objeto, com divisória tracejada */}
+            <div data-intro="hero-sub" className="pointer-events-auto surface-outline bg-walnut/75 p-6">
+              <p className="text-[14px] uppercase text-ink">Marketing digital global</p>
+              <div className="my-4 border-t border-dashed border-cork" aria-hidden />
+              <p className="text-[16px] font-normal normal-case leading-[1.4] text-ink-soft">
+                Marketing que conecta sua marca a pessoas do mundo inteiro: estratégia, conteúdo, mídia paga e dados em uma nova
+                dimensão digital.
               </p>
-              <p data-intro="hero-sub" className="text-lg font-light leading-relaxed text-ink-soft sm:text-xl">
-                Marketing que conecta sua marca a pessoas do mundo inteiro: estratégia, conteúdo, mídia paga e dados em uma nova dimensão
-                digital.
-              </p>
-              <div data-intro="hero-sub" className="pointer-events-auto mt-7 flex flex-wrap items-center gap-3">
+              <div className="mt-6 flex flex-wrap items-center gap-x-6 gap-y-3">
                 <a href="#explore" className="btn-primary">
-                  Explore the world <ArrowUpRight className="h-4 w-4" aria-hidden />
+                  Explore the world
                 </a>
-                <a href="#experience" className="btn-ghost">
-                  Como fazemos <ArrowDown className="h-4 w-4" aria-hidden />
+                <a href="#experience" className="link-underline">
+                  Como fazemos <ArrowDown className="h-3.5 w-3.5" aria-hidden />
                 </a>
               </div>
             </div>
 
             <div data-intro="hero-sub" className="flex flex-col items-start gap-3 md:items-end">
-              <p className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.2em] text-ink-mute">
+              <p className="flex items-center gap-2 text-[12px] uppercase text-ink-mute">
                 <MousePointerClick className="h-3.5 w-3.5" aria-hidden />
                 Arraste · clique nos pontos e continentes · duplo clique recentraliza
               </p>
@@ -238,21 +243,21 @@ export function HeroSection({ quality, reduced, onGlobeReady }: HeroSectionProps
 
 /* ------------------------------------------------------------------ */
 
-const TITLE_CLASS = 'display text-[clamp(3.4rem,13.5vw,13.5rem)] uppercase';
+const TITLE_CLASS = 'display text-[clamp(3.2rem,10.5vw,10.5rem)]';
 
 /**
- * O título é desenhado em duas camadas idênticas: a de trás mostra "Reimagined." (atrás do globo)
- * e a da frente mostra "The world." (na frente dele). O texto acessível está no h1 sr-only.
+ * Wordmark no canto superior esquerdo, em duas camadas idênticas: "Reimagined." fica atrás do globo
+ * e "The world." passa na frente dele. O texto acessível está no h1 sr-only.
  */
 function HeroTitle({ front }: { front: boolean }) {
   return (
-    <div className="container-x flex h-full flex-col items-center pt-[calc(var(--nav-h)+5svh)] text-center sm:pt-[calc(var(--nav-h)+3svh)]">
+    <div className="container-x flex h-full flex-col items-start pt-[calc(var(--nav-h)+4svh)]">
       <div data-intro="hero-title" className={TITLE_CLASS}>
         <span className="mask-line">
           <span className={front ? 'text-ink' : 'invisible'}>The world.</span>
         </span>
         <span className="mask-line">
-          <span className={front ? 'invisible' : 'text-gradient opacity-[0.34]'}>Reimagined.</span>
+          <span className={front ? 'invisible' : 'text-driftwood'}>Reimagined.</span>
         </span>
       </div>
     </div>

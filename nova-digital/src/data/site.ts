@@ -9,13 +9,18 @@ export const SITE = {
   contactEndpoint: import.meta.env.VITE_CONTACT_ENDPOINT || '',
 };
 
+/** Navegação mínima: no máximo quatro itens (sistema ORYZO). */
 export const NAV_LINKS = [
-  { id: 'home', label: 'Home' },
   { id: 'experience', label: 'Experience' },
-  { id: 'technology', label: 'Technology' },
+  { id: 'technology', label: 'Services' },
+  { id: 'explore', label: 'Explore' },
+  { id: 'contact', label: 'Contact' },
+] as const;
+
+/** Links extras do rodapé (seções que não cabem na navegação principal). */
+export const FOOTER_LINKS = [
   { id: 'network', label: 'Network' },
   { id: 'about', label: 'About' },
-  { id: 'contact', label: 'Contact' },
 ] as const;
 
 /**

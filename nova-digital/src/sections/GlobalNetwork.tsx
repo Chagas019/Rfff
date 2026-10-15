@@ -49,12 +49,12 @@ export function GlobalNetwork() {
             <MaskTitle
               id="network-title"
               lines={['One planet.', 'Infinite connections.']}
-              className="display text-[clamp(2.8rem,8vw,7.5rem)] uppercase"
+              className="display text-[clamp(2.4rem,3.6vw,3.2rem)]"
               lineClassName={(i) => (i === 1 ? 'text-ink-mute' : 'text-ink')}
             />
           </div>
           <FadeUp delay={0.1}>
-            <p className="max-w-md text-lg leading-relaxed text-ink-soft lg:ml-auto">
+            <p className="max-w-md text-lg font-normal leading-[1.4] text-ink-soft lg:ml-auto">
               Cada linha é uma rota de campanha entre dois mercados. Clique em uma linha para ver o tipo de ação, a distância, a diferença
               de fuso e o alcance, ou em uma cidade para destacar todas as campanhas ligadas a ela.
             </p>
@@ -62,7 +62,7 @@ export function GlobalNetwork() {
         </div>
 
         <FadeUp className="relative mt-14">
-          <div className="relative rounded-[28px] border border-white/[0.06] bg-gradient-to-b from-void-900 to-void p-3 sm:p-6">
+          <div className="relative rounded-card border border-cork bg-transparent p-3 sm:p-6">
             <NetworkMap
               cities={cities}
               routes={routes}
@@ -81,7 +81,7 @@ export function GlobalNetwork() {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: 8 }}
                   transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
-                  className="glass relative mt-3 rounded-2xl p-5 md:absolute md:bottom-6 md:left-6 md:mt-0 md:w-[340px]"
+                  className="glass relative mt-3 rounded-card p-5 md:absolute md:bottom-6 md:left-6 md:mt-0 md:w-[340px]"
                   role="region"
                   aria-live="polite"
                   aria-label="Detalhes da conexão"
@@ -93,7 +93,7 @@ export function GlobalNetwork() {
                   {city && !route && (
                     <div>
                       <p className="eyebrow text-amber-glow">{city.country}</p>
-                      <p className="mt-1.5 text-xl font-light text-ink">{city.name}</p>
+                      <p className="mt-1.5 text-xl font-medium text-ink">{city.name}</p>
                       <p className="mt-3 text-sm text-ink-soft">{cityRoutes.length} conexões</p>
                       <ul className="mt-3 flex flex-wrap gap-2">
                         {cityRoutes.map((r) => {
@@ -103,7 +103,7 @@ export function GlobalNetwork() {
                               <button
                                 type="button"
                                 onClick={() => selectRoute(r.id)}
-                                className="rounded-full border border-white/10 px-3 py-1.5 text-xs text-ink-soft transition-colors hover:border-amber-glow/50 hover:text-ink"
+                                className="rounded-full border border-cork px-3 py-1.5 text-xs text-ink-soft transition-colors hover:border-ink hover:text-ink"
                               >
                                 {other?.name ?? r.label}
                               </button>
@@ -136,8 +136,8 @@ export function GlobalNetwork() {
                     aria-pressed={sel}
                     className={`flex min-h-[44px] items-center gap-2 whitespace-nowrap rounded-full border px-4 text-xs transition-colors ${
                       sel
-                        ? 'border-amber-glow/60 bg-amber-glow/10 text-ink'
-                        : 'border-white/10 text-ink-soft hover:border-white/30 hover:text-ink'
+                        ? 'border-ink bg-bark text-ink'
+                        : 'border-cork text-ink-soft hover:border-ink hover:text-ink'
                     }`}
                   >
                     {a.name}
@@ -150,13 +150,13 @@ export function GlobalNetwork() {
           </ul>
         </FadeUp>
 
-        <div className="mt-20 grid gap-px overflow-hidden rounded-3xl border border-white/[0.06] bg-white/[0.06] sm:grid-cols-3">
+        <div className="mt-20 grid gap-px overflow-hidden rounded-card border border-cork bg-cork sm:grid-cols-3">
           {NETWORK_STATS.items.map((s, i) => (
             <FadeUp key={s.label} delay={i * 0.08} className="bg-void px-6 py-10 sm:px-8">
-              <p className="text-[clamp(3rem,7vw,5.5rem)] font-extralight leading-none tracking-tightest text-ink">
+              <p className="display text-[clamp(2.6rem,4vw,3.2rem)] text-ink">
                 <Counter item={s} />
               </p>
-              <p className="mt-4 font-mono text-[11px] uppercase tracking-[0.2em] text-ink-mute">{s.label}</p>
+              <p className="mt-4 font-mono text-[11px] uppercase text-ink-mute">{s.label}</p>
             </FadeUp>
           ))}
         </div>
@@ -183,20 +183,20 @@ function RouteDetails({ route }: { route: Route }) {
       <p className="eyebrow text-amber-glow">
         {KIND_LABEL[route.kind]} · {route.label}
       </p>
-      <p className="mt-2 flex flex-wrap items-center gap-2 text-xl font-light text-ink">
+      <p className="mt-2 flex flex-wrap items-center gap-2 text-xl font-medium text-ink">
         {a.name} <ArrowLeftRight className="h-4 w-4 text-ink-mute" aria-hidden /> {b.name}
       </p>
       <dl className="mt-4 grid grid-cols-3 gap-3 text-sm">
         <div>
-          <dt className="font-mono text-[10px] uppercase tracking-[0.14em] text-ink-mute">Distância</dt>
+          <dt className="font-mono text-[10px] uppercase text-ink-mute">Distância</dt>
           <dd className="mt-1 tabular-nums text-ink">{Math.round(km).toLocaleString('pt-BR')} km</dd>
         </div>
         <div>
-          <dt className="font-mono text-[10px] uppercase tracking-[0.14em] text-ink-mute">Fuso*</dt>
+          <dt className="font-mono text-[10px] uppercase text-ink-mute">Fuso*</dt>
           <dd className="mt-1 tabular-nums text-ink">{formatTzDiff(a.timezone, b.timezone)}</dd>
         </div>
         <div>
-          <dt className="font-mono text-[10px] uppercase tracking-[0.14em] text-ink-mute">Alcance/dia{demo ? ' · demo' : ''}</dt>
+          <dt className="font-mono text-[10px] uppercase text-ink-mute">Alcance/dia{demo ? ' · demo' : ''}</dt>
           <dd className="mt-1 tabular-nums text-ink">{route.reachK.toLocaleString('pt-BR')} mil</dd>
         </div>
       </dl>

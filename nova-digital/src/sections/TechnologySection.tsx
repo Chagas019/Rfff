@@ -61,11 +61,8 @@ export function TechnologySection() {
     const ctx = gsap.context(() => {
       gsap.from(el.querySelectorAll('[data-tech-wrap]'), {
         opacity: 0,
-        y: 90,
-        rotateX: 24,
-        z: -160,
-        transformPerspective: 1200,
-        duration: 1.3,
+        y: 40,
+        duration: 1.1,
         ease: 'expo.out',
         stagger: 0.1,
         clearProps: 'transform',
@@ -84,12 +81,12 @@ export function TechnologySection() {
             <MaskTitle
               id="technology-title"
               lines={['Beyond the', 'expected.']}
-              className="display text-[clamp(3rem,9vw,8.5rem)] uppercase"
+              className="display text-[clamp(2.4rem,3.6vw,3.2rem)]"
               lineClassName={(i) => (i === 1 ? 'text-ink-mute' : 'text-ink')}
             />
           </div>
           <FadeUp delay={0.1}>
-            <p className="max-w-md text-lg leading-relaxed text-ink-soft lg:ml-auto">
+            <p className="max-w-md text-lg font-normal leading-[1.4] text-ink-soft lg:ml-auto">
               Quatro frentes de marketing que trabalham juntas para transformar atenção em clientes, em qualquer lugar do planeta.
               <span className="mt-3 block text-sm text-ink-mute">
                 Passe o cursor para explorar. Toque ou clique para fixar os detalhes.
@@ -98,7 +95,7 @@ export function TechnologySection() {
           </FadeUp>
         </div>
 
-        <div ref={grid} className="mt-16 grid gap-4 sm:grid-cols-2 xl:grid-cols-4" style={{ perspective: 1400 }}>
+        <div ref={grid} className="mt-16 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
           {ITEMS.map((item) => (
             <div key={item.id} data-tech-wrap>
               <TechnologyCard item={item} />

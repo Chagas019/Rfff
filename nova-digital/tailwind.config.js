@@ -1,19 +1,31 @@
 /** @type {import('tailwindcss').Config} */
+// Sistema visual ORYZO Darkroom: canvas walnut, texto cream, bark como superfície elevada,
+// cork/driftwood para estrutura e ember apenas para destaques editoriais.
+const cream = '#ffedd7';
 export default {
   content: ['./index.html', './src/**/*.{ts,tsx}'],
   theme: {
     extend: {
       colors: {
-        void: { DEFAULT: '#030303', 900: '#08080a', 800: '#0e0e12', 700: '#16161c', 600: '#22222a' },
-        ink: { DEFAULT: '#f4f4f5', soft: '#a1a1aa', mute: '#71717a', faint: '#3f3f46' },
-        volt: { DEFAULT: '#3d7bff', 300: '#8fb4ff', 400: '#5b8fff', 500: '#3d7bff', 600: '#2457d6' },
-        amber: { glow: '#ffb547', 300: '#ffd08a', 500: '#ff9f1c' },
+        // canvas (walnut shadow) e superfície elevada (bark brown)
+        void: { DEFAULT: '#100904', 900: '#100904', 800: '#382416', 700: '#382416', 600: '#40372e' },
+        ink: { DEFAULT: cream, soft: '#cdbba6', mute: '#9a8b7a', faint: '#40372e' },
+        // tons estruturais (antes "volt"): cream → driftwood → cork
+        volt: { DEFAULT: '#6c5f51', 300: cream, 400: '#cdbba6', 500: '#6c5f51', 600: '#40372e' },
+        // ember: só para créditos e frases curtas em destaque
+        amber: { glow: '#dc5000', 300: '#f0a070', 500: '#dc5000' },
+        walnut: '#100904',
+        bark: '#382416',
+        cork: '#40372e',
+        driftwood: '#6c5f51',
+        ember: '#dc5000',
       },
       fontFamily: {
-        sans: ['"Inter Tight Variable"', 'system-ui', 'sans-serif'],
-        mono: ['"JetBrains Mono"', 'ui-monospace', 'monospace'],
+        sans: ['"Inter Variable"', 'ui-sans-serif', 'system-ui', '-apple-system', 'BlinkMacSystemFont', '"Segoe UI"', 'sans-serif'],
+        // rótulos usam a mesma família, em caixa alta e peso 500
+        mono: ['"Inter Variable"', 'ui-sans-serif', 'system-ui', 'sans-serif'],
       },
-      letterSpacing: { tightest: '-0.06em' },
+      borderRadius: { card: '12px', ghost: '22.5px', pill: '36px' },
       transitionTimingFunction: { expo: 'cubic-bezier(0.16, 1, 0.3, 1)' },
     },
   },

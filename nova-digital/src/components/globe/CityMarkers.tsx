@@ -4,9 +4,9 @@ import * as THREE from 'three';
 import type { City } from '../../data/types';
 import { latLonToVec3 } from '../../lib/geo';
 
-const AMBER = new THREE.Color('#ffb547');
-const WHITE = new THREE.Color('#eaf1ff');
-const BLUE = new THREE.Color('#8fb4ff');
+const AMBER = new THREE.Color('#f07a2c');
+const WHITE = new THREE.Color('#ffedd7');
+const BLUE = new THREE.Color('#ffedd7');
 
 interface CityMarkersProps {
   cities: City[];
@@ -132,7 +132,7 @@ export function CityMarkers({ cities, selectedId, linkedIds, hitRadius, reduced,
             }}
             raycast={() => null}
           >
-            <meshBasicMaterial color="#ffd08a" transparent toneMapped={false} depthWrite={false} blending={THREE.AdditiveBlending} />
+            <meshBasicMaterial color="#ffcf9e" transparent toneMapped={false} depthWrite={false} blending={THREE.AdditiveBlending} />
           </mesh>
           {/* área de clique maior que o ponto visível (melhor para toque) */}
           <mesh

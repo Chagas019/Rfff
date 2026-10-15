@@ -55,14 +55,12 @@ interface StoryFrame {
 }
 
 const STORY: StoryFrame[] = [
-  // topo: globo baixo e central, com "Reimagined." aparecendo atrás dele
-  { p: 0.0, x: 0.0, y: -0.66, dist: 4.5, sunAz: -1.25, sunEl: 0.28, warm: 0.0, night: 1.1, exposure: 1 },
-  // capítulo 1 (texto à esquerda): globo à direita, dia
-  { p: 0.33, x: 1.05, y: 0.0, dist: 3.7, sunAz: -0.6, sunEl: 0.25, warm: 0.05, night: 1.0, exposure: 1 },
-  // capítulo 2 (texto à direita): globo à esquerda, lado noturno com luzes em âmbar
-  { p: 0.66, x: -1.05, y: 0.0, dist: 3.6, sunAz: 2.35, sunEl: 0.15, warm: 0.6, night: 1.6, exposure: 1 },
-  // capítulo 3 (frase central): globo afastado e mais escuro para a leitura
-  { p: 1.0, x: 0.0, y: 0.0, dist: 5.6, sunAz: 1.85, sunEl: 0.3, warm: 0.35, night: 1.35, exposure: 0.7 },
+  // topo: o globo é o objeto, à direita e abaixo do wordmark; "Reimagined." aparece atrás dele
+  { p: 0.0, x: 0.42, y: -0.5, dist: 4.4, sunAz: 0.9, sunEl: 0.45, warm: 0.2, night: 1.1, exposure: 1 },
+  // capítulos em "void mode": globo centralizado; muda só rotação de luz e distância
+  { p: 0.33, x: 0.0, y: 0.0, dist: 4.9, sunAz: 0.55, sunEl: 0.4, warm: 0.25, night: 1.0, exposure: 1 },
+  { p: 0.66, x: 0.0, y: 0.0, dist: 4.9, sunAz: 2.4, sunEl: 0.2, warm: 0.7, night: 2.2, exposure: 1 },
+  { p: 1.0, x: 0.0, y: 0.0, dist: 5.4, sunAz: 1.3, sunEl: 0.35, warm: 0.45, night: 1.3, exposure: 0.85 },
 ];
 
 const ease = (t: number) => t * t * (3 - 2 * t);
@@ -88,10 +86,10 @@ function sampleStory(p: number): StoryFrame {
   };
 }
 
-const BLUE = new THREE.Color('#3d7bff');
-const AMBER = new THREE.Color('#ff9f1c');
-const RIM_BLUE = new THREE.Color('#5b8fff');
-const RIM_AMBER = new THREE.Color('#ffb547');
+const BLUE = new THREE.Color('#b8743c');
+const AMBER = new THREE.Color('#dc5000');
+const RIM_BLUE = new THREE.Color('#e8b48a');
+const RIM_AMBER = new THREE.Color('#f07a2c');
 
 /* ------------------------------------------------------------------ */
 /* Controle por ponteiro: arrastar, pinça e roda do mouse              */
@@ -227,7 +225,7 @@ function Scene(props: GlobeSceneProps) {
   // seleção: onda na origem e arcos ativos para os destinos
   const selected = selectedId ? (byId.get(selectedId) ?? null) : null;
   useEffect(() => {
-    if (selected) addRipple(selected.lat, selected.lon, '#ffb547');
+    if (selected) addRipple(selected.lat, selected.lon, '#f07a2c');
   }, [selected, addRipple]);
 
   const linkedIds = useMemo(() => {
@@ -257,7 +255,7 @@ function Scene(props: GlobeSceneProps) {
     return out;
   }, [selected, routes, byId, quality]);
 
-  const onArrive = useCallback((city: City) => addRipple(city.lat, city.lon, '#ffd08a'), [addRipple]);
+  const onArrive = useCallback((city: City) => addRipple(city.lat, city.lon, '#ffcf9e'), [addRipple]);
 
   // clique na superfície: destaca o continente
   const handleSurfaceClick = useCallback(
@@ -268,7 +266,7 @@ function Scene(props: GlobeSceneProps) {
       const continent = continentAt(countries, lat, lon);
       if (continent) {
         onContinent(continent, lat, lon);
-        addRipple(lat, lon, '#8fb4ff');
+        addRipple(lat, lon, '#ffedd7');
       }
     },
     [countries, onContinent, addRipple],

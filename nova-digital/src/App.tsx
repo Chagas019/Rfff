@@ -36,7 +36,7 @@ export default function App() {
       </a>
       <LoadingScreen ready={globeReady} onDone={() => ScrollTrigger.refresh()} />
       <Navbar />
-      <main id="main" className="grain">
+      <main id="main">
         <HeroSection quality={quality} reduced={reduced} onGlobeReady={onGlobeReady} />
         <TechnologySection />
         <GlobalNetwork />

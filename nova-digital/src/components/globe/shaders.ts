@@ -35,12 +35,12 @@ export const earthFragment = /* glsl */ `
     // dia: levemente dessaturado e frio, para combinar com o fundo preto
     vec3 day = texture2D(uDay, vUv).rgb;
     float luma = dot(day, vec3(0.299, 0.587, 0.114));
-    day = mix(vec3(luma), day, 0.82) * vec3(0.84, 0.93, 1.08);
+    day = mix(vec3(luma) * vec3(1.1, 0.93, 0.74), day, 0.3);
     vec3 lit = day * (0.03 + 0.92 * max(ndl, 0.0));
 
     // noite: luzes das cidades em âmbar
     vec3 night = texture2D(uNight, vUv).rgb;
-    night = pow(night, vec3(1.5)) * vec3(1.0, 0.64, 0.3) * 1.9 * uNightBoost;
+    night = pow(night, vec3(1.5)) * vec3(1.0, 0.55, 0.22) * 1.9 * uNightBoost;
 
     vec3 col = mix(night + day * 0.018, lit, dayMix);
 
@@ -48,8 +48,8 @@ export const earthFragment = /* glsl */ `
     float water = texture2D(uWater, vUv).r;
     vec3 h = normalize(s + v);
     float nh = max(dot(n, h), 0.0);
-    float spec = (pow(nh, 380.0) * 0.55 + pow(nh, 36.0) * 0.045) * water * dayMix;
-    col += spec * vec3(0.7, 0.85, 1.0);
+    float spec = pow(nh, 520.0) * 0.4 * water * dayMix;
+    col += spec * vec3(1.0, 0.9, 0.78);
 
     // borda luminosa (fresnel)
     float fres = pow(1.0 - max(dot(n, v), 0.0), 2.6);

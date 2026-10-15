@@ -81,7 +81,7 @@ export function GlobeControls({
           <ControlButton label="Aproximar" onClick={() => controller.zoomBy(1 / 1.18)}>
             <Plus className="h-4 w-4" aria-hidden />
           </ControlButton>
-          <span className="mx-0.5 h-5 w-px bg-white/10" aria-hidden />
+          <span className="mx-0.5 h-5 w-px bg-cork" aria-hidden />
         </>
       )}
       <ControlButton label="Centralizar o globo" onClick={onCenter}>

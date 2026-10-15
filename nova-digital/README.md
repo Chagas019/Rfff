@@ -17,9 +17,18 @@ npm run preview    # serve o build
 
 Para testar o modo sem WebGL, abra `/?nowebgl`.
 
+## Sistema visual (ORYZO Darkroom)
+
+- Cores: canvas `#100904` (walnut), texto `#ffedd7` (cream), superfície elevada `#382416` (bark), divisórias tracejadas `#40372e` (cork), estrutura `#6c5f51` (driftwood) e `#dc5000` (ember) só em destaques editoriais, nunca em botões.
+- Tipografia: Inter, caixa alta e peso 500 na interface; texto descritivo em caixa mista, peso 400, ~29px no desktop. Títulos com entrelinha 0.90, sem apertar o espaçamento.
+- Sem sombras desfocadas nem brilhos; raio 12px nos cards, pílula de 36px no CTA preenchido, 22,5px no botão contornado, campos só com linha inferior.
+- Navegação com no máximo quatro itens (Experience, Services, Explore, Contact); Network e About ficam no rodapé.
+- Hero com wordmark no canto superior esquerdo, rótulo vertical na borda direita e cartão de atribuição; capítulos em "void mode" (título à esquerda, globo ao centro, texto à direita).
+- Tokens em `tailwind.config.js` e `src/styles/index.css`.
+
 ## Stack
 
-React 18 + TypeScript, Vite 5, Tailwind CSS 3, Three.js 0.170, React Three Fiber 8, Drei 9, GSAP 3 (ScrollTrigger), Framer Motion 11, Lucide React, d3-geo + topojson-client + world-atlas (fronteiras dos países), fontes auto-hospedadas via Fontsource (Inter Tight e JetBrains Mono). React Router não foi usado porque a página tem uma rota só.
+React 18 + TypeScript, Vite 5, Tailwind CSS 3, Three.js 0.170, React Three Fiber 8, Drei 9, GSAP 3 (ScrollTrigger), Framer Motion 11, Lucide React, d3-geo + topojson-client + world-atlas (fronteiras dos países), fonte Inter auto-hospedada via Fontsource. React Router não foi usado porque a página tem uma rota só.
 
 ## Seções
 
@@ -60,7 +69,7 @@ Sem endpoint, o formulário abre o aplicativo de e-mail com a mensagem pronta. O
 - Three.js fica num chunk separado, carregado sob demanda. O globo do Explore só monta perto da tela, e cada canvas para de renderizar quando sai da tela.
 - Pixel ratio limitado (2 no desktop, 1,75 em aparelhos modestos), ajuste automático com `PerformanceMonitor`, menos partículas e menos geometria em celulares.
 - Texturas em WebP (~345 KB no total).
-- Sem WebGL (ou se o contexto cair), aparece um globo vetorial em SVG que também gira e deixa selecionar cidades.
+- Sem WebGL (ou se o contexto cair), aparece um globo vetorial em canvas 2D que pode ser arrastado e deixa selecionar cidades. Ele não gira sozinho, para não travar aparelhos que desenham a página sem aceleração gráfica.
 - `prefers-reduced-motion`: pula a abertura, desliga a rotação automática e as partículas animadas, e faz as transições sem animação.
 - Link "pular para o conteúdo", foco visível, menu mobile com foco preso e Esc, controles com `aria-label`, área de toque de pelo menos 44 px.
 
