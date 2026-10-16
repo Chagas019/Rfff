@@ -15,12 +15,12 @@ import { SEASON } from '../data/calendar2026';
 import { DRIVERS_SOURCE, drivers } from '../data/drivers';
 import { teamById, teams } from '../data/teams';
 import { useAsync } from '../hooks/useAsync';
-import { API_SOURCE, fetchDriverStandings } from '../services/f1Api';
+import { API_SOURCE, LIVE_REFRESH_MS, fetchDriverStandings } from '../services/f1Api';
 import type { Driver } from '../types';
 import { age, normalize } from '../utils/format';
 
 function SeasonStats({ driver }: { driver: Driver }) {
-  const { state, retry } = useAsync((signal) => fetchDriverStandings(SEASON, signal), []);
+  const { state, retry } = useAsync((signal) => fetchDriverStandings(SEASON, signal), [], { refreshMs: LIVE_REFRESH_MS });
   if (state.status === 'loading' || state.status === 'idle') {
     return <div className="grid grid-cols-4 gap-2" role="status" aria-label="Carregando estatísticas">{[0, 1, 2, 3].map((i) => <div key={i} className="h-16 animate-pulse rounded-xl bg-white/5" />)}</div>;
   }

@@ -14,6 +14,14 @@ Uma plataforma interativa para fãs da Fórmula 1 (temporada 2026), feita com **
 - **Favoritos** de corridas, circuitos, pilotos e equipes (salvos no `localStorage`).
 - **Pesquisa global** (`Ctrl/⌘ + K` ou `/`), menu para celular, botão de voltar ao topo, animações ao rolar, estados de carregamento, erro e vazio, navegação por teclado (foco preso nos modais, Esc para fechar, link "pular para o conteúdo") e respeito a `prefers-reduced-motion`.
 
+## Atualização automática
+
+O site se mantém atualizado sozinho, sem ninguém precisar recarregar a página:
+
+- **Dados ao vivo**: classificação, estatísticas dos pilotos, resultados e o pódio da última corrida na home são buscados de novo a cada 3 minutos (só com a aba visível), quando a pessoa volta para a aba e quando a internet reconecta. Os dados antigos ficam na tela enquanto os novos chegam. O selo "Atualiza sozinho" mostra a hora da última busca e tem um botão para atualizar na hora.
+- **Calendário**: status (próxima, ao vivo, concluída), contagem regressiva e "próximo GP" são calculados pelo relógio, então mudam sozinhos.
+- **Versão nova do site**: cada build gera `/version.json` (commit da Vercel). O site consulta esse arquivo a cada 5 minutos; quando sai uma publicação nova, ela entra sozinha na próxima troca de página (ou na hora, se a aba estiver em segundo plano). Os cabeçalhos em `vercel.json` impedem que o navegador guarde versões velhas do `index.html`.
+
 ## Tipografia
 
 Inspirada em **Growth** (Broworks Studio) e **TT Burn** (TrueType), que são fontes pagas. Como o projeto não tem a licença delas, usa alternativas gratuitas (OFL) com o mesmo estilo, hospedadas no próprio site via Fontsource:

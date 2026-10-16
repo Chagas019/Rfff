@@ -9,7 +9,8 @@ import { SEASON } from '../data/calendar2026';
 import { drivers } from '../data/drivers';
 import { teams } from '../data/teams';
 import { useAsync } from '../hooks/useAsync';
-import { API_BASE, API_SOURCE, fetchConstructorStandings, fetchDriverStandings } from '../services/f1Api';
+import { API_BASE, API_SOURCE, LIVE_REFRESH_MS, fetchConstructorStandings, fetchDriverStandings } from '../services/f1Api';
+import { LiveBadge } from '../components/LiveBadge';
 import { normalize } from '../utils/format';
 
 /** Associa o construtor da API à equipe local (para usar as cores). */
@@ -27,7 +28,7 @@ function Bar({ value, max, color }: { value: number; max: number; color: string 
 }
 
 function DriversTable() {
-  const { state, retry } = useAsync((signal) => fetchDriverStandings(SEASON, signal), []);
+  const { state, retry, refreshNow, updatedAt, refreshing } = useAsync((signal) => fetchDriverStandings(SEASON, signal), [], { refreshMs: LIVE_REFRESH_MS });
   if (state.status === 'loading' || state.status === 'idle') return <LoadingState label="Carregando classificação de pilotos…" rows={8} />;
   if (state.status === 'error') return <ErrorState message={state.error} onRetry={retry}><Unavailable /></ErrorState>;
   const items = state.data.items;
@@ -35,7 +36,10 @@ function DriversTable() {
   const max = items[0].points;
   return (
     <div>
-      <p className="label mb-3">Após a rodada {state.data.round} · temporada {state.data.season}</p>
+      <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
+        <p className="label">Após a rodada {state.data.round} · temporada {state.data.season}</p>
+        <LiveBadge updatedAt={updatedAt} refreshing={refreshing} onRefresh={refreshNow} />
+      </div>
       <div className="overflow-x-auto rounded-2xl border border-white/10">
         <table className="w-full min-w-[640px] text-left text-sm">
           <caption className="sr-only">Classificação do campeonato de pilotos</caption>
@@ -75,7 +79,7 @@ function DriversTable() {
 }
 
 function ConstructorsTable() {
-  const { state, retry } = useAsync((signal) => fetchConstructorStandings(SEASON, signal), []);
+  const { state, retry, refreshNow, updatedAt, refreshing } = useAsync((signal) => fetchConstructorStandings(SEASON, signal), [], { refreshMs: LIVE_REFRESH_MS });
   if (state.status === 'loading' || state.status === 'idle') return <LoadingState label="Carregando classificação de construtores…" rows={8} />;
   if (state.status === 'error') return <ErrorState message={state.error} onRetry={retry}><Unavailable /></ErrorState>;
   const items = state.data.items;
@@ -83,7 +87,10 @@ function ConstructorsTable() {
   const max = items[0].points;
   return (
     <div>
-      <p className="label mb-3">Após a rodada {state.data.round} · temporada {state.data.season}</p>
+      <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
+        <p className="label">Após a rodada {state.data.round} · temporada {state.data.season}</p>
+        <LiveBadge updatedAt={updatedAt} refreshing={refreshing} onRefresh={refreshNow} />
+      </div>
       <div className="overflow-x-auto rounded-2xl border border-white/10">
         <table className="w-full min-w-[520px] text-left text-sm">
           <caption className="sr-only">Classificação do campeonato de construtores</caption>

@@ -6,6 +6,7 @@ import { FavoriteButton } from '../components/FavoriteButton';
 import { Flag } from '../components/Flag';
 import { Garage } from '../components/Garage';
 import { Hero } from '../components/Hero';
+import { LastRacePodium } from '../components/LastRacePodium';
 import { RaceCard } from '../components/RaceCard';
 import { RaceCountdown } from '../components/RaceCountdown';
 import { Reveal } from '../components/Reveal';
@@ -39,6 +40,7 @@ export function HomePage() {
   const upcoming = races.filter((r) => !r.cancelled && ['next', 'upcoming', 'live'].includes(getRaceStatus(r, races, now))).slice(0, 3);
   const completed = races.filter((r) => getRaceStatus(r, races, now) === 'completed').length;
   const total = races.filter((r) => !r.cancelled).length;
+  const lastRace = [...races].reverse().find((r) => r.round && getRaceStatus(r, races, now) === 'completed');
 
   const ticker = [
     `Temporada 2026 · ${total} Grandes Prêmios`,
@@ -106,6 +108,9 @@ export function HomePage() {
           <p className="panel p-8 text-zinc-400">A temporada 2026 foi encerrada. Volte em breve para o calendário de 2027.</p>
         )}
       </section>
+
+      {/* Último resultado (atualiza sozinho) */}
+      {lastRace && <LastRacePodium race={lastRace} />}
 
       {/* Garagem */}
       <section className="container-grid pb-20" aria-labelledby="garage-title">

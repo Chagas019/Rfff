@@ -12,7 +12,7 @@ import { SEASON, races } from '../data/calendar2026';
 import { circuits } from '../data/circuits';
 import { useAsync } from '../hooks/useAsync';
 import { useNow } from '../hooks/useNow';
-import { API_SOURCE, fetchRaceResults } from '../services/f1Api';
+import { API_SOURCE, LIVE_REFRESH_MS, fetchRaceResults } from '../services/f1Api';
 import type { Race } from '../types';
 import { formatDateTime, formatWeekend, userTimeZone } from '../utils/format';
 import { RACE_DURATION_MS, SESSION_LABELS, getRaceStatus } from '../utils/race';
@@ -37,7 +37,7 @@ function downloadIcs(race: Race) {
 }
 
 function Results({ round }: { round: number }) {
-  const { state, retry } = useAsync((signal) => fetchRaceResults(SEASON, round, signal), [round]);
+  const { state, retry } = useAsync((signal) => fetchRaceResults(SEASON, round, signal), [round], { refreshMs: LIVE_REFRESH_MS });
   if (state.status === 'loading' || state.status === 'idle') return <LoadingState label="Carregando resultado oficial…" rows={5} />;
   if (state.status === 'error') return <ErrorState message={state.error} onRetry={retry} />;
   if (!state.data.length) return <EmptyState title="Resultado ainda não publicado" message="A fonte de dados ainda não disponibilizou a classificação final desta corrida." />;

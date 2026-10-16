@@ -1,9 +1,11 @@
 import { AnimatePresence, MotionConfig, motion } from 'framer-motion';
+import { RefreshCw } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { Route, Routes, useLocation } from 'react-router-dom';
 import { BackToTop } from './components/BackToTop';
 import { Footer } from './components/Footer';
 import { Navbar } from './components/Navbar';
+import { useAppUpdate } from './hooks/useAppUpdate';
 import { playPassSound, preloadPassSound } from './services/sound';
 import { PageTransition } from './components/PageTransition';
 import { SearchBar } from './components/SearchBar';
@@ -34,9 +36,14 @@ export default function App() {
   const section = sectionOf(location.pathname);
   const prevSection = useRef(section);
   const [navigated, setNavigated] = useState(false);
+  const updateAvailable = useAppUpdate();
+  const updateRef = useRef(false);
+  updateRef.current = updateAvailable;
   useEffect(() => {
     if (section !== prevSection.current) {
       prevSection.current = section;
+      // versão nova publicada: carrega a página já na versão nova, sem ninguém precisar atualizar
+      if (updateRef.current) { window.location.reload(); return; }
       setNavigated(true);
       playPassSound(); // som do carro passando na troca de página
     }
@@ -95,6 +102,19 @@ export default function App() {
       </AnimatePresence>
       <Footer />
       <BackToTop />
+      <AnimatePresence>
+        {updateAvailable && (
+          <motion.div
+            initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 30 }}
+            className="glass fixed bottom-6 left-1/2 z-[70] flex w-[min(92vw,440px)] -translate-x-1/2 items-center gap-3 rounded-2xl border border-race/40 px-4 py-3 text-sm text-white shadow-2xl"
+            role="status"
+          >
+            <RefreshCw className="h-5 w-5 shrink-0 text-race" aria-hidden />
+            <span className="flex-1">Saiu uma versão nova do GRID F1. Ela entra sozinha na próxima página.</span>
+            <button type="button" className="btn-primary px-3 py-1.5 text-xs" onClick={() => window.location.reload()}>Atualizar</button>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </MotionConfig>
   );
 }

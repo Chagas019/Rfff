@@ -9,7 +9,11 @@ import type { ConstructorStanding, DriverStanding, RaceResultRow, StandingsResul
 export const API_BASE: string = (import.meta.env?.VITE_F1_API_BASE as string | undefined) ?? 'https://api.jolpi.ca/ergast/f1';
 export const API_SOURCE = { label: 'Jolpica-F1 API (dados da FIA/F1)', url: 'https://github.com/jolpica/jolpica-f1' };
 
-const CACHE_TTL = 10 * 60 * 1000;
+/** Cache curto: só evita pedidos repetidos entre componentes; a atualização automática busca dados novos. */
+const CACHE_TTL = 90 * 1000;
+
+/** Intervalo da atualização automática dos dados ao vivo. */
+export const LIVE_REFRESH_MS = 3 * 60 * 1000;
 
 export class ApiError extends Error {}
 
