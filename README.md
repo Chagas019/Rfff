@@ -14,6 +14,14 @@ Uma plataforma interativa para fãs da Fórmula 1 (temporada 2026), feita com **
 - **Favoritos** de corridas, circuitos, pilotos e equipes (salvos no `localStorage`).
 - **Pesquisa global** (`Ctrl/⌘ + K` ou `/`), menu para celular, botão de voltar ao topo, animações ao rolar, estados de carregamento, erro e vazio, navegação por teclado (foco preso nos modais, Esc para fechar, link "pular para o conteúdo") e respeito a `prefers-reduced-motion`.
 
+## Jogos (`/jogos`)
+
+- **Luzes de largada**: as 5 luzes acendem e apagam num momento sorteado; mede o tempo de reação em ms e detecta queima de largada. Funciona com toque, clique, espaço ou Enter.
+- **Pit stop**: os pneus acendem em ordem sorteada; pneu errado custa +0,4 s. Depois é só liberar o carro. Dá para escolher as cores da equipe e o composto.
+- **Quiz 2026**: 10 perguntas sorteadas a partir dos dados do próprio site (números, equipes, chefes de equipe, carros, sedes, circuitos, voltas, rodadas). Nada é inventado; cada resposta tem um link "Saiba mais" para a página de origem. A pontuação dá bônus por rapidez e por acertos seguidos.
+
+Os recordes ficam salvos no `localStorage` do aparelho e podem ser compartilhados.
+
 ## Atualização automática
 
 O site se mantém atualizado sozinho, sem ninguém precisar recarregar a página:

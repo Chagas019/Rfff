@@ -13,6 +13,7 @@ export const NAV_LINKS = [
   { to: '/pilotos', label: 'Pilotos' },
   { to: '/equipes', label: 'Equipes' },
   { to: '/classificacao', label: 'Classificação' },
+  { to: '/jogos', label: 'Jogos' },
 ];
 
 export function Navbar({ onSearch }: { onSearch: () => void }) {
@@ -38,7 +39,7 @@ export function Navbar({ onSearch }: { onSearch: () => void }) {
   }, [open]);
 
   const linkClass = ({ isActive }: { isActive: boolean }) =>
-    `relative px-3 py-2 text-sm font-semibold uppercase tracking-wider transition ${isActive ? 'text-white' : 'text-zinc-400 hover:text-white'}`;
+    `relative whitespace-nowrap px-2 py-2 text-[13px] font-semibold uppercase tracking-wide transition xl:px-3 xl:text-sm xl:tracking-wider ${isActive ? 'text-white' : 'text-zinc-400 hover:text-white'}`;
 
   return (
     <header className={`fixed inset-x-0 top-0 z-50 transition duration-300 ${scrolled || open ? 'glass border-b border-white/10' : 'bg-gradient-to-b from-black/70 to-transparent'}`}>
@@ -47,14 +48,14 @@ export function Navbar({ onSearch }: { onSearch: () => void }) {
       </a>
       <nav className="container-grid flex h-16 items-center justify-between gap-4" aria-label="Principal">
         <Link to="/" aria-label="GRID F1 — página inicial"><Logo /></Link>
-        <ul className="hidden items-center gap-1 lg:flex">
+        <ul className="hidden items-center gap-0 lg:flex xl:gap-1">
           {NAV_LINKS.map((l) => (
             <li key={l.to}>
               <NavLink to={l.to} end={l.to === '/'} className={linkClass}>
                 {({ isActive }) => (
                   <>
                     {l.label}
-                    {isActive && <motion.span layoutId="nav-underline" className="absolute inset-x-3 -bottom-0.5 h-0.5 bg-race" />}
+                    {isActive && <motion.span layoutId="nav-underline" className="absolute inset-x-2 -bottom-0.5 h-0.5 bg-race xl:inset-x-3" />}
                   </>
                 )}
               </NavLink>
@@ -64,7 +65,7 @@ export function Navbar({ onSearch }: { onSearch: () => void }) {
         <div className="flex items-center gap-2">
           <button type="button" onClick={onSearch} className="btn-icon w-auto gap-2 px-3" aria-label="Abrir pesquisa (Ctrl+K)">
             <Search className="h-4 w-4" aria-hidden />
-            <kbd className="hidden rounded border border-white/10 px-1.5 font-mono text-[10px] text-zinc-500 md:inline">Ctrl K</kbd>
+            <kbd className="hidden whitespace-nowrap rounded border border-white/10 px-1.5 font-mono text-[10px] text-zinc-500 md:inline lg:hidden xl:inline">Ctrl K</kbd>
           </button>
           <SoundToggle />
           <Link to="/favoritos" className="btn-icon relative" aria-label={`Favoritos (${count})`}>

@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { ArrowRight, CalendarDays, Clock, Cpu, Flag as FlagIcon, Gauge, MapPin, Trophy, Users, Zap } from 'lucide-react';
+import { ArrowRight, Brain, CalendarDays, Clock, Cpu, Flag as FlagIcon, Gauge, Lightbulb, MapPin, Trophy, Users, Wrench, Zap } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { CarPhoto } from '../components/CarPhoto';
 import { FavoriteButton } from '../components/FavoriteButton';
@@ -111,6 +111,36 @@ export function HomePage() {
 
       {/* Último resultado (atualiza sozinho) */}
       {lastRace && <LastRacePodium race={lastRace} />}
+
+      {/* Jogos */}
+      <section className="container-grid pb-20" aria-labelledby="games-title">
+        <Reveal>
+          <div className="panel relative overflow-hidden p-6 sm:p-10">
+            <div className="pointer-events-none absolute -left-20 bottom-0 h-64 w-64 rounded-full bg-[radial-gradient(circle,rgba(225,6,0,0.2),transparent_65%)]" aria-hidden />
+            <div className="relative grid items-center gap-8 lg:grid-cols-[1fr_1.3fr]">
+              <div>
+                <p className="label text-race-400">Área de diversão</p>
+                <h2 id="games-title" className="mt-2 text-3xl font-black uppercase sm:text-4xl">Jogos do box</h2>
+                <p className="mt-3 text-zinc-400">Teste seu reflexo nas luzes de largada, faça o pit stop mais rápido e prove que conhece o grid de 2026. Depois, desafie os amigos.</p>
+                <Link to="/jogos" className="btn-primary mt-6">Jogar agora <ArrowRight className="h-4 w-4" aria-hidden /></Link>
+              </div>
+              <div className="grid grid-cols-3 gap-3">
+                {[
+                  { to: '/jogos/luzes', icon: Lightbulb, title: 'Luzes de largada', text: 'Reflexo' },
+                  { to: '/jogos/pit-stop', icon: Wrench, title: 'Pit stop', text: 'Velocidade' },
+                  { to: '/jogos/quiz', icon: Brain, title: 'Quiz 2026', text: 'Conhecimento' },
+                ].map((g) => (
+                  <Link key={g.to} to={g.to} className="group flex flex-col items-center gap-3 rounded-2xl border border-white/10 bg-white/[0.03] p-4 text-center transition hover:-translate-y-1 hover:border-race/60 hover:bg-race/10 sm:p-6">
+                    <g.icon className="h-8 w-8 text-race transition group-hover:scale-110" aria-hidden />
+                    <span className="font-display text-sm font-black uppercase text-white sm:text-lg">{g.title}</span>
+                    <span className="label text-[10px]">{g.text}</span>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          </div>
+        </Reveal>
+      </section>
 
       {/* Garagem */}
       <section className="container-grid pb-20" aria-labelledby="garage-title">

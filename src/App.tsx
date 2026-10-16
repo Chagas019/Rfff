@@ -13,6 +13,7 @@ import { CalendarPage } from './pages/CalendarPage';
 import { CircuitsPage } from './pages/CircuitsPage';
 import { DriversPage } from './pages/DriversPage';
 import { FavoritesPage } from './pages/FavoritesPage';
+import { GamesPage } from './pages/GamesPage';
 import { HomePage } from './pages/HomePage';
 import { NotFoundPage } from './pages/NotFoundPage';
 import { RaceDetailPage } from './pages/RaceDetailPage';
@@ -21,7 +22,7 @@ import { TeamsPage } from './pages/TeamsPage';
 
 const TITLES: Record<string, string> = {
   calendario: 'Calendário 2026', circuitos: 'Circuitos', pilotos: 'Pilotos', equipes: 'Equipes',
-  classificacao: 'Classificação', favoritos: 'Favoritos',
+  classificacao: 'Classificação', favoritos: 'Favoritos', jogos: 'Jogos',
 };
 
 /** Seção da URL usada como chave de transição (abrir um modal não troca de página). */
@@ -95,6 +96,8 @@ export default function App() {
             <Route path="/equipes" element={<TeamsPage />} />
             <Route path="/equipes/:id" element={<TeamsPage />} />
             <Route path="/classificacao" element={<StandingsPage />} />
+            <Route path="/jogos" element={<GamesPage />} />
+            <Route path="/jogos/:game" element={<GamesPage />} />
             <Route path="/favoritos" element={<FavoritesPage />} />
             <Route path="*" element={<NotFoundPage />} />
           </Routes>
