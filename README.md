@@ -4,7 +4,7 @@ Uma plataforma interativa para fãs da Fórmula 1 (temporada 2026), feita com **
 
 ## Funcionalidades
 
-- **Início**: hero cinematográfico ("THE RACE NEVER STOPS."), faixa animada com dados da temporada, card do próximo GP com contagem regressiva em tempo real (que nunca fica negativa), favoritar e compartilhar.
+- **Início**: landing com três celulares (fonte Albert Sans): Lewis Hamilton em Silverstone, os pontos **ao vivo** de Hamilton e da Ferrari em 2026 e os da carreira de Hamilton (contagem animada), e a Ferrari SF-26 com Leclerc (16) e Hamilton (44); menu em tela cheia com links para biografia, classificação e equipe. Depois vem faixa animada com dados da temporada, card do próximo GP com contagem regressiva em tempo real (que nunca fica negativa), favoritar e compartilhar.
 - **Calendário 2026**: as 22 etapas mais as 2 canceladas (Bahrein e Arábia Saudita), com busca, filtros por país, mês e status, alternância entre cards e lista (preferência salva) e página de detalhes de cada GP (`/calendario/:id`) com programação, contagem, exportação `.ics`, compartilhamento (Web Share API, com cópia do link como alternativa) e resultado oficial quando a corrida já terminou.
 - **Circuitos**: cards com traçado SVG animado, ficha técnica, recorde de volta verificado e modal de detalhes (`/circuitos/:id`).
 - **Pilotos**: galeria dos 22 titulares, busca, filtro por equipe, ordenação e perfil (`/pilotos/:id`) com biografia, trajetória e estatísticas da temporada **em tempo real**.

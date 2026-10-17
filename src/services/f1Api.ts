@@ -145,3 +145,9 @@ export async function fetchRaceResults(season: number, round: number, signal?: A
     time: r.Time?.time,
   }));
 }
+
+/** Soma os pontos de todas as temporadas de um piloto (uma linha por temporada na Jolpica). */
+export async function fetchCareerPoints(driverId: string, signal?: AbortSignal): Promise<number> {
+  const json = await getJson<StandingsTable<{ DriverStandings: ErgastDriverStanding[] }>>(`/drivers/${driverId}/driverstandings.json?limit=100`, signal);
+  return json.MRData.StandingsTable.StandingsLists.reduce((sum, list) => sum + Number(list.DriverStandings[0]?.points ?? 0), 0);
+}

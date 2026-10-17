@@ -5,8 +5,8 @@ import { CarPhoto } from '../components/CarPhoto';
 import { FavoriteButton } from '../components/FavoriteButton';
 import { Flag } from '../components/Flag';
 import { Garage } from '../components/Garage';
-import { Hero } from '../components/Hero';
 import { LastRacePodium } from '../components/LastRacePodium';
+import { PhoneHero } from '../components/PhoneHero';
 import { RaceCard } from '../components/RaceCard';
 import { RaceCountdown } from '../components/RaceCountdown';
 import { Reveal } from '../components/Reveal';
@@ -55,7 +55,7 @@ export function HomePage() {
 
   return (
     <>
-      <Hero nextRace={next} />
+      <PhoneHero />
       <Ticker items={ticker} />
 
       {/* Próximo Grande Prêmio */}
