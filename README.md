@@ -38,7 +38,7 @@ O site inteiro segue a landing da home:
 - botões quadrados: branco (ação principal) e vidro (secundária);
 - menu em tela cheia com o degradê vermelho da landing e links entrando em sequência;
 - troca de página "apagaram as luzes": três faixas (vinho, vermelho e azul-noite) cobrem a tela, as cinco luzes de largada acendem e apagam, o nome da página entra em velocidade e a página nova surge saindo do desfoque;
-- página 404 em tela cheia ("Saiu da pista!"): "404" gigante com oval branco, vídeo no centro, paralaxe com o mouse e atalhos para as seções;
+- página 404 "Saiu da pista." feita no próprio site (sem imagem ou vídeo externo): um carro entra no traçado de Silverstone, escapa numa curva com marca de pneu e cascalho e para na brita com "Você está aqui"; o botão "Recolocar o carro" devolve ele à pista, e há atalhos e pesquisa;
 - títulos das páginas entram "em velocidade" (speed reveal) e os números grandes contam ao aparecer na tela (classificação, estatísticas do piloto, temporada em números).
 
 ## Como executar
