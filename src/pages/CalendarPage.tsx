@@ -29,7 +29,7 @@ export function CalendarPage() {
 
   return (
     <>
-      <PageHeader kicker="Temporada 2026" title={<>Calendário <span className="text-race">interativo</span></>}>
+      <PageHeader kicker="Temporada 2026" title={<>Calendário <span className="text-gold">interativo</span></>}>
         <p>22 Grandes Prêmios confirmados. Filtre por país, mês ou status, busque pelo nome e alterne entre cards e lista. Horários exibidos no seu fuso ({userTimeZone()}).</p>
       </PageHeader>
 
@@ -73,7 +73,7 @@ export function CalendarPage() {
                 const Icon = v === 'grid' ? LayoutGrid : List;
                 return (
                   <button key={v} type="button" onClick={() => setView(v)} aria-pressed={view === v} aria-label={v === 'grid' ? 'Ver em cards' : 'Ver em lista'}
-                    className={`flex h-8 w-9 items-center justify-center rounded-md transition ${view === v ? 'bg-race text-white' : 'text-zinc-400 hover:text-white'}`}>
+                    className={`flex h-8 w-9 items-center justify-center rounded-md transition ${view === v ? 'bg-gold text-black' : 'text-zinc-400 hover:text-white'}`}>
                     <Icon className="h-4 w-4" aria-hidden />
                   </button>
                 );

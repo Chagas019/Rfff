@@ -3,24 +3,11 @@ import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { createPortal } from 'react-dom';
 import { Link } from 'react-router-dom';
 import { SEASON } from '../data/calendar2026';
+import { useCountUp } from './CountUp';
+import { LANDING_IMG as IMG } from '../data/landing';
 import { useAsync } from '../hooks/useAsync';
 import { fetchCareerPoints, fetchConstructorStandings, fetchDriverStandings, LIVE_REFRESH_MS } from '../services/f1Api';
 
-const IMG = {
-  bg: 'https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260709_152331_bd312d1a-1f20-46b9-9b68-12bcdcf6d53e.png&w=1280&q=85',
-  logo: 'https://framerusercontent.com/images/NZPITJ6zDBvxVT7rc1NH2sOU.png',
-  profile: 'https://framerusercontent.com/images/JIl4japgQlMAQRvh1gDHszRvkUY.png?width=92&height=92',
-  ukFlag: 'https://framerusercontent.com/images/pqUTggaeyOivtzDImRzkBRdww.png',
-  hamilton: 'https://framerusercontent.com/images/m5IyHuJeOQ5P0GOvWx1xv0IR9Y.png',
-  avatars: 'https://framerusercontent.com/images/dAAdqktZVxBDjPKk97YCjZjsE.png',
-  circuit: 'https://framerusercontent.com/images/raKAG2bJP9xeqi118VMniPLvbAA.png',
-  medal: 'https://framerusercontent.com/images/pIXUcwyAF0xzCIaKjtNLahHpasQ.png',
-  ferrari: 'https://framerusercontent.com/images/sUDhzMuxKIOvqjSH5U1fn0QSXqI.png',
-  chassis: 'https://framerusercontent.com/images/zIA1tYDOAdZo3k6IXX9gBC5FGbY.png',
-  car: 'https://framerusercontent.com/images/MzKCSYB4uVt9psQq4jRwQNRDjc.png',
-  leclercStats: 'https://framerusercontent.com/images/MJfqhcmEoIBnfimJNhKqoZpq0.png',
-  hamiltonStats: 'https://framerusercontent.com/images/3EwXxC1QutaGnlNDZMlAN66ZmTU.png',
-};
 
 const MENU_LINKS = [
   { label: 'Biography', to: '/pilotos/hamilton' },
@@ -29,27 +16,6 @@ const MENU_LINKS = [
 ];
 
 const EASE = 'cubic-bezier(0.16,1,0.3,1)';
-
-/** Conta de 0 até `target` com ease-out cúbico, começando depois de `delay` ms. */
-function useCountUp(target: number | null, delay: number, duration = 2200) {
-  const [value, setValue] = useState(0);
-  useEffect(() => {
-    if (target === null) return;
-    if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) { setValue(target); return; }
-    let raf = 0;
-    const timer = setTimeout(() => {
-      const start = performance.now();
-      const tick = (t: number) => {
-        const p = Math.min(1, (t - start) / duration);
-        setValue(Math.round(target * (1 - Math.pow(1 - p, 3))));
-        if (p < 1) raf = requestAnimationFrame(tick);
-      };
-      raf = requestAnimationFrame(tick);
-    }, delay);
-    return () => { clearTimeout(timer); cancelAnimationFrame(raf); };
-  }, [target, delay, duration]);
-  return value;
-}
 
 /** Moldura de iPhone; o conteúdo é desenhado em 390 px de largura e escalado para caber na tela. */
 function PhoneMockup({ children }: { children: ReactNode }) {

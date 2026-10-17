@@ -5,17 +5,19 @@ export default {
     extend: {
       colors: {
         race: { DEFAULT: '#e10600', 500: '#e10600', 400: '#ff2a1f', 600: '#b30500', glow: '#ff3b30' },
-        carbon: { 950: '#07070a', 900: '#0d0d12', 850: '#121219', 800: '#181820', 700: '#22222c', 600: '#2e2e3a', 500: '#4a4a58' },
+        // tons da landing: azul-noite #0a0e1c e vidro rgba(20,20,30)
+        carbon: { 950: '#0a0e1c', 900: '#0e1324', 850: '#121829', 800: '#161c2e', 700: '#20273b', 600: '#2c3449', 500: '#4a5268' },
+        gold: { DEFAULT: '#EDB40B', 400: '#f5c63a', 600: '#c99608' },
         f1: { dark: 'rgb(41,41,41)', yellow: 'rgb(237,180,11)' },
-        telemetry: { cyan: '#22d3ee', green: '#22c55e', yellow: '#facc15', purple: '#a855f7' },
+        telemetry: { cyan: '#22d3ee', green: '#22c55e', yellow: '#EDB40B', purple: '#a855f7' },
       },
       fontFamily: {
-        // Big Shoulders Display ≈ "Growth" (ultracondensada); Oswald ≈ "TT Burn" (condensada, variável)
-        display: ['"Big Shoulders Display"', '"Oswald Variable"', 'Impact', 'sans-serif'],
-        condensed: ['"Oswald Variable"', '"Big Shoulders Display"', 'Impact', 'sans-serif'],
-        sans: ['"Titillium Web"', 'system-ui', 'sans-serif'],
+        // Albert Sans em tudo, como na landing
+        display: ['"Albert Sans"', 'sans-serif'],
+        condensed: ['"Albert Sans"', 'sans-serif'],
+        sans: ['"Albert Sans"', 'system-ui', 'sans-serif'],
         albert: ['"Albert Sans"', 'sans-serif'],
-        mono: ['"JetBrains Mono"', 'ui-monospace', 'monospace'],
+        mono: ['"Albert Sans"', 'ui-monospace', 'monospace'],
       },
       keyframes: {
         marquee: { '0%': { transform: 'translateX(0)' }, '100%': { transform: 'translateX(-50%)' } },

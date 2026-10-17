@@ -5,6 +5,7 @@ import { Route, Routes, useLocation } from 'react-router-dom';
 import { BackToTop } from './components/BackToTop';
 import { Footer } from './components/Footer';
 import { Navbar } from './components/Navbar';
+import { LANDING_IMG } from './data/landing';
 import { useAppUpdate } from './hooks/useAppUpdate';
 import { playPassSound, preloadPassSound } from './services/sound';
 import { PageTransition } from './components/PageTransition';
@@ -72,6 +73,11 @@ export default function App() {
 
   return (
     <MotionConfig reducedMotion="user">
+      {/* fundo da landing atrás de todas as páginas */}
+      <div className="pointer-events-none fixed inset-0 -z-10" aria-hidden>
+        <img src={LANDING_IMG.bg} alt="" className="h-full w-full object-cover" />
+        <div className="absolute inset-0 bg-[#0a0e1c]/85" />
+      </div>
       <Navbar onSearch={() => setSearchOpen(true)} />
       <SearchBar open={searchOpen} onClose={() => setSearchOpen(false)} />
       {navigated && <PageTransition key={section} routeKey={section} />}
@@ -109,10 +115,10 @@ export default function App() {
         {updateAvailable && (
           <motion.div
             initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 30 }}
-            className="glass fixed bottom-6 left-1/2 z-[70] flex w-[min(92vw,440px)] -translate-x-1/2 items-center gap-3 rounded-2xl border border-race/40 px-4 py-3 text-sm text-white shadow-2xl"
+            className="glass fixed bottom-6 left-1/2 z-[70] flex w-[min(92vw,440px)] -translate-x-1/2 items-center gap-3 rounded-2xl border border-gold/40 px-4 py-3 text-sm text-white shadow-2xl"
             role="status"
           >
-            <RefreshCw className="h-5 w-5 shrink-0 text-race" aria-hidden />
+            <RefreshCw className="h-5 w-5 shrink-0 text-gold" aria-hidden />
             <span className="flex-1">Saiu uma versão nova do GRID F1. Ela entra sozinha na próxima página.</span>
             <button type="button" className="btn-primary px-3 py-1.5 text-xs" onClick={() => window.location.reload()}>Atualizar</button>
           </motion.div>

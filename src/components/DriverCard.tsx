@@ -15,7 +15,7 @@ export function DriverCard({ driver, onOpen }: { driver: Driver; onOpen: () => v
       <div className="absolute -right-10 -top-10 h-40 w-40 rounded-full opacity-20 blur-3xl transition group-hover:opacity-50" style={{ background: team.color }} aria-hidden />
       <button type="button" onClick={onOpen} className="block w-full text-left" aria-label={`Abrir perfil de ${driver.firstName} ${driver.lastName}`}>
         <div className="relative h-48 overflow-hidden">
-          <span className="absolute left-4 top-3 font-display text-6xl font-black leading-none" style={{ color: team.color, opacity: 0.85 }}>{driver.number}</span>
+          <span className="absolute left-4 top-3 font-display text-6xl font-semibold leading-none" style={{ color: team.color, opacity: 0.85 }}>{driver.number}</span>
           {driver.photoUrl ? (
             <img src={driver.photoUrl} alt={`${driver.firstName} ${driver.lastName}`} className="absolute bottom-0 right-0 h-full object-contain" loading="lazy" />
           ) : (
@@ -24,7 +24,7 @@ export function DriverCard({ driver, onOpen }: { driver: Driver; onOpen: () => v
         </div>
         <div className="border-t border-white/5 p-5 pr-16">
           <p className="text-sm text-zinc-400">{driver.firstName}</p>
-          <h3 className="text-xl font-black uppercase leading-tight">{driver.lastName}</h3>
+          <h3 className="text-xl font-semibold leading-tight">{driver.lastName}</h3>
           <p className="mt-2 flex items-center gap-2 text-xs text-zinc-400">
             <span className="h-2.5 w-2.5 rounded-full" style={{ background: team.color }} aria-hidden />
             {team.name}

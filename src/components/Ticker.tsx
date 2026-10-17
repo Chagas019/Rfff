@@ -4,12 +4,12 @@ import { Zap } from 'lucide-react';
 export function Ticker({ items }: { items: string[] }) {
   const loop = [...items, ...items];
   return (
-    <div className="group relative overflow-hidden border-y border-race/30 bg-race/[0.07] py-3" aria-label="Informações da temporada">
+    <div className="group relative overflow-hidden border-y border-gold/30 bg-gold/[0.07] py-3" aria-label="Informações da temporada">
       <ul className="sr-only">{items.map((i) => <li key={i}>{i}</li>)}</ul>
       <div className="flex w-max animate-marquee gap-10 group-hover:[animation-play-state:paused]" aria-hidden>
         {loop.map((text, i) => (
-          <span key={i} className="flex items-center gap-3 whitespace-nowrap font-mono text-xs uppercase tracking-[0.2em] text-zinc-300">
-            <Zap className="h-3.5 w-3.5 text-race" /> {text}
+          <span key={i} className="flex items-center gap-3 whitespace-nowrap font-mono text-xs text-zinc-300">
+            <Zap className="h-3.5 w-3.5 text-gold" /> {text}
           </span>
         ))}
       </div>
