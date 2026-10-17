@@ -55,7 +55,7 @@ export function Garage({ initialTeam }: { initialTeam?: string }) {
       }}
     >
       {/* brilho com a cor da equipe */}
-      <motion.div aria-hidden className="pointer-events-none absolute -inset-10 -z-10 rounded-[3rem] blur-3xl" animate={{ background: `radial-gradient(60% 60% at 60% 50%, ${team.color}40, transparent 70%)` }} transition={{ duration: 0.8 }} />
+      <motion.div aria-hidden className="pointer-events-none absolute -inset-4 -z-10 rounded-[3rem] blur-3xl sm:-inset-10" animate={{ background: `radial-gradient(60% 60% at 60% 50%, ${team.color}40, transparent 70%)` }} transition={{ duration: 0.8 }} />
 
       <div className="grid items-center gap-6 lg:grid-cols-[1fr_2fr]">
         <div className="order-2 lg:order-1">

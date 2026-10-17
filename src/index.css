@@ -5,6 +5,8 @@
 @layer base {
   :root { color-scheme: dark; }
   html { position: relative; scroll-behavior: smooth; -webkit-tap-highlight-color: transparent; }
+  /* brilhos e faixas decorativas nunca criam rolagem lateral (clip não quebra sticky/fixed) */
+  html, body { overflow-x: clip; }
   body { @apply bg-carbon-950 font-sans text-zinc-200 antialiased; }
   ::selection { background: #EDB40B; color: #0a0e1c; }
   :focus-visible { outline: 2px solid #EDB40B; outline-offset: 3px; border-radius: 6px; }

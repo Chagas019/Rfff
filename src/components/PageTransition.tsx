@@ -1,4 +1,5 @@
 import { motion, useReducedMotion } from 'framer-motion';
+import { useEffect, useState } from 'react';
 import { Logo } from './Logo';
 
 const EASE = [0.76, 0, 0.24, 1] as const;
@@ -14,7 +15,13 @@ const TIMES = [0, 0.33, 0.68, 1];
  */
 export function PageTransition({ routeKey, label }: { routeKey: string; label: string }) {
   const reduce = useReducedMotion();
-  if (reduce) return null;
+  // sai da tela (e do DOM) quando a animação termina, para não deixar uma camada fixa por cima do site
+  const [done, setDone] = useState(false);
+  useEffect(() => {
+    const t = setTimeout(() => setDone(true), (DURATION + 0.25) * 1000);
+    return () => clearTimeout(t);
+  }, []);
+  if (reduce || done) return null;
   const band = (className: string, delay: number) => (
     <motion.div
       className={`absolute -inset-y-16 -left-[20%] w-[140%] -skew-x-[14deg] ${className}`}
