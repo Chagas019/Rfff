@@ -1,5 +1,6 @@
 import { races } from '../calendar2026';
 import { circuits } from '../circuits';
+import { trackShapes } from '../trackShapes';
 import { drivers } from '../drivers';
 import { teams } from '../teams';
 
@@ -40,5 +41,17 @@ describe('integridade dos dados', () => {
     expect(teams).toHaveLength(11);
     for (const t of teams) expect(drivers.filter((d) => d.teamId === t.id)).toHaveLength(2);
     expect(new Set(drivers.map((d) => d.number)).size).toBe(drivers.length);
+  });
+});
+
+describe('traçados reais', () => {
+  it('todo circuito tem traçado real e ele segue o sentido oficial de corrida', () => {
+    for (const c of circuits) {
+      expect(trackShapes[c.id], c.id).toBeDefined();
+      if (c.id === 'suzuka') continue; // "8": o sentido não se define pela área
+      const p = c.layout;
+      const area = p.reduce((s, [x, y], i) => { const [nx, ny] = p[(i + 1) % p.length]; return s + x * ny - nx * y; }, 0);
+      expect(area > 0 ? 'Horário' : 'Anti-horário', c.id).toBe(c.direction);
+    }
   });
 });

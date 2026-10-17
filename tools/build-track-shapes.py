@@ -25,7 +25,10 @@ IDS = {
     'interlagos': 'br-1940', 'las-vegas': 'us-2023', 'lusail': 'qa-2004', 'yas-marina': 'ae-2009',
 }
 MARGIN = 6.0
-TOLERANCE = 0.32
+TOLERANCE = 0.14
+# sentido oficial de corrida (formula1.com); Suzuka é um "8" e fica como está
+ANTICLOCKWISE = {'jeddah', 'miami', 'baku', 'singapore', 'cota', 'interlagos', 'las-vegas', 'yas-marina'}
+FIGURE_EIGHT = {'suzuka'}
 
 
 def simplify(pts, tol):
@@ -47,7 +50,18 @@ def simplify(pts, tol):
     return left[:-1] + right
 
 
-def shape(coords):
+def orient(pts, site_id):
+    """Garante que a ordem dos pontos siga o sentido oficial, mantendo a linha de chegada no início."""
+    if site_id in FIGURE_EIGHT:
+        return pts
+    area = sum(pts[i][0] * pts[(i + 1) % len(pts)][1] - pts[(i + 1) % len(pts)][0] * pts[i][1] for i in range(len(pts)))
+    clockwise = area > 0  # y para baixo
+    if clockwise == (site_id in ANTICLOCKWISE):
+        pts = [pts[0]] + pts[1:][::-1]
+    return pts
+
+
+def shape(coords, site_id):
     lat0 = sum(c[1] for c in coords) / len(coords)
     k = math.cos(math.radians(lat0))
     pts = [(lon * k, -lat) for lon, lat in coords]  # norte para cima
@@ -64,7 +78,8 @@ def shape(coords):
     first = simplify(pts[: far + 1], TOLERANCE)
     second = simplify(pts[far:] + [pts[0]], TOLERANCE)
     pts = first[:-1] + second[:-1]
-    return [[round(x, 1), round(y, 1)] for x, y in pts]
+    pts = orient(pts, site_id)
+    return [[round(x, 2), round(y, 2)] for x, y in pts]
 
 
 def main():
@@ -79,7 +94,7 @@ def main():
         'export const trackShapes: Record<string, [number, number][]> = {',
     ]
     for site_id, src_id in IDS.items():
-        pts = shape(by_id[src_id]['geometry']['coordinates'])
+        pts = shape(by_id[src_id]['geometry']['coordinates'], site_id)
         flat = ','.join(f'[{x},{y}]' for x, y in pts)
         out.append(f"  '{site_id}': [{flat}],")
     out.append('};')
