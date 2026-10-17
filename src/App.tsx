@@ -1,10 +1,11 @@
 import { AnimatePresence, MotionConfig, motion } from 'framer-motion';
 import { RefreshCw } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
-import { Route, Routes, useLocation } from 'react-router-dom';
+import { matchRoutes, Route, Routes, useLocation } from 'react-router-dom';
 import { BackToTop } from './components/BackToTop';
 import { Footer } from './components/Footer';
 import { Navbar } from './components/Navbar';
+import { LANDING_IMG } from './data/landing';
 import { useAppUpdate } from './hooks/useAppUpdate';
 import { playPassSound, preloadPassSound } from './services/sound';
 import { PageTransition } from './components/PageTransition';
@@ -25,6 +26,9 @@ const TITLES: Record<string, string> = {
   classificacao: 'Classificação', favoritos: 'Favoritos', jogos: 'Jogos',
 };
 
+/** Rotas conhecidas: o que não casar com nenhuma é a 404, que ocupa a tela inteira sem rodapé. */
+const KNOWN_ROUTES = ['/', '/calendario', '/calendario/:id', '/circuitos', '/circuitos/:id', '/pilotos', '/pilotos/:id', '/equipes', '/equipes/:id', '/classificacao', '/jogos', '/jogos/:game', '/favoritos'].map((path) => ({ path }));
+
 /** Seção da URL usada como chave de transição (abrir um modal não troca de página). */
 const sectionOf = (path: string) => {
   const [first, second] = path.split('/').filter(Boolean);
@@ -35,6 +39,9 @@ export default function App() {
   const location = useLocation();
   const [searchOpen, setSearchOpen] = useState(false);
   const section = sectionOf(location.pathname);
+  const notFound = !matchRoutes(KNOWN_ROUTES, location);
+  const first = location.pathname.split('/').filter(Boolean)[0];
+  const label = notFound ? 'Fora da pista' : first ? TITLES[first] ?? 'GRID F1' : 'Início';
   const prevSection = useRef(section);
   const [navigated, setNavigated] = useState(false);
   const updateAvailable = useAppUpdate();
@@ -53,8 +60,7 @@ export default function App() {
 
   useEffect(() => {
     window.scrollTo({ top: 0 });
-    const first = location.pathname.split('/').filter(Boolean)[0];
-    document.title = first && TITLES[first] ? `${TITLES[first]} · GRID F1` : 'GRID F1 — A Experiência da Velocidade';
+    document.title = notFound ? 'Página não encontrada · GRID F1' : first && TITLES[first] ? `${TITLES[first]} · GRID F1` : 'GRID F1 — A Experiência da Velocidade';
   }, [section]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
@@ -72,18 +78,25 @@ export default function App() {
 
   return (
     <MotionConfig reducedMotion="user">
+      {/* fundo da landing atrás de todas as páginas */}
+      <div className="pointer-events-none fixed inset-0 -z-10" aria-hidden>
+        <img src={LANDING_IMG.bg} alt="" className="h-full w-full object-cover" />
+        <div className="absolute inset-0 bg-[#0a0e1c]/85" />
+      </div>
       <Navbar onSearch={() => setSearchOpen(true)} />
       <SearchBar open={searchOpen} onClose={() => setSearchOpen(false)} />
-      {navigated && <PageTransition key={section} routeKey={section} />}
+      {navigated && <PageTransition key={section} routeKey={section} label={label} />}
       <AnimatePresence mode="wait">
         <motion.main
           id="conteudo"
           key={section}
           tabIndex={-1}
           className="relative min-h-screen outline-none"
-          initial={{ opacity: 0, x: 40 }}
-          animate={{ opacity: 1, x: 0, transition: { duration: 0.45, delay: 0.1, ease: [0.16, 1, 0.3, 1] } }}
-          exit={{ opacity: 0, x: -40, transition: { duration: 0.3, ease: [0.7, 0, 0.84, 0] } }}
+          // a página nova aparece por trás da cortina: sobe, ganha foco (sem desfoque) e cresce um pouco.
+          // filter volta a "none" no fim para não prender elementos fixed (modais) dentro do main.
+          initial={{ opacity: 0, y: 28, scale: 0.985, filter: 'blur(10px)' }}
+          animate={{ opacity: 1, y: 0, scale: 1, filter: 'blur(0px)', transition: { duration: 0.7, delay: navigated ? 0.4 : 0.05, ease: [0.16, 1, 0.3, 1] }, transitionEnd: { filter: 'none' } }}
+          exit={{ opacity: 0, y: -16, scale: 0.99, filter: 'blur(6px)', transition: { duration: 0.3, ease: [0.7, 0, 0.84, 0] } }}
         >
           <Routes location={location}>
             <Route path="/" element={<HomePage />} />
@@ -103,16 +116,16 @@ export default function App() {
           </Routes>
         </motion.main>
       </AnimatePresence>
-      <Footer />
+      {!notFound && <Footer />}
       <BackToTop />
       <AnimatePresence>
         {updateAvailable && (
           <motion.div
             initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 30 }}
-            className="glass fixed bottom-6 left-1/2 z-[70] flex w-[min(92vw,440px)] -translate-x-1/2 items-center gap-3 rounded-2xl border border-race/40 px-4 py-3 text-sm text-white shadow-2xl"
+            className="glass fixed bottom-6 left-1/2 z-[70] flex w-[min(92vw,440px)] -translate-x-1/2 items-center gap-3 rounded-2xl border border-gold/40 px-4 py-3 text-sm text-white shadow-2xl"
             role="status"
           >
-            <RefreshCw className="h-5 w-5 shrink-0 text-race" aria-hidden />
+            <RefreshCw className="h-5 w-5 shrink-0 text-gold" aria-hidden />
             <span className="flex-1">Saiu uma versão nova do GRID F1. Ela entra sozinha na próxima página.</span>
             <button type="button" className="btn-primary px-3 py-1.5 text-xs" onClick={() => window.location.reload()}>Atualizar</button>
           </motion.div>

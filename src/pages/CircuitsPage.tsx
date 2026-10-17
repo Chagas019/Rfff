@@ -12,7 +12,7 @@ import { SourceNote } from '../components/SourceNote';
 import { EmptyState } from '../components/States';
 import { TrackMap } from '../components/TrackMap';
 import { races } from '../data/calendar2026';
-import { CIRCUITS_SOURCE, circuits } from '../data/circuits';
+import { CIRCUITS_SOURCE, TRACKS_SOURCE, circuits } from '../data/circuits';
 import { formatWeekend, normalize } from '../utils/format';
 
 export function CircuitsPage() {
@@ -38,7 +38,7 @@ export function CircuitsPage() {
 
   return (
     <>
-      <PageHeader kicker="Traçados 2026" title={<>Os <span className="text-race">circuitos</span></>}>
+      <PageHeader kicker="Traçados 2026" title={<>Os <span className="text-gold">circuitos</span></>}>
         <p>Dos templos da velocidade às ruas iluminadas da noite. Clique em uma pista para ver a ficha técnica completa.</p>
       </PageHeader>
       <div className="container-grid py-10">
@@ -56,7 +56,7 @@ export function CircuitsPage() {
             </select>
           </label>
           <label className="flex items-center gap-2 text-sm text-zinc-300">
-            <input type="checkbox" className="h-4 w-4 accent-race" checked={showCancelled} onChange={(e) => setShowCancelled(e.target.checked)} />
+            <input type="checkbox" className="h-4 w-4 accent-gold" checked={showCancelled} onChange={(e) => setShowCancelled(e.target.checked)} />
             Mostrar etapas canceladas
           </label>
         </div>
@@ -72,7 +72,7 @@ export function CircuitsPage() {
             ))}
           </div>
         )}
-        <SourceNote label={CIRCUITS_SOURCE.label} url={CIRCUITS_SOURCE.url}>Traçados esquemáticos desenhados para este site (ilustrativos).</SourceNote>
+        <SourceNote label={CIRCUITS_SOURCE.label} url={CIRCUITS_SOURCE.url}>Traçados reais: <a href={TRACKS_SOURCE.url} target="_blank" rel="noreferrer" className="underline hover:text-white">{TRACKS_SOURCE.label}</a>.</SourceNote>
       </div>
 
       <Modal open={!!selected} onClose={close} title={selected ? selected.circuit.name : 'Circuito'} wide>
@@ -83,11 +83,11 @@ export function CircuitsPage() {
               <motion.div initial={{ scale: 0.85, rotate: -6, opacity: 0 }} animate={{ scale: 1, rotate: 0, opacity: 1 }} transition={{ type: 'spring', damping: 18 }} className="relative h-full">
                 <TrackMap points={selected.circuit.layout} name={selected.circuit.name} className="h-full max-h-[460px] w-full" />
               </motion.div>
-              <p className="absolute bottom-3 left-6 text-[11px] text-zinc-500">Traçado esquemático · ponto branco = linha de chegada</p>
+              <p className="absolute bottom-3 left-6 text-[11px] text-zinc-500">Traçado real · quadriculado = linha de chegada · passe o mouse para inclinar</p>
             </div>
             <div className="p-6 sm:p-8">
               <p className="flex items-center gap-2 text-sm text-zinc-400"><Flag code={selected.circuit.countryCode} country={selected.circuit.country} />{selected.circuit.city}, {selected.circuit.country}</p>
-              <h2 className="mt-1 pr-10 text-2xl font-black uppercase sm:text-3xl">{selected.circuit.name}</h2>
+              <h2 className="mt-1 pr-10 text-2xl font-semibold sm:text-3xl">{selected.circuit.name}</h2>
               <p className="mt-3 text-sm text-zinc-300">{selected.circuit.description}</p>
               {selected.circuit.provisional && (
                 <p className="mt-3 flex items-start gap-2 rounded-lg border border-telemetry-yellow/30 bg-telemetry-yellow/10 p-3 text-xs text-telemetry-yellow">

@@ -19,7 +19,7 @@ export function BackToTop() {
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: 20 }}
           onClick={() => window.scrollTo({ top: 0, behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' })}
-          className="fixed bottom-6 right-6 z-50 flex h-12 w-12 items-center justify-center rounded-full bg-race text-white shadow-[0_10px_30px_-5px_rgba(225,6,0,0.7)] transition hover:bg-race-400"
+          className="fixed bottom-6 right-6 z-50 flex h-12 w-12 items-center justify-center rounded-full bg-gold text-black shadow-[0_10px_30px_-5px_rgba(237,180,11,0.7)] transition hover:bg-gold"
           aria-label="Voltar ao topo"
         >
           <ArrowUp className="h-5 w-5" aria-hidden />

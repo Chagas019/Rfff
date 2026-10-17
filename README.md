@@ -4,9 +4,9 @@ Uma plataforma interativa para fãs da Fórmula 1 (temporada 2026), feita com **
 
 ## Funcionalidades
 
-- **Início**: hero cinematográfico ("THE RACE NEVER STOPS."), faixa animada com dados da temporada, card do próximo GP com contagem regressiva em tempo real (que nunca fica negativa), favoritar e compartilhar.
+- **Início**: landing com três celulares (fonte Albert Sans): Lewis Hamilton em Silverstone, os pontos **ao vivo** de Hamilton e da Ferrari em 2026 e os da carreira de Hamilton (contagem animada), e a Ferrari SF-26 com Leclerc (16) e Hamilton (44); menu em tela cheia com links para biografia, classificação e equipe. Depois vem faixa animada com dados da temporada, card do próximo GP com contagem regressiva em tempo real (que nunca fica negativa), favoritar e compartilhar.
 - **Calendário 2026**: as 22 etapas mais as 2 canceladas (Bahrein e Arábia Saudita), com busca, filtros por país, mês e status, alternância entre cards e lista (preferência salva) e página de detalhes de cada GP (`/calendario/:id`) com programação, contagem, exportação `.ics`, compartilhamento (Web Share API, com cópia do link como alternativa) e resultado oficial quando a corrida já terminou.
-- **Circuitos**: cards com traçado SVG animado, ficha técnica, recorde de volta verificado e modal de detalhes (`/circuitos/:id`).
+- **Circuitos**: cards com o **traçado real** de cada pista como uma maquete em relevo suave (base com espessura e quadriculado, asfalto com espessura e luz, bordas brancas, zebras vermelhas e brancas nas curvas, grid de largada, seta do sentido oficial de corrida e carro com rastro de luz; inclina acompanhando o mouse), ficha técnica, recorde de volta verificado e modal de detalhes (`/circuitos/:id`).
 - **Pilotos**: galeria dos 22 titulares, busca, filtro por equipe, ordenação e perfil (`/pilotos/:id`) com biografia, trajetória e estatísticas da temporada **em tempo real**.
 - **Equipes**: 11 equipes com cores, pilotos, história e **foto real do carro de 2026** (Wikimedia Commons, com crédito), com zoom e animação.
 - **Classificação**: pilotos e construtores (posição, pontos, vitórias e pódios) vindos de uma API real.
@@ -30,14 +30,16 @@ O site se mantém atualizado sozinho, sem ninguém precisar recarregar a página
 - **Calendário**: status (próxima, ao vivo, concluída), contagem regressiva e "próximo GP" são calculados pelo relógio, então mudam sozinhos.
 - **Versão nova do site**: cada build gera `/version.json` (commit da Vercel). O site consulta esse arquivo a cada 5 minutos; quando sai uma publicação nova, ela entra sozinha na próxima troca de página (ou na hora, se a aba estiver em segundo plano). Os cabeçalhos em `vercel.json` impedem que o navegador guarde versões velhas do `index.html`.
 
-## Tipografia
+## Visual
 
-Inspirada em **Growth** (Broworks Studio) e **TT Burn** (TrueType), que são fontes pagas. Como o projeto não tem a licença delas, usa alternativas gratuitas (OFL) com o mesmo estilo, hospedadas no próprio site via Fontsource:
-- **Big Shoulders Display** (títulos, ultracondensada) no lugar da Growth;
-- **Oswald Variable** (rótulos, botões e subtítulos, condensada e variável) no lugar da TT Burn;
-- **Titillium Web** para textos corridos.
-
-Para usar as fontes originais licenciadas, coloque os arquivos `.woff2` em `public/fonts/`, declare-os com `@font-face` em `src/index.css` e troque os nomes em `tailwind.config.js` (`display` e `condensed`).
+O site inteiro segue a landing da home:
+- **Albert Sans** (Google Fonts) em tudo, com títulos de letras bem juntas e entrelinha curta;
+- fundo azul-noite `#0a0e1c` com a foto da landing atrás de todas as páginas, cartões de vidro (`rgba(20,20,30,0.8)` com desfoque) e dourado `#EDB40B` como destaque;
+- botões quadrados: branco (ação principal) e vidro (secundária);
+- menu em tela cheia com o degradê vermelho da landing e links entrando em sequência;
+- troca de página "apagaram as luzes": três faixas (vinho, vermelho e azul-noite) cobrem a tela, as cinco luzes de largada acendem e apagam, o nome da página entra em velocidade e a página nova surge saindo do desfoque;
+- página 404 "Saiu da pista." feita no próprio site (sem imagem ou vídeo externo): um carro entra no traçado de Silverstone, escapa numa curva com marca de pneu e cascalho e para na brita com "Você está aqui"; o botão "Recolocar o carro" devolve ele à pista, e há atalhos e pesquisa;
+- títulos das páginas entram "em velocidade" (speed reveal) e os números grandes contam ao aparecer na tela (classificação, estatísticas do piloto, temporada em números).
 
 ## Como executar
 
@@ -73,7 +75,7 @@ Nenhuma chave secreta é usada no frontend.
 
 **Fotos dos carros (reais):** usadas para as equipes sem imagem de estúdio. carregadas no navegador do visitante pela API pública do [Wikimedia Commons](https://commons.wikimedia.org) (`src/services/carPhotos.ts`). Só entram fotos com licença livre (CC/domínio público), e cada uma mostra o autor e a licença, com link para o arquivo original. A busca procura a categoria do chassi de 2026 (ex.: *McLaren MCL40*) e, se não achar, o nome do carro ou da equipe com 2026. O resultado fica em cache por 24 h. Se ainda não houver foto livre de um carro, o card avisa e mostra um link para o Commons. Para fixar uma foto específica, coloque o nome do arquivo em `PINNED_PHOTOS`.
 
-Fotos oficiais da F1 e das equipes têm direitos autorais e não são usadas. Capacetes dos pilotos e traçados das pistas são ilustrações SVG deste projeto. Para usar fotos de pilotos, preencha `photoUrl` e `photoCredit` em `drivers.ts` com imagens licenciadas.
+Fotos oficiais da F1 e das equipes têm direitos autorais e não são usadas. Capacetes dos pilotos são ilustrações SVG deste projeto. Os traçados das pistas são reais, do projeto aberto [bacinger/f1-circuits](https://github.com/bacinger/f1-circuits) (licença MIT), convertidos por `tools/build-track-shapes.py` para `src/data/trackShapes.ts`. Para usar fotos de pilotos, preencha `photoUrl` e `photoCredit` em `drivers.ts` com imagens licenciadas.
 
 ## Estrutura
 

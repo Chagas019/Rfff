@@ -14,6 +14,7 @@ import { EmptyState, ErrorState } from '../components/States';
 import { SEASON } from '../data/calendar2026';
 import { DRIVERS_SOURCE, drivers } from '../data/drivers';
 import { teamById, teams } from '../data/teams';
+import { CountUp } from '../components/CountUp';
 import { useAsync } from '../hooks/useAsync';
 import { API_SOURCE, LIVE_REFRESH_MS, fetchDriverStandings } from '../services/f1Api';
 import type { Driver } from '../types';
@@ -30,10 +31,12 @@ function SeasonStats({ driver }: { driver: Driver }) {
   return (
     <div>
       <dl className="grid grid-cols-2 gap-2 sm:grid-cols-4">
-        {[['Posição', `${row.position}º`], ['Pontos', row.points], ['Vitórias', row.wins], ['Pódios', row.podiums ?? '—']].map(([k, v]) => (
-          <div key={k as string} className="rounded-xl border border-white/5 bg-white/[0.03] p-3 text-center">
-            <dt className="label text-[10px]">{k}</dt>
-            <dd className="font-display text-2xl font-black text-white">{v}</dd>
+        {([['Posição', row.position, 'º'], ['Pontos', row.points, ''], ['Vitórias', row.wins, ''], ['Pódios', row.podiums ?? null, '']] as const).map(([k, v, suffix], i) => (
+          <div key={k} className="rounded-xl border border-white/10 bg-white/[0.04] p-3">
+            <dt className="text-[12px] text-white/60">{k}</dt>
+            <dd className={`display-number mt-2 text-[44px] ${k === 'Pontos' ? 'text-gold' : 'text-white'}`}>
+              {v === null ? '—' : <><CountUp value={v} delay={i * 120} />{suffix}</>}
+            </dd>
           </div>
         ))}
       </dl>
@@ -61,7 +64,7 @@ export function DriversPage() {
 
   return (
     <>
-      <PageHeader kicker="Grid 2026" title={<>Os <span className="text-race">pilotos</span></>}>
+      <PageHeader kicker="Grid 2026" title={<>Os <span className="text-gold">pilotos</span></>}>
         <p>22 pilotos, 11 equipes. Clique em um card para ver biografia, trajetória e números da temporada.</p>
       </PageHeader>
       <div className="container-grid py-10">
@@ -106,14 +109,14 @@ export function DriversPage() {
         {selected && selTeam && (
           <div>
             <div className="relative overflow-hidden p-6 sm:p-8" style={{ background: `linear-gradient(120deg, ${selTeam.color}33, transparent 60%)` }}>
-              <span className="pointer-events-none absolute -right-4 -top-8 font-display text-[10rem] font-black leading-none opacity-15" style={{ color: selTeam.color }} aria-hidden>{selected.number}</span>
+              <span className="pointer-events-none absolute -right-4 -top-8 font-display text-[10rem] font-semibold leading-none opacity-15" style={{ color: selTeam.color }} aria-hidden>{selected.number}</span>
               <div className="relative flex flex-col gap-6 sm:flex-row sm:items-center">
                 <motion.div initial={{ rotate: -10, scale: 0.8, opacity: 0 }} animate={{ rotate: 0, scale: 1, opacity: 1 }} transition={{ type: 'spring', damping: 14 }}>
                   <DriverHelmet driver={selected} team={selTeam} className="h-40 w-40" />
                 </motion.div>
                 <div>
                   <p className="label" style={{ color: selTeam.color }}>#{selected.number} · {selTeam.name}</p>
-                  <h2 className="text-3xl font-black uppercase leading-none sm:text-5xl">{selected.firstName}<br />{selected.lastName}</h2>
+                  <h2 className="text-3xl font-semibold leading-none sm:text-5xl">{selected.firstName}<br />{selected.lastName}</h2>
                   <p className="mt-2 flex items-center gap-2 text-zinc-300"><Flag code={selected.countryCode} country={selected.nationality} />{selected.nationality}</p>
                 </div>
               </div>
@@ -129,7 +132,7 @@ export function DriversPage() {
                     ['Estreia na F1', selected.debutYear],
                     ['Títulos mundiais', selected.worldTitles],
                   ].map(([k, v]) => (
-                    <div key={k as string} className="rounded-lg bg-white/[0.03] p-3"><dt className="label text-[10px]">{k}</dt><dd className="font-semibold text-white">{v}</dd></div>
+                    <div key={k as string} className="rounded-lg bg-white/[0.03] p-3"><dt className="label text-[12px]">{k}</dt><dd className="font-semibold text-white">{v}</dd></div>
                   ))}
                 </dl>
                 <p className="mt-2 text-[11px] text-zinc-500">Títulos contabilizados até o fim da temporada 2025.</p>

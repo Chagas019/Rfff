@@ -6,7 +6,7 @@ export function LoadingState({ label = 'Carregando dados…', rows = 6 }: { labe
     <div role="status" aria-live="polite" className="space-y-3">
       <span className="sr-only">{label}</span>
       <p className="label flex items-center gap-2" aria-hidden>
-        <span className="h-2 w-2 animate-pulse rounded-full bg-race" /> {label}
+        <span className="h-2 w-2 animate-pulse rounded-full bg-gold" /> {label}
       </p>
       {Array.from({ length: rows }).map((_, i) => (
         <div key={i} className="h-12 animate-pulse rounded-xl bg-white/[0.04]" style={{ animationDelay: `${i * 80}ms` }} />
