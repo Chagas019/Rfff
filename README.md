@@ -37,6 +37,8 @@ O site inteiro segue a landing da home:
 - fundo azul-noite `#0a0e1c` com a foto da landing atrás de todas as páginas, cartões de vidro (`rgba(20,20,30,0.8)` com desfoque) e dourado `#EDB40B` como destaque;
 - botões quadrados: branco (ação principal) e vidro (secundária);
 - menu em tela cheia com o degradê vermelho da landing e links entrando em sequência;
+- troca de página "apagaram as luzes": três faixas (vinho, vermelho e azul-noite) cobrem a tela, as cinco luzes de largada acendem e apagam, o nome da página entra em velocidade e a página nova surge saindo do desfoque;
+- página 404 em tela cheia ("Saiu da pista!"): "404" gigante com oval branco, vídeo no centro, paralaxe com o mouse e atalhos para as seções;
 - títulos das páginas entram "em velocidade" (speed reveal) e os números grandes contam ao aparecer na tela (classificação, estatísticas do piloto, temporada em números).
 
 ## Como executar
