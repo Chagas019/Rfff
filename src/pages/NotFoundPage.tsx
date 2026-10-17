@@ -176,7 +176,7 @@ export function NotFoundPage() {
           viewBox="-8 -8 116 116"
           className="h-full max-h-[56vh] w-full max-w-[640px]"
           role="img"
-          aria-label={`Traçado esquemático de ${circuit.name} com um carro que saiu da pista`}
+          aria-label={`Traçado de ${circuit.name} com um carro que saiu da pista`}
           initial={reduce ? false : { opacity: 0, y: 30, scale: 0.95 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
           transition={{ delay: 0.25, duration: 1, ease: EASE }}

@@ -12,7 +12,7 @@ import { SourceNote } from '../components/SourceNote';
 import { EmptyState } from '../components/States';
 import { TrackMap } from '../components/TrackMap';
 import { races } from '../data/calendar2026';
-import { CIRCUITS_SOURCE, circuits } from '../data/circuits';
+import { CIRCUITS_SOURCE, TRACKS_SOURCE, circuits } from '../data/circuits';
 import { formatWeekend, normalize } from '../utils/format';
 
 export function CircuitsPage() {
@@ -72,7 +72,7 @@ export function CircuitsPage() {
             ))}
           </div>
         )}
-        <SourceNote label={CIRCUITS_SOURCE.label} url={CIRCUITS_SOURCE.url}>Traçados esquemáticos desenhados para este site (ilustrativos).</SourceNote>
+        <SourceNote label={CIRCUITS_SOURCE.label} url={CIRCUITS_SOURCE.url}>Traçados reais: <a href={TRACKS_SOURCE.url} target="_blank" rel="noreferrer" className="underline hover:text-white">{TRACKS_SOURCE.label}</a>.</SourceNote>
       </div>
 
       <Modal open={!!selected} onClose={close} title={selected ? selected.circuit.name : 'Circuito'} wide>
@@ -83,7 +83,7 @@ export function CircuitsPage() {
               <motion.div initial={{ scale: 0.85, rotate: -6, opacity: 0 }} animate={{ scale: 1, rotate: 0, opacity: 1 }} transition={{ type: 'spring', damping: 18 }} className="relative h-full">
                 <TrackMap points={selected.circuit.layout} name={selected.circuit.name} className="h-full max-h-[460px] w-full" />
               </motion.div>
-              <p className="absolute bottom-3 left-6 text-[11px] text-zinc-500">Traçado esquemático · ponto branco = linha de chegada</p>
+              <p className="absolute bottom-3 left-6 text-[11px] text-zinc-500">Traçado real · quadriculado = linha de chegada · passe o mouse para inclinar</p>
             </div>
             <div className="p-6 sm:p-8">
               <p className="flex items-center gap-2 text-sm text-zinc-400"><Flag code={selected.circuit.countryCode} country={selected.circuit.country} />{selected.circuit.city}, {selected.circuit.country}</p>

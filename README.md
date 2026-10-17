@@ -6,7 +6,7 @@ Uma plataforma interativa para fãs da Fórmula 1 (temporada 2026), feita com **
 
 - **Início**: landing com três celulares (fonte Albert Sans): Lewis Hamilton em Silverstone, os pontos **ao vivo** de Hamilton e da Ferrari em 2026 e os da carreira de Hamilton (contagem animada), e a Ferrari SF-26 com Leclerc (16) e Hamilton (44); menu em tela cheia com links para biografia, classificação e equipe. Depois vem faixa animada com dados da temporada, card do próximo GP com contagem regressiva em tempo real (que nunca fica negativa), favoritar e compartilhar.
 - **Calendário 2026**: as 22 etapas mais as 2 canceladas (Bahrein e Arábia Saudita), com busca, filtros por país, mês e status, alternância entre cards e lista (preferência salva) e página de detalhes de cada GP (`/calendario/:id`) com programação, contagem, exportação `.ics`, compartilhamento (Web Share API, com cópia do link como alternativa) e resultado oficial quando a corrida já terminou.
-- **Circuitos**: cards com traçado SVG animado, ficha técnica, recorde de volta verificado e modal de detalhes (`/circuitos/:id`).
+- **Circuitos**: cards com o **traçado real** de cada pista em relevo suave (maquete inclinada com espessura, bordas, sombra e luz, que inclina acompanhando o mouse), ficha técnica, recorde de volta verificado e modal de detalhes (`/circuitos/:id`).
 - **Pilotos**: galeria dos 22 titulares, busca, filtro por equipe, ordenação e perfil (`/pilotos/:id`) com biografia, trajetória e estatísticas da temporada **em tempo real**.
 - **Equipes**: 11 equipes com cores, pilotos, história e **foto real do carro de 2026** (Wikimedia Commons, com crédito), com zoom e animação.
 - **Classificação**: pilotos e construtores (posição, pontos, vitórias e pódios) vindos de uma API real.
@@ -75,7 +75,7 @@ Nenhuma chave secreta é usada no frontend.
 
 **Fotos dos carros (reais):** usadas para as equipes sem imagem de estúdio. carregadas no navegador do visitante pela API pública do [Wikimedia Commons](https://commons.wikimedia.org) (`src/services/carPhotos.ts`). Só entram fotos com licença livre (CC/domínio público), e cada uma mostra o autor e a licença, com link para o arquivo original. A busca procura a categoria do chassi de 2026 (ex.: *McLaren MCL40*) e, se não achar, o nome do carro ou da equipe com 2026. O resultado fica em cache por 24 h. Se ainda não houver foto livre de um carro, o card avisa e mostra um link para o Commons. Para fixar uma foto específica, coloque o nome do arquivo em `PINNED_PHOTOS`.
 
-Fotos oficiais da F1 e das equipes têm direitos autorais e não são usadas. Capacetes dos pilotos e traçados das pistas são ilustrações SVG deste projeto. Para usar fotos de pilotos, preencha `photoUrl` e `photoCredit` em `drivers.ts` com imagens licenciadas.
+Fotos oficiais da F1 e das equipes têm direitos autorais e não são usadas. Capacetes dos pilotos são ilustrações SVG deste projeto. Os traçados das pistas são reais, do projeto aberto [bacinger/f1-circuits](https://github.com/bacinger/f1-circuits) (licença MIT), convertidos por `tools/build-track-shapes.py` para `src/data/trackShapes.ts`. Para usar fotos de pilotos, preencha `photoUrl` e `photoCredit` em `drivers.ts` com imagens licenciadas.
 
 ## Estrutura
 

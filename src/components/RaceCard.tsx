@@ -58,7 +58,7 @@ export function RaceCard({ race, status, view = 'grid' }: Props) {
         <FavoriteButton kind="race" id={race.id} label={race.name} />
       </div>
       <div className="relative mx-5 my-4 h-28">
-        {circuit && <TrackMap points={circuit.layout} name={circuit.name} color={muted ? '#52525b' : '#EDB40B'} className="h-full w-full" animated={false} />}
+        {circuit && <TrackMap points={circuit.layout} name={circuit.name} color={muted ? '#52525b' : '#EDB40B'} className="h-full w-full" animated={false} interactive={false} />}
       </div>
       <div className="mt-auto space-y-3 border-t border-white/5 p-5">
         <div className="flex flex-wrap items-center gap-2">
