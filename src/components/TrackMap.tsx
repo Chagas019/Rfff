@@ -5,7 +5,7 @@ import { trackPath } from '../utils/track';
 interface Props { points: [number, number][]; name: string; color?: string; animated?: boolean; className?: string }
 
 /** Traçado esquemático do circuito com carro luminoso percorrendo a pista. */
-export function TrackMap({ points, name, color = '#e10600', animated = true, className = '' }: Props) {
+export function TrackMap({ points, name, color = '#EDB40B', animated = true, className = '' }: Props) {
   const reduce = useReducedMotion();
   const d = useMemo(() => trackPath(points), [points]);
   const id = useId().replace(/:/g, '');

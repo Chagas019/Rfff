@@ -6,7 +6,7 @@ import { createPortal } from 'react-dom';
 interface Props { open: boolean; onClose: () => void; title: string; children: ReactNode; accent?: string; wide?: boolean }
 
 /** Modal acessível: foco preso, Esc fecha, rolagem do fundo bloqueada. */
-export function Modal({ open, onClose, title, children, accent = '#e10600', wide = false }: Props) {
+export function Modal({ open, onClose, title, children, accent = '#EDB40B', wide = false }: Props) {
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {

@@ -30,7 +30,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
                 exit={{ opacity: 0, y: 10 }}
                 className="glass flex items-center gap-3 rounded-xl border border-white/10 px-4 py-3 text-sm text-white shadow-2xl"
               >
-                <I className={t.kind === 'error' ? 'h-5 w-5 text-race' : t.kind === 'info' ? 'h-5 w-5 text-telemetry-cyan' : 'h-5 w-5 text-telemetry-green'} aria-hidden />
+                <I className={t.kind === 'error' ? 'h-5 w-5 text-gold' : t.kind === 'info' ? 'h-5 w-5 text-telemetry-cyan' : 'h-5 w-5 text-telemetry-green'} aria-hidden />
                 {t.message}
               </motion.div>
             );

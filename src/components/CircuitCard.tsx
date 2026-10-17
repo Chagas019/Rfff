@@ -22,7 +22,7 @@ export function CircuitCard({ circuit, round, onOpen, cancelled }: { circuit: Ci
       </div>
       <div className="flex flex-1 flex-col p-5">
         <p className="flex items-center gap-1.5 text-sm text-zinc-400"><Flag code={circuit.countryCode} country={circuit.country} /> {circuit.city}, {circuit.country}</p>
-        <h3 className="mt-1 text-lg font-bold uppercase leading-tight">{circuit.name}</h3>
+        <h3 className="mt-1 text-lg font-bold leading-tight">{circuit.name}</h3>
         <dl className="mt-4 grid grid-cols-3 gap-2 text-center">
           {[
             ['Km', circuit.lengthKm.toFixed(3)],
@@ -30,7 +30,7 @@ export function CircuitCard({ circuit, round, onOpen, cancelled }: { circuit: Ci
             ['Voltas', circuit.laps],
           ].map(([k, v]) => (
             <div key={k} className="rounded-lg bg-white/[0.03] py-2">
-              <dt className="label text-[10px]">{k}</dt>
+              <dt className="label text-[12px]">{k}</dt>
               <dd className="font-display text-lg font-bold text-white">{v}</dd>
             </div>
           ))}

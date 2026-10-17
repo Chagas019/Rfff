@@ -21,10 +21,10 @@ export function RaceCard({ race, status, view = 'grid' }: Props) {
     return (
       <motion.article layout className={`panel panel-hover group flex flex-col gap-4 p-4 sm:flex-row sm:items-center ${muted ? 'opacity-70' : ''}`}>
         <div className="flex items-center gap-4 sm:w-64">
-          <span className="font-display text-2xl font-black text-race">{roundLabel}</span>
+          <span className="font-display text-2xl font-semibold text-gold">{roundLabel}</span>
           <Flag code={race.countryCode} country={race.country} className="text-3xl" />
           <div className="min-w-0">
-            <h3 className="truncate text-base font-bold uppercase">{race.name}</h3>
+            <h3 className="truncate text-base font-bold">{race.name}</h3>
             <p className="text-xs text-zinc-400">{race.city}</p>
           </div>
         </div>
@@ -49,8 +49,8 @@ export function RaceCard({ race, status, view = 'grid' }: Props) {
     <motion.article layout className={`panel panel-hover group flex h-full flex-col ${muted ? 'opacity-75' : ''}`}>
       <div className="relative flex items-start justify-between gap-3 p-5 pb-0">
         <div>
-          <span className="font-display text-4xl font-black leading-none text-white/10 transition group-hover:text-race/40">{roundLabel}</span>
-          <h3 className="mt-2 text-lg font-bold uppercase leading-tight">{race.name}</h3>
+          <span className="font-display text-4xl font-semibold leading-none text-white/10 transition group-hover:text-gold/40">{roundLabel}</span>
+          <h3 className="mt-2 text-lg font-bold leading-tight">{race.name}</h3>
           <p className="mt-1 flex items-center gap-1.5 text-sm text-zinc-400">
             <Flag code={race.countryCode} country={race.country} /> {race.city}, {race.country}
           </p>
@@ -58,7 +58,7 @@ export function RaceCard({ race, status, view = 'grid' }: Props) {
         <FavoriteButton kind="race" id={race.id} label={race.name} />
       </div>
       <div className="relative mx-5 my-4 h-28">
-        {circuit && <TrackMap points={circuit.layout} name={circuit.name} color={muted ? '#52525b' : '#e10600'} className="h-full w-full" animated={false} />}
+        {circuit && <TrackMap points={circuit.layout} name={circuit.name} color={muted ? '#52525b' : '#EDB40B'} className="h-full w-full" animated={false} />}
       </div>
       <div className="mt-auto space-y-3 border-t border-white/5 p-5">
         <div className="flex flex-wrap items-center gap-2">
@@ -80,7 +80,7 @@ export function RaceCard({ race, status, view = 'grid' }: Props) {
         )}
         <div className="flex items-center justify-between pt-1">
           <span className="flex items-center gap-1 text-xs text-zinc-500"><MapPin className="h-3 w-3" aria-hidden />{circuit?.name}</span>
-          <Link to={`/calendario/${race.id}`} className="flex items-center gap-1 text-xs font-bold uppercase tracking-wider text-race-400 hover:text-white">
+          <Link to={`/calendario/${race.id}`} className="flex items-center gap-1 text-xs font-bold text-gold hover:text-white">
             Detalhes <ArrowUpRight className="h-3.5 w-3.5" aria-hidden />
           </Link>
         </div>

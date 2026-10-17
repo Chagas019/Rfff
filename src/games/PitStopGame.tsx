@@ -102,10 +102,10 @@ export function PitStopGame() {
       <div className="panel relative overflow-hidden p-4 sm:p-6">
         <div className="grid-bg absolute inset-0 opacity-30" aria-hidden />
         <div className="relative mb-4 flex items-center justify-between">
-          <p className="label flex items-center gap-2"><Timer className="h-3.5 w-3.5 text-race" aria-hidden />Tempo parado</p>
-          <p className="font-display text-4xl font-black tabular-nums text-white" aria-live="off">{shown.toFixed(2)}<span className="ml-1 text-lg text-race">s</span></p>
+          <p className="label flex items-center gap-2"><Timer className="h-3.5 w-3.5 text-gold" aria-hidden />Tempo parado</p>
+          <p className="font-display text-4xl font-semibold tabular-nums text-white" aria-live="off">{shown.toFixed(2)}<span className="ml-1 text-lg text-gold">s</span></p>
         </div>
-        {penalty > 0 && <p className="relative -mt-3 mb-2 text-right text-xs text-race">+{(penalty / 1000).toFixed(1)} s de penalidade (pneu errado)</p>}
+        {penalty > 0 && <p className="relative -mt-3 mb-2 text-right text-xs text-gold">+{(penalty / 1000).toFixed(1)} s de penalidade (pneu errado)</p>}
 
         {/* box visto de cima */}
         <div className="relative mx-auto aspect-[3/4] w-full max-w-sm select-none" style={{ touchAction: 'manipulation' }}>
@@ -158,7 +158,7 @@ export function PitStopGame() {
           {/* overlays */}
           <AnimatePresence>
             {phase === 'countdown' && (
-              <motion.p key={count} initial={{ scale: 2, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ opacity: 0 }} className="absolute inset-0 flex items-center justify-center font-display text-8xl font-black text-white drop-shadow-[0_0_20px_rgba(225,6,0,0.9)]">
+              <motion.p key={count} initial={{ scale: 2, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ opacity: 0 }} className="absolute inset-0 flex items-center justify-center font-display text-8xl font-semibold text-white drop-shadow-[0_0_20px_rgba(237,180,11,0.9)]">
                 {count || 'GO'}
               </motion.p>
             )}
@@ -169,14 +169,14 @@ export function PitStopGame() {
           {(phase === 'idle' || phase === 'done') && (
             <button type="button" className="btn-primary" onClick={start}>{phase === 'done' ? 'Novo pit stop' : 'Chamar para o box'}</button>
           )}
-          {phase === 'working' && <p className="font-condensed uppercase tracking-widest text-telemetry-yellow">Toque no pneu que está piscando</p>}
+          {phase === 'working' && <p className="font-condensed text-telemetry-yellow">Toque no pneu que está piscando</p>}
           {phase === 'release' && (
             <motion.button initial={{ scale: 0.8 }} animate={{ scale: 1 }} type="button" className="btn-primary bg-telemetry-green text-black hover:bg-telemetry-green" onClick={release} autoFocus>
               Liberar o carro!
             </motion.button>
           )}
           {phase === 'done' && final !== null && (
-            <p className="w-full text-center font-condensed uppercase tracking-widest text-zinc-300" aria-live="polite">
+            <p className="w-full text-center font-condensed text-zinc-300" aria-live="polite">
               Pit stop de {(final / 1000).toFixed(2)} s {best === final ? '· novo recorde!' : ''}
             </p>
           )}
@@ -186,7 +186,7 @@ export function PitStopGame() {
       <aside className="space-y-4">
         <div className="panel p-5">
           <p className="label flex items-center gap-2"><Trophy className="h-3.5 w-3.5 text-telemetry-yellow" aria-hidden />Seu recorde</p>
-          <p className="mt-1 font-display text-4xl font-black text-white">{best !== null ? <>{(best / 1000).toFixed(2)}<span className="ml-1 text-lg text-race">s</span></> : '—'}</p>
+          <p className="mt-1 font-display text-4xl font-semibold text-white">{best !== null ? <>{(best / 1000).toFixed(2)}<span className="ml-1 text-lg text-gold">s</span></> : '—'}</p>
           {best !== null && (
             <div className="mt-4 flex flex-wrap gap-2">
               <ShareButton title="Desafio do pit stop · GRID F1" text={`Fiz um pit stop de ${(best / 1000).toFixed(2)} s no GRID F1. Consegue bater?`} path="/jogos/pit-stop" />
@@ -212,7 +212,7 @@ export function PitStopGame() {
         </div>
         <div className="panel p-5 text-sm text-zinc-400">
           <p className="label mb-2">Como funciona</p>
-          Os pneus acendem um de cada vez, em ordem sorteada. Toque no que está piscando; errar o pneu custa <strong className="text-race">+0,4 s</strong>. Depois dos quatro, libere o carro. Nas corridas, os melhores pit stops ficam perto de 2 segundos.
+          Os pneus acendem um de cada vez, em ordem sorteada. Toque no que está piscando; errar o pneu custa <strong className="text-gold">+0,4 s</strong>. Depois dos quatro, libere o carro. Nas corridas, os melhores pit stops ficam perto de 2 segundos.
         </div>
       </aside>
     </div>

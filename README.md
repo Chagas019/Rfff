@@ -4,7 +4,7 @@ Uma plataforma interativa para fãs da Fórmula 1 (temporada 2026), feita com **
 
 ## Funcionalidades
 
-- **Início**: hero cinematográfico ("THE RACE NEVER STOPS."), faixa animada com dados da temporada, card do próximo GP com contagem regressiva em tempo real (que nunca fica negativa), favoritar e compartilhar.
+- **Início**: landing com três celulares (fonte Albert Sans): Lewis Hamilton em Silverstone, os pontos **ao vivo** de Hamilton e da Ferrari em 2026 e os da carreira de Hamilton (contagem animada), e a Ferrari SF-26 com Leclerc (16) e Hamilton (44); menu em tela cheia com links para biografia, classificação e equipe. Depois vem faixa animada com dados da temporada, card do próximo GP com contagem regressiva em tempo real (que nunca fica negativa), favoritar e compartilhar.
 - **Calendário 2026**: as 22 etapas mais as 2 canceladas (Bahrein e Arábia Saudita), com busca, filtros por país, mês e status, alternância entre cards e lista (preferência salva) e página de detalhes de cada GP (`/calendario/:id`) com programação, contagem, exportação `.ics`, compartilhamento (Web Share API, com cópia do link como alternativa) e resultado oficial quando a corrida já terminou.
 - **Circuitos**: cards com traçado SVG animado, ficha técnica, recorde de volta verificado e modal de detalhes (`/circuitos/:id`).
 - **Pilotos**: galeria dos 22 titulares, busca, filtro por equipe, ordenação e perfil (`/pilotos/:id`) com biografia, trajetória e estatísticas da temporada **em tempo real**.
@@ -30,14 +30,16 @@ O site se mantém atualizado sozinho, sem ninguém precisar recarregar a página
 - **Calendário**: status (próxima, ao vivo, concluída), contagem regressiva e "próximo GP" são calculados pelo relógio, então mudam sozinhos.
 - **Versão nova do site**: cada build gera `/version.json` (commit da Vercel). O site consulta esse arquivo a cada 5 minutos; quando sai uma publicação nova, ela entra sozinha na próxima troca de página (ou na hora, se a aba estiver em segundo plano). Os cabeçalhos em `vercel.json` impedem que o navegador guarde versões velhas do `index.html`.
 
-## Tipografia
+## Visual
 
-Inspirada em **Growth** (Broworks Studio) e **TT Burn** (TrueType), que são fontes pagas. Como o projeto não tem a licença delas, usa alternativas gratuitas (OFL) com o mesmo estilo, hospedadas no próprio site via Fontsource:
-- **Big Shoulders Display** (títulos, ultracondensada) no lugar da Growth;
-- **Oswald Variable** (rótulos, botões e subtítulos, condensada e variável) no lugar da TT Burn;
-- **Titillium Web** para textos corridos.
-
-Para usar as fontes originais licenciadas, coloque os arquivos `.woff2` em `public/fonts/`, declare-os com `@font-face` em `src/index.css` e troque os nomes em `tailwind.config.js` (`display` e `condensed`).
+O site inteiro segue a landing da home:
+- **Albert Sans** (Google Fonts) em tudo, com títulos de letras bem juntas e entrelinha curta;
+- fundo azul-noite `#0a0e1c` com a foto da landing atrás de todas as páginas, cartões de vidro (`rgba(20,20,30,0.8)` com desfoque) e dourado `#EDB40B` como destaque;
+- botões quadrados: branco (ação principal) e vidro (secundária);
+- menu em tela cheia com o degradê vermelho da landing e links entrando em sequência;
+- troca de página "apagaram as luzes": três faixas (vinho, vermelho e azul-noite) cobrem a tela, as cinco luzes de largada acendem e apagam, o nome da página entra em velocidade e a página nova surge saindo do desfoque;
+- página 404 em tela cheia ("Saiu da pista!"): "404" gigante com oval branco, vídeo no centro, paralaxe com o mouse e atalhos para as seções;
+- títulos das páginas entram "em velocidade" (speed reveal) e os números grandes contam ao aparecer na tela (classificação, estatísticas do piloto, temporada em números).
 
 ## Como executar
 

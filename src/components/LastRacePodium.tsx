@@ -23,8 +23,8 @@ export function LastRacePodium({ race }: { race: Race }) {
   const header = (
     <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
       <div>
-        <p className="label flex items-center gap-2 text-race-400"><Trophy className="h-3.5 w-3.5" aria-hidden />Último resultado · Rodada {race.round}</p>
-        <h2 id="podium-title" className="mt-2 text-3xl font-black uppercase sm:text-4xl">
+        <p className="label flex items-center gap-2 text-gold"><Trophy className="h-3.5 w-3.5" aria-hidden />Último resultado · Rodada {race.round}</p>
+        <h2 id="podium-title" className="mt-2 text-3xl font-semibold sm:text-4xl">
           <Flag code={race.countryCode} country={race.country} className="mr-3 align-middle" />{race.name}
         </h2>
       </div>
@@ -52,11 +52,11 @@ export function LastRacePodium({ race }: { race: Race }) {
           const r = top[idx];
           const local = drivers.find((d) => normalize(`${d.firstName} ${d.lastName}`) === normalize(r.driver)) ?? drivers.find((d) => normalize(r.driver).endsWith(normalize(d.lastName)));
           const team = local ? teamById(local.teamId) : undefined;
-          const color = team?.color ?? '#e10600';
+          const color = team?.color ?? '#EDB40B';
           const content = (
             <>
               {local && team && <DriverHelmet driver={local} team={team} className="mx-auto h-20 w-20 sm:h-28 sm:w-28" />}
-              <p className="mt-2 font-display text-sm font-black uppercase leading-tight text-white sm:text-lg">{r.driver}</p>
+              <p className="mt-2 font-display text-sm font-semibold leading-tight text-white sm:text-lg">{r.driver}</p>
               <p className="truncate text-[11px] text-zinc-400 sm:text-xs">{r.constructor}</p>
               <p className="mt-1 font-mono text-[11px] text-zinc-300 sm:text-xs">{r.time ?? r.status}</p>
             </>
@@ -72,8 +72,8 @@ export function LastRacePodium({ race }: { race: Race }) {
                 style={{ background: `linear-gradient(180deg, ${color}55, ${color}10 70%, transparent)` }}
               >
                 <span className="absolute inset-x-0 top-0 h-1" style={{ background: MEDAL[idx] }} aria-hidden />
-                <span className="absolute inset-0 flex items-start justify-center pt-3 font-display text-4xl font-black text-white/90 sm:text-6xl">{r.position}</span>
-                <span className="absolute bottom-2 inset-x-0 text-center font-condensed text-[10px] uppercase tracking-widest text-zinc-300 sm:text-xs">+{r.points} pts</span>
+                <span className="absolute inset-0 flex items-start justify-center pt-3 font-display text-4xl font-semibold text-white/90 sm:text-6xl">{r.position}</span>
+                <span className="absolute bottom-2 inset-x-0 text-center font-condensed text-[10px] text-zinc-300 sm:text-xs">+{r.points} pts</span>
               </motion.div>
             </li>
           );

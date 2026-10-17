@@ -18,7 +18,7 @@ export function LiveBadge({ updatedAt, refreshing, onRefresh, className = '' }: 
         <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-telemetry-green opacity-60" />
         <span className="relative inline-flex h-2 w-2 rounded-full bg-telemetry-green" />
       </span>
-      <span className="font-condensed uppercase tracking-wider">Atualiza sozinho</span>
+      <span className="font-condensed">Atualiza sozinho</span>
       {updatedAt && <span className="text-zinc-500" aria-live="polite">· {refreshing ? 'buscando…' : ago(updatedAt, now)}</span>}
       {onRefresh && (
         <button type="button" onClick={onRefresh} className="ml-1 rounded-full p-1.5 text-zinc-400 transition hover:bg-white/10 hover:text-white" aria-label="Atualizar agora">

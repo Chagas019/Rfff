@@ -1,12 +1,13 @@
 import { motion } from 'framer-motion';
 import { ArrowRight, Brain, CalendarDays, Clock, Cpu, Flag as FlagIcon, Gauge, Lightbulb, MapPin, Trophy, Users, Wrench, Zap } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { CountUp } from '../components/CountUp';
 import { CarPhoto } from '../components/CarPhoto';
 import { FavoriteButton } from '../components/FavoriteButton';
 import { Flag } from '../components/Flag';
 import { Garage } from '../components/Garage';
-import { Hero } from '../components/Hero';
 import { LastRacePodium } from '../components/LastRacePodium';
+import { PhoneHero } from '../components/PhoneHero';
 import { RaceCard } from '../components/RaceCard';
 import { RaceCountdown } from '../components/RaceCountdown';
 import { Reveal } from '../components/Reveal';
@@ -55,8 +56,29 @@ export function HomePage() {
 
   return (
     <>
-      <Hero nextRace={next} />
+      <PhoneHero />
       <Ticker items={ticker} />
+
+      {/* Temporada em números, no estilo dos "Season Points" da landing */}
+      <section className="container-grid pt-20" aria-labelledby="numbers-title">
+        <SectionHeader kicker="Temporada 2026" title={<span id="numbers-title">A temporada em números</span>} />
+        <dl className="grid grid-cols-2 gap-3 lg:grid-cols-5">
+          {[
+            { k: 'Grandes Prêmios', v: total, to: '/calendario' },
+            { k: 'Etapas concluídas', v: completed, to: '/calendario' },
+            { k: 'Fins de semana com Sprint', v: races.filter((r) => r.sprint && !r.cancelled).length, to: '/calendario' },
+            { k: 'Equipes', v: teams.length, to: '/equipes' },
+            { k: 'Pilotos titulares', v: drivers.length, to: '/pilotos' },
+          ].map((n, i) => (
+            <Reveal key={n.k} delay={i * 0.08} className={i === 4 ? 'col-span-2 lg:col-span-1' : ''}>
+              <Link to={n.to} className="panel panel-hover flex h-full flex-col justify-between p-5">
+                <dt className="text-[13px] text-white/60">{n.k}</dt>
+                <dd><CountUp value={n.v} delay={i * 150} className={`display-number mt-8 block text-[clamp(72px,8vw,110px)] ${i === 1 ? 'text-gold' : 'text-gradient'}`} /></dd>
+              </Link>
+            </Reveal>
+          ))}
+        </dl>
+      </section>
 
       {/* Próximo Grande Prêmio */}
       <section id="proxima" className="container-grid scroll-mt-24 py-20" aria-labelledby="next-title">
@@ -70,10 +92,10 @@ export function HomePage() {
                   <span className="chip">Rodada {next.round} de {total}</span>
                   {next.sprint && <span className="chip border-telemetry-yellow/40 text-telemetry-yellow"><Zap className="h-3 w-3" aria-hidden />Sprint</span>}
                 </div>
-                <h3 className="mt-5 text-3xl font-black uppercase sm:text-5xl">
+                <h3 className="mt-5 text-3xl font-semibold sm:text-5xl">
                   <Flag code={next.countryCode} country={next.country} className="mr-3 align-middle" />{next.name}
                 </h3>
-                <p className="mt-2 flex items-center gap-2 text-zinc-400"><MapPin className="h-4 w-4 text-race" aria-hidden />{next.city}, {next.country} · {nextCircuit.name}</p>
+                <p className="mt-2 flex items-center gap-2 text-zinc-400"><MapPin className="h-4 w-4 text-gold" aria-hidden />{next.city}, {next.country} · {nextCircuit.name}</p>
                 <dl className="mt-6 grid gap-4 sm:grid-cols-2">
                   <div className="rounded-xl border border-white/10 bg-white/[0.03] p-4">
                     <dt className="label flex items-center gap-2"><CalendarDays className="h-3.5 w-3.5" aria-hidden />Fim de semana</dt>
@@ -96,9 +118,9 @@ export function HomePage() {
               </div>
               <div className="relative min-h-[320px] border-t border-white/5 bg-gradient-to-br from-carbon-800 to-black lg:border-l lg:border-t-0">
                 <div className="grid-bg absolute inset-0" aria-hidden />
-                <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(225,6,0,0.18),transparent_60%)]" aria-hidden />
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(237,180,11,0.18),transparent_60%)]" aria-hidden />
                 <TrackMap points={nextCircuit.layout} name={nextCircuit.name} className="absolute inset-0 m-auto h-[85%] w-[85%]" />
-                <div className="absolute bottom-4 left-4 right-4 flex justify-between font-mono text-[11px] uppercase text-zinc-400">
+                <div className="absolute bottom-4 left-4 right-4 flex justify-between font-mono text-[11px] text-zinc-400">
                   <span>{nextCircuit.lengthKm.toFixed(3)} km</span><span>{nextCircuit.turns} curvas</span><span>{nextCircuit.laps} voltas</span>
                 </div>
               </div>
@@ -116,11 +138,11 @@ export function HomePage() {
       <section className="container-grid pb-20" aria-labelledby="games-title">
         <Reveal>
           <div className="panel relative overflow-hidden p-6 sm:p-10">
-            <div className="pointer-events-none absolute -left-20 bottom-0 h-64 w-64 rounded-full bg-[radial-gradient(circle,rgba(225,6,0,0.2),transparent_65%)]" aria-hidden />
+            <div className="pointer-events-none absolute -left-20 bottom-0 h-64 w-64 rounded-full bg-[radial-gradient(circle,rgba(237,180,11,0.2),transparent_65%)]" aria-hidden />
             <div className="relative grid items-center gap-8 lg:grid-cols-[1fr_1.3fr]">
               <div>
-                <p className="label text-race-400">Área de diversão</p>
-                <h2 id="games-title" className="mt-2 text-3xl font-black uppercase sm:text-4xl">Jogos do box</h2>
+                <p className="label text-gold">Área de diversão</p>
+                <h2 id="games-title" className="mt-2 text-3xl font-semibold sm:text-4xl">Jogos do box</h2>
                 <p className="mt-3 text-zinc-400">Teste seu reflexo nas luzes de largada, faça o pit stop mais rápido e prove que conhece o grid de 2026. Depois, desafie os amigos.</p>
                 <Link to="/jogos" className="btn-primary mt-6">Jogar agora <ArrowRight className="h-4 w-4" aria-hidden /></Link>
               </div>
@@ -130,10 +152,10 @@ export function HomePage() {
                   { to: '/jogos/pit-stop', icon: Wrench, title: 'Pit stop', text: 'Velocidade' },
                   { to: '/jogos/quiz', icon: Brain, title: 'Quiz 2026', text: 'Conhecimento' },
                 ].map((g) => (
-                  <Link key={g.to} to={g.to} className="group flex flex-col items-center gap-3 rounded-2xl border border-white/10 bg-white/[0.03] p-4 text-center transition hover:-translate-y-1 hover:border-race/60 hover:bg-race/10 sm:p-6">
-                    <g.icon className="h-8 w-8 text-race transition group-hover:scale-110" aria-hidden />
-                    <span className="font-display text-sm font-black uppercase text-white sm:text-lg">{g.title}</span>
-                    <span className="label text-[10px]">{g.text}</span>
+                  <Link key={g.to} to={g.to} className="group flex flex-col items-center gap-3 rounded-2xl border border-white/10 bg-white/[0.03] p-4 text-center transition hover:-translate-y-1 hover:border-gold/60 hover:bg-gold/10 sm:p-6">
+                    <g.icon className="h-8 w-8 text-gold transition group-hover:scale-110" aria-hidden />
+                    <span className="font-display text-sm font-semibold text-white sm:text-lg">{g.title}</span>
+                    <span className="label text-[12px]">{g.text}</span>
                   </Link>
                 ))}
               </div>
@@ -164,12 +186,12 @@ export function HomePage() {
             {PILLARS.map((p, i) => (
               <Reveal key={p.title} delay={i * 0.06}>
                 <Link to={p.to} className="panel panel-hover group flex h-full min-h-[200px] flex-col justify-between p-5">
-                  <p.icon className="h-7 w-7 text-race transition group-hover:scale-110" aria-hidden />
+                  <p.icon className="h-7 w-7 text-gold transition group-hover:scale-110" aria-hidden />
                   <div>
-                    <h3 className="text-lg font-bold uppercase">{p.title}</h3>
+                    <h3 className="text-lg font-bold">{p.title}</h3>
                     <p className="mt-2 text-sm text-zinc-400">{p.text}</p>
                   </div>
-                  <ArrowRight className="mt-3 h-4 w-4 text-zinc-600 transition group-hover:translate-x-1 group-hover:text-race" aria-hidden />
+                  <ArrowRight className="mt-3 h-4 w-4 text-zinc-600 transition group-hover:translate-x-1 group-hover:text-gold" aria-hidden />
                 </Link>
               </Reveal>
             ))}
@@ -178,10 +200,10 @@ export function HomePage() {
             <div className="panel relative overflow-hidden p-6 sm:p-10">
               <div className="grid items-center gap-6 lg:grid-cols-[1fr_1.4fr]">
                 <div>
-                  <p className="label text-race-400">Regulamento 2026</p>
-                  <h3 className="mt-2 text-2xl font-black uppercase sm:text-3xl">Carros menores, mais leves e mais elétricos</h3>
+                  <p className="label text-gold">Regulamento 2026</p>
+                  <h3 className="mt-2 text-2xl font-semibold sm:text-3xl">Carros menores, mais leves e mais elétricos</h3>
                   <p className="mt-3 text-zinc-400">A nova geração usa combustível 100% sustentável, divide a potência quase igualmente entre motor a combustão e elétrico e substitui o DRS por asas móveis.</p>
-                  <a href="https://www.fia.com/regulation/category/110" target="_blank" rel="noreferrer" className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-race-400 hover:text-white">
+                  <a href="https://www.fia.com/regulation/category/110" target="_blank" rel="noreferrer" className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-gold hover:text-white">
                     Regulamentos na FIA <ArrowRight className="h-4 w-4" aria-hidden />
                   </a>
                 </div>

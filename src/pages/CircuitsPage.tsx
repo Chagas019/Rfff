@@ -38,7 +38,7 @@ export function CircuitsPage() {
 
   return (
     <>
-      <PageHeader kicker="Traçados 2026" title={<>Os <span className="text-race">circuitos</span></>}>
+      <PageHeader kicker="Traçados 2026" title={<>Os <span className="text-gold">circuitos</span></>}>
         <p>Dos templos da velocidade às ruas iluminadas da noite. Clique em uma pista para ver a ficha técnica completa.</p>
       </PageHeader>
       <div className="container-grid py-10">
@@ -56,7 +56,7 @@ export function CircuitsPage() {
             </select>
           </label>
           <label className="flex items-center gap-2 text-sm text-zinc-300">
-            <input type="checkbox" className="h-4 w-4 accent-race" checked={showCancelled} onChange={(e) => setShowCancelled(e.target.checked)} />
+            <input type="checkbox" className="h-4 w-4 accent-gold" checked={showCancelled} onChange={(e) => setShowCancelled(e.target.checked)} />
             Mostrar etapas canceladas
           </label>
         </div>
@@ -87,7 +87,7 @@ export function CircuitsPage() {
             </div>
             <div className="p-6 sm:p-8">
               <p className="flex items-center gap-2 text-sm text-zinc-400"><Flag code={selected.circuit.countryCode} country={selected.circuit.country} />{selected.circuit.city}, {selected.circuit.country}</p>
-              <h2 className="mt-1 pr-10 text-2xl font-black uppercase sm:text-3xl">{selected.circuit.name}</h2>
+              <h2 className="mt-1 pr-10 text-2xl font-semibold sm:text-3xl">{selected.circuit.name}</h2>
               <p className="mt-3 text-sm text-zinc-300">{selected.circuit.description}</p>
               {selected.circuit.provisional && (
                 <p className="mt-3 flex items-start gap-2 rounded-lg border border-telemetry-yellow/30 bg-telemetry-yellow/10 p-3 text-xs text-telemetry-yellow">
