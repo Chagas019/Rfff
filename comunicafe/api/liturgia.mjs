@@ -38,7 +38,8 @@ export default async function handler(req, res) {
   try {
     const r = await fetch(FONTE, { headers: { "user-agent": "Mozilla/5.0 (Comunica+Fe; liturgia do dia)" } });
     if (!r.ok) throw new Error("fonte respondeu " + r.status);
-    const lit = lerLiturgia(await r.text());
+    const html = await r.text(), lit = lerLiturgia(html);
+    if (req.query && req.query.depurar) { const c = html.slice(html.indexOf("<body")); const at = (re, n = 600) => { const i = c.search(re); return i < 0 ? "(não achei)" : c.slice(i, i + n); }; return res.status(200).json({ lit, data: at(/data-liturgia/), lista: at(/id="leituras"/, 900) }); }
     if (!lit.data || !(lit.primeira || lit.evangelho)) throw new Error("não encontrei as leituras na página");
     res.setHeader("cache-control", "public, s-maxage=1800, stale-while-revalidate=3600");
     res.status(200).json(lit);
