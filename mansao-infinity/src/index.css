@@ -1,0 +1,99 @@
+@import "tailwindcss";
+
+@theme {
+  --font-display: "Cormorant Garamond", "Times New Roman", serif;
+  --font-sans: "Manrope", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --color-ink: #0b0b0c;
+  --color-graphite: #1d1d20;
+  --color-stone: #8f877b;
+  --color-sand: #d9cdb8;
+  --color-bone: #f3efe7;
+  --color-gold: #c9b48a;
+  --ease-lux: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+:root {
+  color-scheme: dark;
+  --glass: rgba(16, 16, 18, 0.62);
+  --glass-strong: rgba(14, 14, 16, 0.82);
+  --glass-border: rgba(255, 255, 255, 0.12);
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+  background: #0b0b0c;
+  color: var(--color-bone);
+  font-family: var(--font-sans);
+  overflow: hidden;
+  overscroll-behavior: none;
+  -webkit-font-smoothing: antialiased;
+}
+
+canvas {
+  touch-action: none;
+  outline: none;
+}
+
+@layer components {
+  .glass {
+    background: var(--glass);
+    border: 1px solid var(--glass-border);
+    backdrop-filter: blur(18px) saturate(140%);
+    -webkit-backdrop-filter: blur(18px) saturate(140%);
+    box-shadow: 0 10px 40px -12px rgba(0, 0, 0, 0.55);
+  }
+  .glass-strong {
+    background: var(--glass-strong);
+    border: 1px solid var(--glass-border);
+    backdrop-filter: blur(22px) saturate(140%);
+    -webkit-backdrop-filter: blur(22px) saturate(140%);
+  }
+  .eyebrow {
+    font-size: 0.6875rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: rgba(243, 239, 231, 0.72);
+  }
+  .btn-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 44px;
+    min-height: 44px;
+    border-radius: 9999px;
+    color: var(--color-bone);
+    transition: background-color 200ms var(--ease-lux), color 200ms var(--ease-lux), transform 200ms var(--ease-lux);
+  }
+  .btn-icon:hover {
+    background: rgba(255, 255, 255, 0.1);
+  }
+  .btn-icon:active {
+    transform: scale(0.96);
+  }
+  .btn-icon[aria-pressed="true"] {
+    background: var(--color-bone);
+    color: var(--color-ink);
+  }
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-gold);
+  outline-offset: 2px;
+}
+
+.scroll-thin {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.25) transparent;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
