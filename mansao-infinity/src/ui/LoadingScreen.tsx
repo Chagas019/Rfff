@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useProgress } from '@react-three/drei';
 import { AnimatePresence, motion } from 'motion/react';
+import { Monogram } from './brand';
 
 /**
  * Tela de carregamento com progresso real (texturas e modelos registrados no
@@ -12,7 +13,7 @@ export function LoadingScreen({ chunkReady }: { chunkReady: boolean }) {
 
   useEffect(() => {
     if (chunkReady && !active && total > 0 && progress >= 100) {
-      const id = window.setTimeout(() => setDone(true), 450);
+      const id = window.setTimeout(() => setDone(true), 500);
       return () => window.clearTimeout(id);
     }
   }, [chunkReady, active, progress, total]);
@@ -25,22 +26,27 @@ export function LoadingScreen({ chunkReady }: { chunkReady: boolean }) {
       {!done && (
         <motion.div
           key="loading"
-          className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-ink px-6 text-center"
+          className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-ink px-6 text-center text-bone"
           initial={{ opacity: 1 }}
-          exit={{ opacity: 0, transition: { duration: 0.9, ease: [0.22, 1, 0.36, 1] } }}
+          exit={{ opacity: 0, transition: { duration: 1.1, ease: [0.22, 1, 0.36, 1] } }}
           role="status"
           aria-live="polite"
         >
-          <p className="eyebrow mb-5">Experiência arquitetônica 3D</p>
-          <h1 className="font-display text-4xl font-light tracking-[0.18em] text-bone sm:text-6xl">MANSÃO INFINITY</h1>
-          <div className="mt-10 h-px w-64 overflow-hidden bg-white/15 sm:w-80" aria-hidden="true">
-            <div className="h-full bg-gold transition-[width] duration-300" style={{ width: `${pct}%` }} />
+          <Monogram size={56} />
+          <h1 className="mt-10 font-display text-3xl font-light tracking-[0.42em] sm:text-5xl">MANSÃO INFINITY</h1>
+          <p className="eyebrow mt-4">Uma nova dimensão de arquitetura e luxo</p>
+          <p className="numeral mt-14 text-6xl font-light tabular-nums text-bone/90 sm:text-7xl">
+            {String(pct).padStart(2, '0')}
+            <span className="ml-1 align-top text-2xl text-gold">%</span>
+          </p>
+          <div className="mt-6 h-px w-56 bg-white/12 sm:w-72" aria-hidden="true">
+            <div className="h-full bg-gold transition-[width] duration-500" style={{ width: `${pct}%` }} />
           </div>
-          <p className="mt-4 text-sm tabular-nums text-bone/80">
-            {pct}% <span className="text-bone/50">· {chunkReady ? `${loaded} de ${Math.max(total, loaded)} texturas PBR` : 'preparando o motor 3D'}</span>
+          <p className="mt-4 text-[10.5px] uppercase tracking-[0.24em] text-bone/45">
+            {chunkReady ? `Materiais ${loaded} / ${Math.max(total, loaded)}` : 'Preparando o motor 3D'}
           </p>
           {errors.length > 0 && (
-            <div className="mt-6 max-w-md rounded-xl border border-red-400/30 bg-red-950/40 px-4 py-3 text-sm text-red-100" role="alert">
+            <div className="mt-8 max-w-md border border-red-300/30 px-5 py-3 text-sm text-red-100" role="alert">
               Não foi possível carregar {errors.length} arquivo(s). Verifique a conexão.
               <button className="ml-3 underline underline-offset-4" onClick={() => window.location.reload()}>
                 Tentar de novo

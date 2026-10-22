@@ -143,41 +143,39 @@ def polished_concrete(size=1024):
 
 
 def travertine(size=1024):
-    """Revestimento de travertino em réguas horizontais (tile = 2 x 2 m)."""
+    """Revestimento em placas de travertino 50 x 100 cm, juntas finas (tile = 2 x 2 m)."""
     r = rng(21)
     y, x = np.mgrid[0:size, 0:size] / size
     col = np.zeros((size, size, 3))
     h = np.zeros((size, size))
-    rows = [0.0]
-    while rows[-1] < 1.0:
-        rows.append(rows[-1] + r.choice([0.15, 0.2, 0.3]))
-    rows[-1] = 1.0
-    pores = fnoise(size, 1.2, 22, ax=4.0, ay=1.0)
-    streak = fnoise(size, 2.0, 23, ax=6.0, ay=1.0)
+    rows = [0.0, 0.25, 0.5, 0.75, 1.0]
+    pores = fnoise(size, 1.2, 22, ax=5.0, ay=1.0)
+    streak = fnoise(size, 2.2, 23, ax=8.0, ay=1.0)
+    band = fnoise(size, 2.8, 24, ax=12.0, ay=1.0)
     for i in range(len(rows) - 1):
         y0, y1 = rows[i], rows[i + 1]
         m_row = (y >= y0) & (y < y1)
-        cuts = np.sort(r.uniform(0, 1, 2))
         offs = r.uniform(0, 1)
         xs = (x + offs) % 1.0
-        seg = np.digitize(xs, cuts)
-        for s in range(3):
-            m = m_row & (seg == s)
+        seg = (xs >= 0.5).astype(int)
+        for sgi in range(2):
+            m = m_row & (seg == sgi)
             t = r.uniform(0.0, 1.0)
-            base = np.array(lerp(np.array([196, 182, 160]), np.array([222, 210, 190]), t)) / 255.0
+            base = np.array(lerp(np.array([206, 190, 164]), np.array([230, 218, 196]), t)) / 255.0
             col[m] = base
         jy = np.minimum(np.abs(y - y0), np.abs(y - y1))
-        jx = np.min(np.stack([np.abs(xs - c) for c in [0, *cuts, 1]]), axis=0)
+        jx = np.minimum(np.minimum(xs, np.abs(xs - 0.5)), 1 - xs)
         j = np.minimum(jy, jx)
-        joint = np.exp(-(j / 0.0025) ** 2)
-        col[m_row] *= (1 - 0.35 * joint[m_row])[..., None]
+        joint = np.exp(-(j / 0.0014) ** 2)
+        col[m_row] *= (1 - 0.22 * joint[m_row])[..., None]
         h[m_row] -= joint[m_row]
-    holes = (pores > 0.72).astype(float) * (pores - 0.72) * 3
-    col *= (0.92 + 0.12 * streak)[..., None]
-    col *= (1 - 0.35 * holes)[..., None]
-    h += 0.3 * streak - holes
-    rough = (0.7 + 0.2 * holes).clip(0, 1)
-    save_set("travertine", col, h, rough, 1.8)
+    holes = (pores > 0.74).astype(float) * (pores - 0.74) * 3
+    col *= (0.9 + 0.14 * streak)[..., None]
+    col *= (0.95 + 0.08 * band)[..., None]
+    col *= (1 - 0.3 * holes)[..., None]
+    h += 0.25 * streak - holes
+    rough = (0.62 + 0.25 * holes + 0.06 * streak).clip(0, 1)
+    save_set("travertine", col, h, rough, 1.6)
 
 
 def wood_grain(size, seed, planks_x, planks_y, c0, c1, ring_freq=18.0, name="wood"):
@@ -271,9 +269,13 @@ def grass(size=1024):
     big = fnoise(size, 2.8, 51)
     mid = fnoise(size, 1.8, 52)
     blades = fnoise(size, 0.4, 53, ax=1.0, ay=0.35)
-    dry = (fnoise(size, 2.2, 54) > 0.72).astype(float)
+    dry = (fnoise(size, 2.2, 54) > 0.8).astype(float)
     tone = 0.35 * big + 0.25 * mid + 0.4 * blades
-    col = colorize(tone, (46, 72, 26), (104, 138, 52))
+    col = colorize(tone, (52, 78, 32), (108, 136, 60))
+    # faixas de corte do gramado (2 por tile, transição suave)
+    y_, x_ = np.mgrid[0:size, 0:size] / size
+    stripe = np.tanh(np.sin(2 * math.pi * 2 * x_) * 6) * 0.5 + 0.5
+    col *= (0.95 + 0.06 * stripe)[..., None]
     dcol = np.array([140, 132, 78]) / 255.0
     col = col * (1 - 0.35 * dry[..., None]) + dcol * 0.35 * dry[..., None]
     h = blades
@@ -479,6 +481,21 @@ def artworks(size=512):
         save(f"art_{k}", a)
 
 
+def cloud(size=256):
+    """Sprite de nuvem: vários "puffs" suaves sobre ruído (canal alfa)."""
+    r = rng(181)
+    y, x = (np.mgrid[0:size, 0:size] / size - 0.5) * 2
+    a = np.zeros((size, size))
+    for _ in range(14):
+        cx, cy = r.normal(0, 0.28, 2)
+        rad = r.uniform(0.22, 0.42)
+        a = np.maximum(a, np.clip(1 - ((x - cx) ** 2 + (y - cy) ** 2) / rad**2, 0, 1) ** 1.6)
+    n = band(size, 4, 40, 182)
+    a = np.clip(a * (0.65 + 0.6 * n) * np.clip(1.2 - np.sqrt(x**2 + y**2), 0, 1), 0, 1)
+    img = np.dstack([np.ones_like(a), np.ones_like(a), np.ones_like(a), a])
+    save("cloud", img, quality=90)
+
+
 def stone_dark(size=512):
     """Pedra escura (basalto/granito) para soleiras, bordas e churrasqueira."""
     a = fnoise(size, 1.0, 171)
@@ -515,10 +532,14 @@ def main():
     books()
     artworks()
     stone_dark()
+    cloud()
 
 
 if __name__ == "__main__":
     if "--only-leaves" in sys.argv:
         leaves_atlas()
+    elif "--only" in sys.argv:
+        for name in sys.argv[sys.argv.index("--only") + 1 :]:
+            globals()[name]()
     else:
         main()

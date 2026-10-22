@@ -1,6 +1,6 @@
 import { useEffect, useLayoutEffect, useMemo, useRef } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
-import { Environment, Lightformer, Sky, Stars } from '@react-three/drei';
+import { Cloud, Clouds, Environment, Lightformer, Sky, Stars } from '@react-three/drei';
 import * as THREE from 'three';
 import { LIGHTING, type LightingPreset } from '../config/lighting';
 import { QUALITY } from '../config/quality';
@@ -72,7 +72,10 @@ export function LightingSystem() {
           <Moon dir={sunDir} />
         </>
       ) : (
-        <Sky distance={1800} sunPosition={sunPos} {...preset.sky} />
+        <>
+          <Sky distance={1800} sunPosition={sunPos} {...preset.sky} />
+          {quality !== 'low' && <SkyClouds sunset={time === 'sunset'} />}
+        </>
       )}
       <Environment key={`${time}-${q.envResolution}`} frames={1} resolution={q.envResolution} background={false}>
         {time === 'night' ? (
@@ -162,15 +165,36 @@ function SunAndSky({ preset, shadowSize, shadows }: { preset: LightingPreset; sh
         shadow-bias={-0.0004}
         shadow-normalBias={0.035}
         shadow-radius={4}
-        shadow-camera-left={-48}
-        shadow-camera-right={48}
-        shadow-camera-top={48}
-        shadow-camera-bottom={-48}
+        shadow-camera-left={-42}
+        shadow-camera-right={42}
+        shadow-camera-top={42}
+        shadow-camera-bottom={-42}
         shadow-camera-near={1}
         shadow-camera-far={220}
       />
       <hemisphereLight ref={hemi} />
     </>
+  );
+}
+
+/** Nuvens volumétricas (sprites) distantes, sobre o mar e nas laterais. */
+function SkyClouds({ sunset }: { sunset: boolean }) {
+  const color = sunset ? '#f3c7aa' : '#f4f6fa';
+  const clouds: { p: [number, number, number]; seed: number; b: [number, number, number] }[] = [
+    { p: [-160, 150, -420], seed: 1, b: [90, 14, 30] },
+    { p: [120, 170, -520], seed: 2, b: [120, 16, 36] },
+    { p: [320, 140, -260], seed: 3, b: [80, 12, 30] },
+    { p: [-360, 160, -140], seed: 4, b: [90, 14, 30] },
+    { p: [20, 190, -700], seed: 5, b: [160, 20, 40] },
+    { p: [-260, 150, 260], seed: 6, b: [80, 12, 30] },
+    { p: [300, 170, 320], seed: 7, b: [90, 14, 30] },
+  ];
+  return (
+    <Clouds texture="/textures/cloud.webp" limit={260} material={THREE.MeshBasicMaterial} frustumCulled={false}>
+      {clouds.map((c) => (
+        <Cloud key={c.seed} seed={c.seed} position={c.p} bounds={c.b} segments={32} volume={70} smallestVolume={0.3} growth={6} speed={0.08} opacity={sunset ? 0.85 : 0.75} color={color} fade={300} />
+      ))}
+    </Clouds>
   );
 }
 

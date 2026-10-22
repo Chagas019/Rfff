@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
-import { TIME_ORDER } from '../config/lighting';
-import { ROOMS, builtArea, type Level } from '../data/plan';
 import { useShallow } from 'zustand/react/shallow';
+import { TIME_ORDER } from '../config/lighting';
+import { ROOMS, builtArea, LEVEL_NAMES, type Level } from '../data/plan';
 import { useExperience, type ViewMode } from '../store/useExperience';
 import { fmtArea } from '../utils/plan2d';
 import { EnvironmentSelector } from './EnvironmentSelector';
@@ -10,81 +10,96 @@ import { RoomNavigation } from './RoomNavigation';
 import { RoomInfoPanel } from './RoomInfoPanel';
 import { HelpPanel, PlanPanel, SettingsPanel, TourPanel } from './Panels';
 import { WalkHUD } from './WalkHUD';
-import { IconArrowRight, IconBulb, IconCube, IconDoor, IconHelp, IconList, IconOrbit, IconPlan, IconPlay, IconSettings, IconTop, IconWalk } from './icons';
+import { Monogram, Wordmark } from './brand';
+import { IconArrowRight, IconBulb, IconDoor, IconHelp, IconList, IconPlan, IconPlay, IconSettings } from './icons';
 
-const MODES: { id: ViewMode; label: string; Icon: typeof IconOrbit; key: string }[] = [
-  { id: 'exterior', label: 'Externa', Icon: IconOrbit, key: '1' },
-  { id: 'interior', label: 'Interna', Icon: IconCube, key: '2' },
-  { id: 'top', label: 'Superior', Icon: IconTop, key: '3' },
-  { id: 'walk', label: 'Caminhar', Icon: IconWalk, key: '4' },
+const MODES: { id: ViewMode; label: string; key: string }[] = [
+  { id: 'exterior', label: 'Externa', key: '1' },
+  { id: 'interior', label: 'Interna', key: '2' },
+  { id: 'top', label: 'Superior', key: '3' },
+  { id: 'walk', label: 'Caminhar', key: '4' },
 ];
 
 const ease = [0.22, 1, 0.36, 1] as const;
+const rise = (delay: number) => ({ initial: { opacity: 0, y: 18 }, animate: { opacity: 1, y: 0, transition: { delay, duration: 1.1, ease } } });
 
-/** Tela inicial sobre a fachada em 3D. */
+/** Tela inicial em formato cinematográfico sobre a fachada em 3D. */
 function IntroScreen() {
   const start = useExperience((s) => s.start);
   const setPlanOpen = useExperience((s) => s.setPlanOpen);
   const suites = ROOMS.filter((r) => /bed|master/.test(r.id) && !r.id.includes('Closet') && !r.id.includes('Bath')).length;
   return (
     <motion.section
-      className="pointer-events-auto fixed inset-0 z-30 flex flex-col justify-end bg-gradient-to-t from-black/80 via-black/25 to-black/10 px-6 pb-10 sm:justify-center sm:px-14 sm:pb-0"
+      className="pointer-events-auto fixed inset-0 z-30 flex flex-col"
       initial={{ opacity: 0 }}
-      animate={{ opacity: 1, transition: { duration: 1.2, delay: 0.3 } }}
-      exit={{ opacity: 0, transition: { duration: 0.8, ease } }}
+      animate={{ opacity: 1, transition: { duration: 1.4, delay: 0.2 } }}
+      exit={{ opacity: 0, transition: { duration: 0.9, ease } }}
       aria-labelledby="intro-title"
     >
-      <motion.p className="eyebrow" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0, transition: { delay: 0.6, duration: 0.8, ease } }}>
-        Residência contemporânea · vista para o mar
-      </motion.p>
-      <motion.h1
-        id="intro-title"
-        className="mt-3 font-display text-5xl font-light leading-[0.95] tracking-[0.14em] text-bone sm:text-7xl lg:text-8xl"
-        initial={{ opacity: 0, y: 24 }}
-        animate={{ opacity: 1, y: 0, transition: { delay: 0.75, duration: 1.1, ease } }}
-      >
-        MANSÃO
-        <br />
-        INFINITY
-      </motion.h1>
-      <motion.p className="mt-5 max-w-md font-display text-xl italic text-bone/90 sm:text-2xl" initial={{ opacity: 0 }} animate={{ opacity: 1, transition: { delay: 1.1, duration: 1 } }}>
-        Uma nova dimensão de arquitetura e luxo.
-      </motion.p>
-      <motion.div className="mt-8 flex flex-col gap-3 sm:flex-row" initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0, transition: { delay: 1.3, duration: 0.8, ease } }}>
-        <button onClick={() => start('exterior')} className="group flex min-h-[52px] items-center justify-center gap-3 rounded-full bg-bone px-7 text-sm font-semibold tracking-wide text-ink transition-transform duration-300 hover:scale-[1.02] active:scale-[0.98]">
-          Explorar mansão <IconArrowRight size={18} className="transition-transform duration-300 group-hover:translate-x-1" />
-        </button>
-        <button
-          onClick={() => {
-            start('exterior');
-            setPlanOpen(true);
-          }}
-          className="glass flex min-h-[52px] items-center justify-center gap-2 rounded-full px-7 text-sm font-medium text-bone transition-colors hover:bg-white/15"
-        >
-          <IconPlan size={18} /> Ver planta
-        </button>
-        <button onClick={() => start('tour')} className="glass flex min-h-[52px] items-center justify-center gap-2 rounded-full px-7 text-sm font-medium text-bone transition-colors hover:bg-white/15">
-          <IconPlay size={16} /> Iniciar visita guiada
-        </button>
-      </motion.div>
-      <motion.dl className="mt-8 grid max-w-xl grid-cols-2 gap-4 border-t border-white/15 pt-5 text-bone sm:mt-10 sm:grid-cols-4" initial={{ opacity: 0 }} animate={{ opacity: 1, transition: { delay: 1.6, duration: 1 } }}>
-        {[
-          [fmtArea(builtArea()).replace(' m²', ''), 'm² construídos'],
-          [String(suites), 'suítes e quartos'],
-          ['4', 'vagas cobertas'],
-          ['20 m', 'borda infinita'],
-        ].map(([v, k]) => (
-          <div key={k}>
-            <dd className="font-display text-2xl sm:text-3xl">{v}</dd>
-            <dt className="text-[10px] uppercase tracking-[0.16em] text-bone/70">{k}</dt>
-          </div>
-        ))}
-      </motion.dl>
+      {/* faixas de cinema e gradientes de leitura */}
+      <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-black/75 via-black/30 to-transparent" />
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/85 to-transparent" />
+      <motion.div className="absolute inset-x-0 top-0 h-[5vh] bg-black" initial={{ scaleY: 0 }} animate={{ scaleY: 1, transition: { duration: 1.2, ease } }} style={{ transformOrigin: 'top' }} />
+      <motion.div className="absolute inset-x-0 bottom-0 h-[5vh] bg-black" initial={{ scaleY: 0 }} animate={{ scaleY: 1, transition: { duration: 1.2, ease } }} style={{ transformOrigin: 'bottom' }} />
+
+      <header className="relative flex items-center justify-between px-6 pt-[calc(5vh+1.25rem)] sm:px-14">
+        <motion.div {...rise(0.4)}>
+          <Wordmark />
+        </motion.div>
+        <motion.p className="eyebrow hidden sm:block" {...rise(0.5)}>
+          Experiência arquitetônica 3D
+        </motion.p>
+      </header>
+
+      <div className="relative mt-auto px-6 pb-[calc(5vh+2rem)] sm:px-14 sm:pb-[calc(5vh+3.5rem)]">
+        <motion.p className="eyebrow flex items-center gap-4" {...rise(0.7)}>
+          <span className="h-px w-10 bg-gold" aria-hidden="true" />
+          Residência contemporânea · vista para o mar
+        </motion.p>
+        <motion.h1 id="intro-title" className="mt-5 font-display text-[3.4rem] font-light leading-[0.92] tracking-[0.16em] text-bone sm:text-8xl lg:text-[8.5rem]" {...rise(0.85)}>
+          MANSÃO
+          <br />
+          INFINITY
+        </motion.h1>
+        <motion.p className="mt-6 max-w-md font-display text-xl font-light italic text-bone/85 sm:text-2xl" {...rise(1.05)}>
+          Uma nova dimensão de arquitetura e luxo.
+        </motion.p>
+        <motion.div className="mt-9 flex flex-col items-start gap-4 sm:flex-row sm:items-center sm:gap-9" {...rise(1.2)}>
+          <button onClick={() => start('exterior')} className="btn-primary group">
+            Explorar mansão <IconArrowRight size={16} className="transition-transform duration-300 group-hover:translate-x-1" />
+          </button>
+          <button
+            onClick={() => {
+              start('exterior');
+              setPlanOpen(true);
+            }}
+            className="btn-line"
+          >
+            <IconPlan size={16} /> Ver planta
+          </button>
+          <button onClick={() => start('tour')} className="btn-line">
+            <IconPlay size={14} /> Iniciar visita guiada
+          </button>
+        </motion.div>
+        <motion.dl className="mt-12 grid max-w-2xl grid-cols-2 border-t border-white/12 sm:grid-cols-4" initial={{ opacity: 0 }} animate={{ opacity: 1, transition: { delay: 1.5, duration: 1.2 } }}>
+          {[
+            [fmtArea(builtArea()).replace(' m²', ''), 'm² construídos'],
+            [String(suites).padStart(2, '0'), 'suítes e quartos'],
+            ['04', 'vagas cobertas'],
+            ['20 m', 'borda infinita'],
+          ].map(([v, k], i) => (
+            <div key={k} className={`flex flex-col-reverse gap-1 pt-4 ${i % 2 ? 'pl-5' : 'pr-5'} ${i > 0 ? 'sm:border-l sm:border-white/12 sm:pl-5' : ''}`}>
+              <dt className="text-[10px] uppercase tracking-[0.26em] text-bone/55">{k}</dt>
+              <dd className="numeral text-3xl font-light text-bone sm:text-[2.1rem]">{v}</dd>
+            </div>
+          ))}
+        </motion.dl>
+      </div>
     </motion.section>
   );
 }
 
-/** Corte por pavimento (vistas interna e superior). */
+/** Corte por pavimento (vistas interna e superior), em abas tipográficas. */
 function LevelSwitch() {
   const cut = useExperience((s) => s.cutLevel);
   const setCut = useExperience((s) => s.setCutLevel);
@@ -94,13 +109,26 @@ function LevelSwitch() {
     { v: null, label: 'Completa' },
   ];
   return (
-    <div className="glass flex rounded-full p-1" role="radiogroup" aria-label="Corte por pavimento">
+    <div className="glass flex items-center gap-5 px-5" role="radiogroup" aria-label="Corte por pavimento">
+      <span className="eyebrow hidden text-[10px] sm:inline">Corte</span>
       {opts.map((o) => (
-        <button key={String(o.v)} role="radio" aria-checked={cut === o.v} onClick={() => setCut(o.v)} className={`min-h-[40px] rounded-full px-3 text-xs font-medium transition-colors ${cut === o.v ? 'bg-bone text-ink' : 'text-bone/80 hover:text-bone'}`}>
+        <button key={String(o.v)} role="radio" aria-checked={cut === o.v} onClick={() => setCut(o.v)} className="tab">
           {o.label}
         </button>
       ))}
     </div>
+  );
+}
+
+/** Leitura discreta da posição: pavimento e rumo da câmera. */
+function Readout() {
+  const pose = useExperience((s) => s.pose);
+  const deg = Math.round(((((-pose.heading * 180) / Math.PI) % 360) + 360) % 360);
+  const dirs = ['N', 'NE', 'L', 'SE', 'S', 'SO', 'O', 'NO'];
+  return (
+    <p className="numeral hidden text-[13px] tracking-[0.18em] text-bone/60 lg:block" aria-hidden="true">
+      {dirs[Math.round(deg / 45) % 8]} {String(deg).padStart(3, '0')}° · {LEVEL_NAMES[pose.level]}
+    </p>
   );
 }
 
@@ -142,6 +170,7 @@ export function UIOverlay({ ready }: { ready: boolean }) {
   const [listOpen, setListOpen] = useState(false);
   const anyLight = Object.values(st.lights).some(Boolean);
   const anyOpen = Object.values(st.doors).some(Boolean);
+  const tour = st.mode === 'tour';
 
   // atalhos de teclado
   useEffect(() => {
@@ -163,7 +192,7 @@ export function UIOverlay({ ready }: { ready: boolean }) {
     return () => window.removeEventListener('keydown', onKey);
   }, []);
 
-  // toast
+  // aviso temporário
   const [toast, setToast] = useState<string | null>(null);
   useEffect(() => {
     if (!st.toast) return;
@@ -174,6 +203,15 @@ export function UIOverlay({ ready }: { ready: boolean }) {
 
   if (!ready) return null;
 
+  const actions = [
+    { label: 'Planta baixa (P)', Icon: IconPlan, pressed: st.planOpen, on: () => st.setPlanOpen(true) },
+    { label: anyLight ? 'Apagar todas as luzes (L)' : 'Acender todas as luzes (L)', Icon: IconBulb, pressed: anyLight, on: () => st.setAllLights(!anyLight) },
+    { label: anyOpen ? 'Fechar portas e portões (O)' : 'Abrir portas e portões (O)', Icon: IconDoor, pressed: anyOpen, on: () => st.setAllDoors(!anyOpen) },
+    { label: 'Visita guiada (T)', Icon: IconPlay, pressed: tour, on: () => st.setMode(tour ? 'exterior' : 'tour') },
+    { label: 'Ajustes', Icon: IconSettings, pressed: st.settingsOpen, on: () => st.setSettingsOpen(true) },
+    { label: 'Ajuda', Icon: IconHelp, pressed: st.helpOpen, on: () => st.setHelpOpen(true) },
+  ];
+
   return (
     <div className="pointer-events-none fixed inset-0 z-20 select-none" style={{ paddingTop: 'env(safe-area-inset-top)' }}>
       <FadeVeil />
@@ -181,120 +219,98 @@ export function UIOverlay({ ready }: { ready: boolean }) {
 
       {st.started && (
         <>
+          {/* gradientes de leitura no topo e na base */}
+          <div className="pointer-events-none absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-black/45 to-transparent" />
+          <div className="pointer-events-none absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-black/50 to-transparent" />
+
+          {/* faixas de cinema durante a visita guiada */}
+          <AnimatePresence>
+            {tour && (
+              <>
+                <motion.div key="lb-t" className="absolute inset-x-0 top-0 z-0 h-[7vh] bg-black" initial={{ scaleY: 0 }} animate={{ scaleY: 1 }} exit={{ scaleY: 0 }} transition={{ duration: 0.8, ease }} style={{ transformOrigin: 'top' }} />
+                <motion.div key="lb-b" className="absolute inset-x-0 bottom-0 z-0 h-[7vh] bg-black" initial={{ scaleY: 0 }} animate={{ scaleY: 1 }} exit={{ scaleY: 0 }} transition={{ duration: 0.8, ease }} style={{ transformOrigin: 'bottom' }} />
+              </>
+            )}
+          </AnimatePresence>
+
           {/* barra superior */}
-          <header className="pointer-events-auto flex items-start justify-between gap-2 p-3 sm:p-4">
-            <div className="flex items-center gap-2">
-              <button
-                onClick={() => setListOpen((v) => !v)}
-                aria-expanded={listOpen}
-                aria-label="Lista de ambientes"
-                className="glass btn-icon"
-              >
-                <IconList />
+          <header className="pointer-events-auto relative flex items-start justify-between gap-2 p-3 sm:p-6">
+            <div className="flex items-center gap-3">
+              <button onClick={() => setListOpen((v) => !v)} aria-expanded={listOpen} aria-label="Índice de ambientes" className="glass btn-icon">
+                <IconList size={18} />
               </button>
-              <div className="hidden leading-tight md:block">
-                <p className="font-display text-xl tracking-[0.2em] text-bone">MANSÃO INFINITY</p>
-                <p className="text-[10px] uppercase tracking-[0.2em] text-bone/65">Experiência arquitetônica</p>
+              <div className="hidden sm:block">
+                <Wordmark compact />
+              </div>
+              <div className="sm:hidden">
+                <Monogram size={36} />
               </div>
             </div>
 
-            <nav className="glass hidden rounded-full p-1 sm:flex" aria-label="Modo de visualização">
-              {MODES.map(({ id, label, Icon, key }) => {
-                const active = st.mode === id;
-                return (
-                  <button
-                    key={id}
-                    onClick={() => st.setMode(id)}
-                    aria-pressed={active}
-                    title={`${label} (${key})`}
-                    className={`flex min-h-[40px] items-center gap-2 rounded-full px-3.5 text-sm font-medium transition-colors duration-200 ${active ? 'bg-bone text-ink' : 'text-bone/80 hover:text-bone'}`}
-                  >
-                    <Icon size={17} />
-                    <span className="hidden md:inline">{label}</span>
-                  </button>
-                );
-              })}
-            </nav>
-
-            <div className="flex items-center gap-2">
-              <div className="hidden sm:block">
-                <EnvironmentSelector />
-              </div>
-              <div className="glass flex flex-col rounded-full p-1 sm:flex-row">
-                <button className="btn-icon" aria-label="Planta baixa (P)" title="Planta baixa (P)" aria-pressed={st.planOpen} onClick={() => st.setPlanOpen(true)}>
-                  <IconPlan />
+            <div className="glass flex divide-x divide-white/10">
+              {actions.map(({ label, Icon, pressed, on }) => (
+                <button key={label} className="btn-icon" aria-label={label} title={label} aria-pressed={pressed} onClick={on}>
+                  <Icon size={18} />
                 </button>
-                <button className="btn-icon" aria-label={anyLight ? 'Apagar todas as luzes (L)' : 'Acender todas as luzes (L)'} title="Luzes (L)" aria-pressed={anyLight} onClick={() => st.setAllLights(!anyLight)}>
-                  <IconBulb />
-                </button>
-                <button className="btn-icon" aria-label={anyOpen ? 'Fechar portas e portões (O)' : 'Abrir portas e portões (O)'} title="Portas (O)" aria-pressed={anyOpen} onClick={() => st.setAllDoors(!anyOpen)}>
-                  <IconDoor />
-                </button>
-                <button className="btn-icon" aria-label="Visita guiada (T)" title="Visita guiada (T)" aria-pressed={st.mode === 'tour'} onClick={() => st.setMode(st.mode === 'tour' ? 'exterior' : 'tour')}>
-                  <IconPlay size={18} />
-                </button>
-                <button className="btn-icon" aria-label="Ajustes" title="Ajustes" onClick={() => st.setSettingsOpen(true)}>
-                  <IconSettings />
-                </button>
-                <button className="btn-icon" aria-label="Ajuda" title="Ajuda" onClick={() => st.setHelpOpen(true)}>
-                  <IconHelp />
-                </button>
-              </div>
+              ))}
             </div>
           </header>
 
           {(st.mode === 'interior' || st.mode === 'top') && (
-            <div className="pointer-events-auto absolute left-1/2 top-[4.6rem] -translate-x-1/2 sm:top-20">
+            <div className="pointer-events-auto absolute left-1/2 top-[4.4rem] -translate-x-1/2 sm:top-24">
               <LevelSwitch />
             </div>
           )}
 
-          {/* painéis laterais */}
-          <div className="pointer-events-none absolute bottom-24 left-3 top-20 flex w-[calc(100%-1.5rem)] flex-col sm:bottom-6 sm:left-4 sm:w-auto">
+          {/* índice de ambientes */}
+          <div className="pointer-events-none absolute bottom-28 left-3 top-[4.4rem] flex w-[calc(100%-1.5rem)] flex-col sm:bottom-28 sm:left-6 sm:top-24 sm:w-auto">
             <AnimatePresence>
               {listOpen && (
-                <motion.div className="pointer-events-auto max-h-full min-h-0" initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.3, ease }}>
+                <motion.div className="pointer-events-auto max-h-full min-h-0" initial={{ opacity: 0, x: -16 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -16 }} transition={{ duration: 0.4, ease }}>
                   <RoomNavigation onClose={() => setListOpen(false)} />
                 </motion.div>
               )}
             </AnimatePresence>
           </div>
-          <div className="pointer-events-none absolute bottom-20 right-3 top-auto flex max-h-[58vh] w-[calc(100%-1.5rem)] flex-col items-end justify-end sm:bottom-6 sm:right-4 sm:top-20 sm:max-h-none sm:w-auto sm:justify-start">
-            <AnimatePresence>{st.selectedRoom && st.mode !== 'tour' && st.mode !== 'walk' && <RoomInfoPanel key="info" />}</AnimatePresence>
+
+          {/* ficha do ambiente */}
+          <div className="pointer-events-none absolute bottom-24 right-3 flex max-h-[58vh] w-[calc(100%-1.5rem)] flex-col items-end justify-end sm:bottom-28 sm:right-6 sm:top-24 sm:max-h-none sm:w-auto sm:justify-start">
+            <AnimatePresence>{st.selectedRoom && !tour && st.mode !== 'walk' && <RoomInfoPanel key="info" />}</AnimatePresence>
           </div>
 
-          {/* barra inferior no celular: modos e horário */}
-          <div className="pointer-events-auto absolute inset-x-3 bottom-3 flex items-center justify-between gap-2 sm:hidden" style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}>
-            {st.mode !== 'walk' && st.mode !== 'tour' && (
-              <>
-                <nav className="glass flex rounded-full p-1" aria-label="Modo de visualização">
-                  {MODES.map(({ id, label, Icon }) => (
-                    <button key={id} onClick={() => st.setMode(id)} aria-pressed={st.mode === id} aria-label={label} className={`flex min-h-[44px] min-w-[44px] items-center justify-center rounded-full ${st.mode === id ? 'bg-bone text-ink' : 'text-bone/85'}`}>
-                      <Icon size={19} />
+          {/* base: modos de visualização, leitura e horário */}
+          {!tour && (
+            <div className="pointer-events-auto absolute inset-x-3 bottom-3 flex flex-col gap-2 sm:inset-x-6 sm:bottom-6 sm:flex-row sm:items-end sm:justify-between" style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}>
+              {st.mode !== 'walk' ? (
+                <nav className="glass flex justify-between px-3 sm:justify-start sm:gap-7 sm:px-6" aria-label="Modo de visualização">
+                  {MODES.map(({ id, label, key }) => (
+                    <button key={id} onClick={() => st.setMode(id)} aria-pressed={st.mode === id} title={`${label} (${key})`} className="tab flex items-center gap-2 px-1">
+                      <span className="numeral text-[13px] tracking-normal text-gold">0{key}</span>
+                      <span>{label}</span>
                     </button>
                   ))}
                 </nav>
-                <EnvironmentSelector compact />
-              </>
-            )}
-          </div>
-
-          {st.mode === 'walk' && (
-            <>
-              <WalkHUD />
-              <button onClick={() => st.setMode('exterior')} className="glass pointer-events-auto absolute left-3 top-[4.2rem] min-h-[44px] rounded-full px-4 text-sm text-bone sm:left-auto sm:right-4 sm:top-20">
-                Sair da caminhada
-              </button>
-            </>
+              ) : (
+                <button onClick={() => st.setMode('exterior')} className="glass btn-line self-start px-5">
+                  Sair da caminhada
+                </button>
+              )}
+              <div className="flex items-center justify-between gap-6">
+                <Readout />
+                <EnvironmentSelector />
+              </div>
+            </div>
           )}
 
-          <div className="pointer-events-none absolute inset-x-3 bottom-3 sm:bottom-6">
-            <AnimatePresence>{st.mode === 'tour' && <TourPanel key="tour" />}</AnimatePresence>
+          {st.mode === 'walk' && <WalkHUD />}
+
+          <div className="pointer-events-none absolute inset-x-0 bottom-0 z-[1]">
+            <AnimatePresence>{tour && <TourPanel key="tour" />}</AnimatePresence>
           </div>
 
           <AnimatePresence>
             {toast && (
-              <motion.div key="toast" role="status" className="glass absolute left-1/2 top-24 -translate-x-1/2 rounded-full px-4 py-2 text-sm text-bone" initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}>
+              <motion.div key="toast" role="status" className="glass absolute left-1/2 top-24 -translate-x-1/2 px-5 py-2.5 text-xs uppercase tracking-[0.2em] text-bone" initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}>
                 {toast}
               </motion.div>
             )}

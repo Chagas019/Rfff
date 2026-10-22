@@ -28,26 +28,26 @@ export function WalkHUD() {
 
   return (
     <>
-      <div className="pointer-events-none fixed left-1/2 top-1/2 h-1.5 w-1.5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-white/80 shadow" aria-hidden="true" />
-      <div className="glass pointer-events-none fixed left-1/2 top-3 -translate-x-1/2 rounded-2xl px-4 py-1 text-center sm:top-20 sm:px-5 sm:py-1.5" aria-live="polite">
+      <div className="pointer-events-none fixed left-1/2 top-1/2 h-4 w-4 -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/70" aria-hidden="true" />
+      <div className="pointer-events-none fixed left-1/2 top-[4.4rem] -translate-x-1/2 text-center sm:top-24" aria-live="polite">
         <p className="eyebrow">{LEVEL_NAMES[pose.level]}</p>
-        <p className="font-display text-xl text-bone">{room ? roomById(room.id)?.name : 'Jardim'}</p>
+        <p className="mt-1 font-display text-2xl font-light text-bone drop-shadow-[0_2px_10px_rgba(0,0,0,0.65)] sm:text-3xl">{room ? roomById(room.id)?.name : 'Jardim'}</p>
       </div>
       {label && (
         <button
-          className="glass pointer-events-auto fixed bottom-40 left-1/2 flex min-h-[44px] -translate-x-1/2 items-center gap-2 rounded-full px-4 text-sm text-bone sm:bottom-28"
+          className="glass pointer-events-auto fixed bottom-40 left-1/2 flex min-h-[46px] -translate-x-1/2 items-center gap-3 px-5 text-[11px] uppercase tracking-[0.18em] text-bone sm:bottom-32"
           onClick={() => (walkInput.interact += 1)}
         >
           {target?.kind === 'elevator' ? <IconElevator size={18} /> : <IconHand size={18} />}
-          {!touch && <kbd className="rounded border border-white/30 px-1.5 text-xs">E</kbd>}
+          {!touch && <kbd className="border border-gold/60 px-1.5 text-[11px] text-gold">E</kbd>}
           {label}
         </button>
       )}
-      <div className="glass pointer-events-none fixed bottom-4 right-4 hidden h-44 w-56 overflow-hidden rounded-2xl sm:block" aria-hidden="true">
+      <div className="glass pointer-events-none fixed bottom-24 right-6 hidden h-44 w-56 overflow-hidden sm:block" aria-hidden="true">
         <FloorPlan level={pose.level} compact />
       </div>
       {!touch && (
-        <p className="glass pointer-events-none fixed bottom-4 left-1/2 hidden -translate-x-1/2 rounded-full px-4 py-2 text-xs text-bone/90 sm:block">Clique para olhar com o mouse · WASD para andar · Shift corre · E interage · Esc solta o mouse</p>
+        <p className="pointer-events-none fixed bottom-7 left-1/2 hidden -translate-x-1/2 text-[10.5px] uppercase tracking-[0.18em] text-bone/70 drop-shadow lg:block">Clique para olhar · WASD anda · Shift corre · E interage · Esc solta o mouse</p>
       )}
       {touch && <TouchControls />}
     </>
@@ -98,7 +98,7 @@ function TouchControls() {
     <>
       <div
         ref={base}
-        className="glass pointer-events-auto fixed bottom-8 left-6 h-32 w-32 touch-none rounded-full"
+        className="pointer-events-auto fixed bottom-24 left-6 h-32 w-32 touch-none rounded-full border border-white/25 bg-black/25 backdrop-blur-md"
         onPointerDown={(e) => {
           joyId.current = e.pointerId;
           (e.target as HTMLElement).setPointerCapture(e.pointerId);
@@ -110,7 +110,7 @@ function TouchControls() {
         role="application"
         aria-label="Joystick de movimento"
       >
-        <div className="absolute left-1/2 top-1/2 h-14 w-14 rounded-full bg-bone/85 shadow-lg" style={{ transform: `translate(calc(-50% + ${knob.x}px), calc(-50% + ${knob.y}px))` }} />
+        <div className="absolute left-1/2 top-1/2 h-12 w-12 rounded-full border border-gold/70 bg-bone/80" style={{ transform: `translate(calc(-50% + ${knob.x}px), calc(-50% + ${knob.y}px))` }} />
       </div>
       <div
         className="pointer-events-auto fixed bottom-0 right-0 top-24 w-1/2 touch-none"

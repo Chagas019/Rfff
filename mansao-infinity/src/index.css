@@ -8,7 +8,7 @@
   --color-stone: #8f877b;
   --color-sand: #d9cdb8;
   --color-bone: #f3efe7;
-  --color-gold: #c9b48a;
+  --color-gold: #c8b08a;
   --ease-lux: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
@@ -38,24 +38,33 @@ canvas {
 }
 
 @layer components {
+  /* painel editorial: fundo escuro translúcido, filete de 1 px, cantos retos */
   .glass {
-    background: var(--glass);
-    border: 1px solid var(--glass-border);
-    backdrop-filter: blur(18px) saturate(140%);
-    -webkit-backdrop-filter: blur(18px) saturate(140%);
-    box-shadow: 0 10px 40px -12px rgba(0, 0, 0, 0.55);
+    background: rgba(12, 12, 13, 0.62);
+    border: 1px solid rgba(255, 255, 255, 0.09);
+    backdrop-filter: blur(22px) saturate(120%);
+    -webkit-backdrop-filter: blur(22px) saturate(120%);
   }
   .glass-strong {
-    background: var(--glass-strong);
-    border: 1px solid var(--glass-border);
-    backdrop-filter: blur(22px) saturate(140%);
-    -webkit-backdrop-filter: blur(22px) saturate(140%);
+    background: rgba(11, 11, 12, 0.86);
+    border: 1px solid rgba(255, 255, 255, 0.09);
+    backdrop-filter: blur(26px) saturate(120%);
+    -webkit-backdrop-filter: blur(26px) saturate(120%);
   }
   .eyebrow {
     font-size: 0.6875rem;
-    letter-spacing: 0.22em;
+    font-weight: 500;
+    letter-spacing: 0.28em;
     text-transform: uppercase;
-    color: rgba(243, 239, 231, 0.72);
+    color: rgba(243, 239, 231, 0.66);
+  }
+  .numeral {
+    font-family: var(--font-display);
+    font-feature-settings: "lnum" 1;
+    letter-spacing: 0.04em;
+  }
+  .hairline {
+    border-color: rgba(255, 255, 255, 0.1);
   }
   .btn-icon {
     display: inline-flex;
@@ -63,19 +72,88 @@ canvas {
     justify-content: center;
     min-width: 44px;
     min-height: 44px;
-    border-radius: 9999px;
-    color: var(--color-bone);
-    transition: background-color 200ms var(--ease-lux), color 200ms var(--ease-lux), transform 200ms var(--ease-lux);
+    color: rgba(243, 239, 231, 0.82);
+    transition: color 250ms var(--ease-lux), background-color 250ms var(--ease-lux);
   }
   .btn-icon:hover {
-    background: rgba(255, 255, 255, 0.1);
-  }
-  .btn-icon:active {
-    transform: scale(0.96);
+    color: var(--color-bone);
+    background: rgba(255, 255, 255, 0.06);
   }
   .btn-icon[aria-pressed="true"] {
+    color: var(--color-gold);
+  }
+  .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    min-height: 52px;
+    padding: 0 1.75rem;
     background: var(--color-bone);
     color: var(--color-ink);
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    transition: background-color 300ms var(--ease-lux), color 300ms var(--ease-lux);
+  }
+  .btn-primary:hover {
+    background: var(--color-gold);
+  }
+  .btn-line {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    min-height: 44px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: rgba(243, 239, 231, 0.88);
+    background-image: linear-gradient(var(--color-gold), var(--color-gold));
+    background-size: 0% 1px;
+    background-position: 0 calc(100% - 10px);
+    background-repeat: no-repeat;
+    transition: background-size 400ms var(--ease-lux), color 300ms var(--ease-lux);
+  }
+  .btn-line:hover {
+    background-size: 100% 1px;
+    color: var(--color-bone);
+  }
+  .tab {
+    position: relative;
+    min-height: 44px;
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: rgba(243, 239, 231, 0.6);
+    transition: color 250ms var(--ease-lux);
+  }
+  .tab:hover {
+    color: var(--color-bone);
+  }
+  .tab[aria-pressed="true"],
+  .tab[aria-checked="true"],
+  .tab[aria-selected="true"] {
+    color: var(--color-bone);
+  }
+  .tab::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 8px;
+    height: 1px;
+    background: var(--color-gold);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 400ms var(--ease-lux);
+  }
+  .tab[aria-pressed="true"]::after,
+  .tab[aria-checked="true"]::after,
+  .tab[aria-selected="true"]::after {
+    transform: scaleX(1);
   }
 }
 

@@ -86,8 +86,8 @@ function buildMaterials(tx: Record<string, THREE.Texture>, anisotropy: number) {
 
   const m = {
     // --- estrutura e revestimentos
-    plaster: std('#ecebe6', 0.92, 0, { normalMap: tx.concrete_normal, normalScale: new THREE.Vector2(0.08, 0.08) }),
-    ceiling: std('#f3f1ec', 0.95),
+    plaster: std('#ebe6dd', 0.9, 0, { normalMap: tx.concrete_normal, normalScale: new THREE.Vector2(0.08, 0.08) }),
+    ceiling: std('#f2efe9', 0.95),
     concrete: pbr('concrete', { color: '#f2f0ec' }, 0.9),
     concreteWhite: pbr('concrete', { color: '#ffffff' }, 0.5),
     travertine: pbr('travertine', {}, 1.0),

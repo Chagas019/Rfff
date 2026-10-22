@@ -41,7 +41,7 @@ export function Dialog({ title, onClose, children, wide = false, labelId }: { ti
     };
   }, [onClose]);
   return (
-    <motion.div className="pointer-events-auto fixed inset-0 z-40 flex items-center justify-center bg-black/55 p-3 sm:p-6" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={onClose}>
+    <motion.div className="pointer-events-auto fixed inset-0 z-40 flex items-center justify-center bg-black/70 p-3 backdrop-blur-[2px] sm:p-8" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={onClose}>
       <motion.div
         ref={ref}
         role="dialog"
@@ -52,14 +52,14 @@ export function Dialog({ title, onClose, children, wide = false, labelId }: { ti
         exit={{ opacity: 0, y: 10 }}
         transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
         onClick={(e) => e.stopPropagation()}
-        className={`flex max-h-full w-full flex-col overflow-hidden rounded-2xl border border-white/12 bg-[#111113]/95 shadow-2xl ${wide ? 'max-w-6xl' : 'max-w-lg'}`}
+        className={`flex max-h-full w-full flex-col overflow-hidden border border-white/10 bg-[#0e0e0f]/[0.97] shadow-[0_40px_120px_-30px_rgba(0,0,0,0.9)] ${wide ? 'max-w-6xl' : 'max-w-lg'}`}
       >
-        <div className="flex items-center justify-between border-b border-white/10 px-5 py-3">
-          <h2 id={labelId} className="font-display text-2xl text-bone">
+        <div className="flex items-center justify-between border-b border-white/10 py-2 pl-7 pr-2">
+          <h2 id={labelId} className="font-display text-[1.7rem] font-light tracking-wide text-bone">
             {title}
           </h2>
-          <button className="btn-icon -mr-2" onClick={onClose} aria-label="Fechar">
-            <IconClose />
+          <button className="btn-icon" onClick={onClose} aria-label="Fechar">
+            <IconClose size={18} />
           </button>
         </div>
         {children}
@@ -75,21 +75,21 @@ export function PlanPanel() {
   const setPlanLevel = useExperience((s) => s.setPlanLevel);
   return (
     <Dialog title="Planta baixa" onClose={() => setPlanOpen(false)} wide labelId="plan-title">
-      <div className="flex flex-wrap items-center gap-3 px-5 pt-3">
-        <div className="glass flex rounded-full p-1" role="tablist" aria-label="Pavimento">
+      <div className="flex flex-wrap items-center gap-x-8 gap-y-2 px-7 pt-3">
+        <div className="flex gap-6" role="tablist" aria-label="Pavimento">
           {([0, 1] as Level[]).map((lv) => (
             <button
               key={lv}
               role="tab"
               aria-selected={level === lv}
               onClick={() => setPlanLevel(lv)}
-              className={`min-h-[40px] rounded-full px-4 text-sm font-medium transition-colors ${level === lv ? 'bg-bone text-ink' : 'text-bone/80 hover:text-bone'}`}
+              className="tab"
             >
               {LEVEL_NAMES[lv]}
             </button>
           ))}
         </div>
-        <p className="text-xs text-bone/70">
+        <p className="text-[11px] uppercase tracking-[0.18em] text-bone/55">
           Área construída {fmtArea(builtArea())} · útil {fmtArea(usefulArea())} (descontadas as paredes) · clique num ambiente para ir até ele
         </p>
       </div>
@@ -98,11 +98,11 @@ export function PlanPanel() {
           <FloorPlan level={level} onPick={() => setPlanOpen(false)} />
         </div>
       </div>
-      <ul className="flex flex-wrap gap-x-5 gap-y-1 border-t border-white/10 px-5 py-3 text-xs text-bone/75" aria-label="Legenda">
+      <ul className="flex flex-wrap gap-x-7 gap-y-1 border-t border-white/10 px-7 py-3.5 text-[10.5px] uppercase tracking-[0.18em] text-bone/60" aria-label="Legenda">
         <li className="flex items-center gap-2"><span className="h-2 w-5 bg-[#ece6da]" /> Parede</li>
         <li className="flex items-center gap-2"><span className="h-2 w-5 border border-[#9fd8e2] bg-[#9fd8e2]/30" /> Vidro / janela</li>
         <li className="flex items-center gap-2"><span className="h-2 w-5 border-b-2 border-dashed border-gold" /> Abertura de porta</li>
-        <li className="flex items-center gap-2"><span className="h-3 w-3 rounded-full bg-gold" /> Você está aqui</li>
+        <li className="flex items-center gap-2"><span className="h-2.5 w-2.5 rounded-full bg-gold" /> Você está aqui</li>
       </ul>
     </Dialog>
   );
@@ -118,26 +118,26 @@ export function SettingsPanel() {
   const toggleExt = useExperience((s) => s.toggleExteriorLights);
   return (
     <Dialog title="Ajustes" onClose={() => setOpen(false)} labelId="settings-title">
-      <div className="space-y-6 px-5 py-5">
+      <div className="space-y-7 px-7 py-6">
         <fieldset>
           <legend className="eyebrow mb-3">Qualidade gráfica</legend>
-          <div className="grid grid-cols-5 gap-1.5">
-            <button aria-pressed={auto} onClick={() => setQuality(quality, true)} className={`min-h-[44px] rounded-lg text-sm ${auto ? 'bg-bone text-ink' : 'bg-white/5 text-bone/85 hover:bg-white/10'}`}>
+          <div className="grid grid-cols-5 gap-2">
+            <button aria-pressed={auto} onClick={() => setQuality(quality, true)} className={`min-h-[44px] border text-[11px] uppercase tracking-[0.16em] transition-colors ${auto ? 'border-gold text-bone' : 'border-white/10 text-bone/65 hover:text-bone'}`}>
               Auto
             </button>
             {QUALITY_ORDER.map((q) => (
-              <button key={q} aria-pressed={!auto && quality === q} onClick={() => setQuality(q, false)} className={`min-h-[44px] rounded-lg text-sm ${!auto && quality === q ? 'bg-bone text-ink' : 'bg-white/5 text-bone/85 hover:bg-white/10'}`}>
+              <button key={q} aria-pressed={!auto && quality === q} onClick={() => setQuality(q, false)} className={`min-h-[44px] border text-[11px] uppercase tracking-[0.16em] transition-colors ${!auto && quality === q ? 'border-gold text-bone' : 'border-white/10 text-bone/65 hover:text-bone'}`}>
                 {QUALITY[q].label}
               </button>
             ))}
           </div>
-          <p className="mt-2 text-xs text-bone/65">
+          <p className="mt-3 text-xs font-light leading-relaxed text-bone/60">
             Atual: {QUALITY[quality].label}. No modo automático a resolução e os efeitos sobem ou descem conforme o desempenho do aparelho.
           </p>
         </fieldset>
-        <label className="flex min-h-[44px] items-center justify-between gap-3 text-sm">
+        <label className="flex min-h-[44px] items-center justify-between gap-3 border-t border-white/10 pt-5 text-sm font-light text-bone/85">
           Iluminação externa (jardim, fachada, piscina)
-          <input type="checkbox" checked={ext} onChange={toggleExt} className="h-5 w-5 accent-[#c9b48a]" />
+          <input type="checkbox" checked={ext} onChange={toggleExt} className="h-5 w-5 accent-[#c8b08a]" />
         </label>
       </div>
     </Dialog>
@@ -162,11 +162,11 @@ export function HelpPanel() {
   ];
   return (
     <Dialog title="Como explorar" onClose={() => setOpen(false)} labelId="help-title">
-      <dl className="grid grid-cols-[auto_1fr] gap-x-5 gap-y-2.5 px-5 py-5 text-sm">
+      <dl className="grid grid-cols-[auto_1fr] gap-x-6 px-7 py-5 text-[13px]">
         {rows.map(([k, v]) => (
           <div key={k} className="contents">
-            <dt className="font-semibold text-gold">{k}</dt>
-            <dd className="text-bone/85">{v}</dd>
+            <dt className="border-b border-white/[0.07] py-2.5 text-[11px] uppercase tracking-[0.16em] text-gold">{k}</dt>
+            <dd className="border-b border-white/[0.07] py-2.5 font-light text-bone/85">{v}</dd>
           </div>
         ))}
       </dl>
@@ -185,40 +185,45 @@ export function TourPanel() {
   if (!s) return null;
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
+      initial={{ opacity: 0, y: 24 }}
       animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: 20 }}
-      className="glass-strong pointer-events-auto mx-auto w-full max-w-2xl rounded-2xl px-5 py-4"
+      exit={{ opacity: 0, y: 24 }}
+      transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+      className="pointer-events-auto relative mx-auto w-full max-w-5xl px-5 pb-[calc(7vh+1rem)] pt-16 sm:px-10"
       role="region"
       aria-label="Visita guiada"
     >
-      <div className="flex items-start gap-4">
-        <div className="min-w-0 flex-1" aria-live="polite">
-          <p className="eyebrow">
-            Visita guiada · {step + 1} de {TOUR.length}
+      <div className="pointer-events-none absolute inset-x-[-50vw] bottom-0 top-0 -z-10 bg-gradient-to-t from-black/80 via-black/45 to-transparent" aria-hidden="true" />
+      <div className="grid gap-4 sm:grid-cols-[1fr_auto] sm:items-end" aria-live="polite">
+        <motion.div key={step} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}>
+          <p className="eyebrow flex items-center gap-4">
+            <span className="numeral text-[15px] tracking-normal text-gold">
+              {String(step + 1).padStart(2, '0')} <span className="text-bone/40">/ {String(TOUR.length).padStart(2, '0')}</span>
+            </span>
+            Visita guiada
           </p>
-          <h2 className="mt-1 font-display text-2xl leading-tight text-bone sm:text-3xl">{s.title}</h2>
-          <p className="mt-1.5 text-sm leading-relaxed text-bone/85">{s.text}</p>
+          <h2 className="mt-2 font-display text-3xl font-light leading-tight text-bone drop-shadow-[0_2px_12px_rgba(0,0,0,0.6)] sm:text-5xl">{s.title}</h2>
+          <p className="mt-2 max-w-2xl text-sm font-light leading-relaxed text-bone/85 drop-shadow-[0_1px_8px_rgba(0,0,0,0.7)]">{s.text}</p>
+        </motion.div>
+        <div className="glass flex items-center divide-x divide-white/10 self-start sm:self-end">
+          <button className="btn-icon" onClick={() => setStep(Math.max(0, step - 1))} disabled={step === 0} aria-label="Plano anterior">
+            <IconPrev size={16} />
+          </button>
+          <button className="btn-icon" onClick={() => setPlaying(!playing)} aria-label={playing ? 'Pausar visita' : 'Continuar visita'}>
+            {playing ? <IconPause size={16} /> : <IconPlay size={16} />}
+          </button>
+          <button className="btn-icon" onClick={() => setStep(Math.min(TOUR.length - 1, step + 1))} disabled={step === TOUR.length - 1} aria-label="Próximo plano">
+            <IconNext size={16} />
+          </button>
+          <button onClick={() => setMode('exterior')} className="min-h-[44px] px-5 text-[11px] uppercase tracking-[0.2em] text-bone/80 hover:text-bone">
+            Sair
+          </button>
         </div>
       </div>
-      <div className="mt-3 flex items-center gap-1">
-        <button className="btn-icon" onClick={() => setStep(Math.max(0, step - 1))} disabled={step === 0} aria-label="Plano anterior">
-          <IconPrev size={18} />
-        </button>
-        <button className="btn-icon" onClick={() => setPlaying(!playing)} aria-label={playing ? 'Pausar visita' : 'Continuar visita'}>
-          {playing ? <IconPause size={18} /> : <IconPlay size={18} />}
-        </button>
-        <button className="btn-icon" onClick={() => setStep(Math.min(TOUR.length - 1, step + 1))} disabled={step === TOUR.length - 1} aria-label="Próximo plano">
-          <IconNext size={18} />
-        </button>
-        <div className="mx-3 flex flex-1 gap-1" aria-hidden="true">
-          {TOUR.map((_, i) => (
-            <span key={i} className={`h-0.5 flex-1 rounded-full transition-colors duration-500 ${i <= step ? 'bg-gold' : 'bg-white/20'}`} />
-          ))}
-        </div>
-        <button onClick={() => setMode('exterior')} className="min-h-[44px] rounded-full px-4 text-sm text-bone/85 hover:bg-white/10">
-          Sair
-        </button>
+      <div className="mt-5 flex gap-1.5" aria-hidden="true">
+        {TOUR.map((_, i) => (
+          <span key={i} className={`h-px flex-1 transition-colors duration-700 ${i <= step ? 'bg-gold' : 'bg-white/20'}`} />
+        ))}
       </div>
     </motion.div>
   );
