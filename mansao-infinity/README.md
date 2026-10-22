@@ -2,6 +2,8 @@
 
 Experiência arquitetônica 3D interativa de uma mansão contemporânea de luxo, feita em **React 19 + TypeScript + Three.js + React Three Fiber**. É um projeto 3D navegável, com interiores completos, mobiliário em escala real, planta baixa conectada ao modelo, iluminação de dia, pôr do sol e noite e visita guiada. Não usa imagens estáticas no lugar do modelo.
 
+**No ar:** https://mansao-infinity.vercel.app (projeto `mansao-infinity` na Vercel, raiz `mansao-infinity/`).
+
 ```bash
 cd mansao-infinity
 npm install
@@ -84,7 +86,7 @@ src/
 
 ## Acessibilidade
 
-Contraste ≥ 4,5:1 nos painéis, foco visível, alvos de toque de 44 px, rótulos em todos os botões de ícone e atalhos de teclado. Diálogos têm foco preso e fecham com Esc. Os cômodos da planta são operáveis por teclado. A preferência por movimento reduzido desliga transições da interface, o balanço da câmera e a rotação da tela inicial, e encurta as transições de câmera.
+Interface em estilo editorial de luxo (painéis com filete de 1 px e cantos retos, monograma, numeração, Cormorant Garamond + Manrope, dourado só como acento). Contraste ≥ 4,5:1 nos painéis, foco visível, alvos de toque de 44 px, rótulos em todos os botões de ícone e atalhos de teclado. Diálogos têm foco preso e fecham com Esc. Os cômodos da planta são operáveis por teclado. A preferência por movimento reduzido desliga transições da interface, o balanço da câmera e a rotação da tela inicial, e encurta as transições de câmera.
 
 ## Testes
 
