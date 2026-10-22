@@ -17,6 +17,8 @@ export interface LightingPreset {
   envIntensity: number;
   /** Parâmetros do céu físico (drei Sky). */
   sky: { turbidity: number; rayleigh: number; mieCoefficient: number; mieDirectionalG: number };
+  /** Cores do céu visível (gradiente zênite → horizonte e halo do sol). */
+  dome: { zenith: string; horizon: string; glow: string };
   fogColor: string;
   fogDensity: number;
   exposure: number;
@@ -36,8 +38,9 @@ export const LIGHTING: Record<TimeOfDay, LightingPreset> = {
     hemiGround: '#6b6253',
     hemiIntensity: 0.4,
     envIntensity: 0.7,
-    sky: { turbidity: 2.0, rayleigh: 1.4, mieCoefficient: 0.004, mieDirectionalG: 0.8 },
-    fogColor: '#c6d4e2',
+    sky: { turbidity: 6, rayleigh: 2.8, mieCoefficient: 0.003, mieDirectionalG: 0.75 },
+    dome: { zenith: '#1d4f9c', horizon: '#bcd2e8', glow: '#fff3dc' },
+    fogColor: '#bccfe2',
     fogDensity: 0.0009,
     exposure: 1.0,
     artificial: 0,
@@ -54,6 +57,7 @@ export const LIGHTING: Record<TimeOfDay, LightingPreset> = {
     hemiIntensity: 0.38,
     envIntensity: 0.75,
     sky: { turbidity: 8, rayleigh: 3.2, mieCoefficient: 0.008, mieDirectionalG: 0.92 },
+    dome: { zenith: '#2c3a63', horizon: '#eea57a', glow: '#ffcf96' },
     fogColor: '#d7a98c',
     fogDensity: 0.0013,
     exposure: 1.0,
@@ -71,6 +75,7 @@ export const LIGHTING: Record<TimeOfDay, LightingPreset> = {
     hemiIntensity: 0.07,
     envIntensity: 0.12,
     sky: { turbidity: 0.6, rayleigh: 0.12, mieCoefficient: 0.002, mieDirectionalG: 0.7 },
+    dome: { zenith: '#040814', horizon: '#24304f', glow: '#9fb4ff' },
     fogColor: '#0b1020',
     fogDensity: 0.0016,
     exposure: 1.05,

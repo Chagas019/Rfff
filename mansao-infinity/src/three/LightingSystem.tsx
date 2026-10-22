@@ -73,7 +73,7 @@ export function LightingSystem() {
         </>
       ) : (
         <>
-          <Sky distance={1800} sunPosition={sunPos} {...preset.sky} />
+          <GradientSky preset={preset} sunDir={sunDir} />
           {quality !== 'low' && <SkyClouds sunset={time === 'sunset'} />}
         </>
       )}
@@ -126,10 +126,10 @@ function SunAndSky({ preset, shadowSize, shadows }: { preset: LightingPreset; sh
     const inside = useExperience.getState().mode === 'walk' ? 0.55 : 1;
     const goal = new THREE.Vector3(...preset.sunDir).normalize();
     c.dir.lerp(goal, 1 - Math.exp(-k * dt)).normalize();
-    c.sunI = THREE.MathUtils.damp(c.sunI, preset.sunIntensity, k, dt);
+    c.sunI = THREE.MathUtils.damp(c.sunI, preset.sunIntensity * (inside < 1 ? 0.8 : 1), k, dt);
     c.hemiI = THREE.MathUtils.damp(c.hemiI, preset.hemiIntensity * inside, k, dt);
     c.env = THREE.MathUtils.damp(c.env, preset.envIntensity * inside, k, dt);
-    c.exp = THREE.MathUtils.damp(c.exp, preset.exposure, k, dt);
+    c.exp = THREE.MathUtils.damp(c.exp, preset.exposure * (inside < 1 ? 0.88 : 1), k, dt);
     c.fogD = THREE.MathUtils.damp(c.fogD, preset.fogDensity, k, dt);
     const a = 1 - Math.exp(-k * dt);
     colors.current.sun.lerp(tmpColor.set(preset.sunColor), a);
@@ -174,6 +174,53 @@ function SunAndSky({ preset, shadowSize, shadows }: { preset: LightingPreset; sh
       />
       <hemisphereLight ref={hemi} />
     </>
+  );
+}
+
+/**
+ * Céu visível: gradiente zênite → horizonte com disco e halo do sol. O céu
+ * físico (Sky) continua sendo usado só para gerar o mapa de ambiente — no
+ * fundo ele estoura no tone mapping e fica quase branco.
+ */
+function GradientSky({ preset, sunDir }: { preset: LightingPreset; sunDir: THREE.Vector3 }) {
+  const mat = useMemo(
+    () =>
+      new THREE.ShaderMaterial({
+        side: THREE.BackSide,
+        depthWrite: false,
+        fog: false,
+        uniforms: {
+          zenith: { value: new THREE.Color(preset.dome.zenith) },
+          horizon: { value: new THREE.Color(preset.dome.horizon) },
+          glow: { value: new THREE.Color(preset.dome.glow) },
+          sunDir: { value: sunDir.clone() },
+        },
+        vertexShader: `varying vec3 vDir; void main(){ vDir = normalize(position); vec4 p = modelViewMatrix * vec4(position,1.0); gl_Position = projectionMatrix * p; gl_Position.z = gl_Position.w; }`,
+        fragmentShader: `uniform vec3 zenith; uniform vec3 horizon; uniform vec3 glow; uniform vec3 sunDir; varying vec3 vDir;
+          void main(){
+            vec3 d = normalize(vDir);
+            float h = max(d.y, 0.0);
+            vec3 col = mix(horizon, zenith, pow(h, 0.5));
+            col = mix(col, horizon * 0.92, smoothstep(0.0, -0.08, d.y));
+            float s = max(dot(d, normalize(sunDir)), 0.0);
+            col += glow * (pow(s, 7.0) * 0.35 + pow(s, 60.0) * 0.6) + glow * smoothstep(0.9993, 0.9997, s) * 6.0;
+            gl_FragColor = vec4(col, 1.0);
+          }`,
+      }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [],
+  );
+  useFrame((_, dt) => {
+    const a = 1 - Math.exp(-2.2 * Math.min(dt, 0.05));
+    mat.uniforms.zenith.value.lerp(tmpColor.set(preset.dome.zenith), a);
+    mat.uniforms.horizon.value.lerp(tmpColor.set(preset.dome.horizon), a);
+    mat.uniforms.glow.value.lerp(tmpColor.set(preset.dome.glow), a);
+    (mat.uniforms.sunDir.value as THREE.Vector3).lerp(sunDir, a).normalize();
+  });
+  return (
+    <mesh material={mat} renderOrder={-10} frustumCulled={false}>
+      <sphereGeometry args={[1500, 48, 24]} />
+    </mesh>
   );
 }
 

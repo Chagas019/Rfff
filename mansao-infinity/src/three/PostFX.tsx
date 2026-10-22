@@ -1,4 +1,4 @@
-import { EffectComposer, Bloom, N8AO, SMAA, ToneMapping, Vignette } from '@react-three/postprocessing';
+import { EffectComposer, Bloom, BrightnessContrast, N8AO, SMAA, ToneMapping, Vignette } from '@react-three/postprocessing';
 import { ToneMappingMode } from 'postprocessing';
 import { QUALITY } from '../config/quality';
 import { useExperience } from '../store/useExperience';
@@ -20,6 +20,7 @@ export function PostFX() {
       {q.ao ? <N8AO halfRes={quality !== 'ultra'} aoRadius={interior ? 1.2 : 2.2} distanceFalloff={1} intensity={interior ? 2.4 : 2.0} quality={quality === 'ultra' ? 'high' : 'medium'} /> : <></>}
       {q.bloom && time !== 'day' ? <Bloom mipmapBlur luminanceThreshold={time === 'night' ? 1.1 : 1.4} luminanceSmoothing={0.25} intensity={time === 'night' ? 0.8 : 0.45} radius={0.65} /> : <></>}
       <ToneMapping mode={ToneMappingMode.ACES_FILMIC} />
+      <BrightnessContrast brightness={time === 'day' ? -0.02 : 0} contrast={time === 'day' ? 0.1 : 0.05} />
       <SMAA />
       <Vignette eskil={false} offset={0.28} darkness={0.42} />
     </EffectComposer>
