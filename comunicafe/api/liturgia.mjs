@@ -15,9 +15,10 @@ export function lerLiturgia(html) {
   const corpo = html.slice(Math.max(0, html.indexOf("<body")));
   const linhas = decodificar(corpo.replace(/<script[\s\S]*?<\/script>|<style[\s\S]*?<\/style>/gi, " ").replace(/<[^>]+>/g, "\n"))
     .split("\n").map(l => l.replace(/\s+/g, " ").trim()).filter(Boolean);
-  // data: blocos "dia-liturgia" (22) e "mes-ano-liturgia" (Out 2026)
-  const dia = (corpo.match(/class="dia-liturgia"[^>]*>\s*(\d{1,2})/) || [])[1];
-  const mesAno = decodificar(((corpo.match(/class="mes-ano-liturgia"[^>]*>([\s\S]{0,200}?)<\/div>/) || [])[1] || "").replace(/<[^>]+>/g, " ")).replace(/\s+/g, " ").trim();
+  // data: blocos "dia-liturgia" (22) e "mes-ano-liturgia" (Out 2026), com ou sem <span> dentro
+  const bloco = classe => decodificar(((corpo.match(new RegExp(`class="${classe}"[^>]*>([\\s\\S]{0,300}?)</div>`)) || [])[1] || "").replace(/<[^>]+>/g, " ")).replace(/\s+/g, " ").trim();
+  const dia = (bloco("dia-liturgia").match(/^(\d{1,2})\b/) || [])[1];
+  const mesAno = bloco("mes-ano-liturgia");
   const [, mesTxt, ano] = mesAno.match(/([A-Za-zç]{3})\w*\s+(\d{4})/) || [];
   const mes = mesTxt && MESES[mesTxt.slice(0, 3).toLowerCase()];
   const data = dia && mes && ano ? `${ano}-${String(mes).padStart(2, "0")}-${String(dia).padStart(2, "0")}` : "";
@@ -38,8 +39,7 @@ export default async function handler(req, res) {
   try {
     const r = await fetch(FONTE, { headers: { "user-agent": "Mozilla/5.0 (Comunica+Fe; liturgia do dia)" } });
     if (!r.ok) throw new Error("fonte respondeu " + r.status);
-    const html = await r.text(), lit = lerLiturgia(html);
-    if (req.query && req.query.depurar) { const c = html.slice(html.indexOf("<body")); const at = (re, n = 600) => { const i = c.search(re); return i < 0 ? "(não achei)" : c.slice(i, i + n); }; return res.status(200).json({ lit, data: at(/data-liturgia/), lista: at(/id="leituras"/, 900) }); }
+    const lit = lerLiturgia(await r.text());
     if (!lit.data || !(lit.primeira || lit.evangelho)) throw new Error("não encontrei as leituras na página");
     res.setHeader("cache-control", "public, s-maxage=1800, stale-while-revalidate=3600");
     res.status(200).json(lit);
