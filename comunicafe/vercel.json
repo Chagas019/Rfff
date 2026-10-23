@@ -3,5 +3,10 @@
   "framework": null,
   "buildCommand": "",
   "installCommand": "",
-  "outputDirectory": "."
+  "outputDirectory": ".",
+  "functions": {
+    "api/conteudo.mjs": {
+      "maxDuration": 60
+    }
+  }
 }
