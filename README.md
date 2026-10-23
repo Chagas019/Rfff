@@ -101,3 +101,7 @@ O site é estático (SPA). Rode `npm run build` e publique a pasta `dist/`.
 
 ---
 Site de fãs sem vínculo com a Formula One Group ou a FIA. "Formula 1", "F1" e marcas relacionadas pertencem aos seus donos.
+
+## Pocket Arcade (projeto separado)
+
+A pasta [`pocket-arcade/`](pocket-arcade/README.md) contém outro projeto, independente deste site: a reconstrução 3D interativa de um videogame portátil, com quatro jogos retrô e realidade aumentada. Ele tem `package.json`, testes e publicação próprios (na Vercel, use *Root Directory* = `pocket-arcade`).
