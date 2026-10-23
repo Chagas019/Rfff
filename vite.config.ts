@@ -1,5 +1,6 @@
 /// <reference types="vitest" />
 import { defineConfig, type Plugin } from 'vite';
+import { configDefaults } from 'vitest/config';
 import react from '@vitejs/plugin-react';
 
 declare const process: { env: Record<string, string | undefined> };
@@ -25,5 +26,7 @@ export default defineConfig({
     globals: true,
     environment: 'jsdom',
     setupFiles: './src/test/setup.ts',
+    // o Pocket Arcade é um projeto à parte, com dependências e testes próprios
+    exclude: [...configDefaults.exclude, 'pocket-arcade/**'],
   },
 });
