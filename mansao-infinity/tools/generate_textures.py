@@ -481,19 +481,44 @@ def artworks(size=512):
         save(f"art_{k}", a)
 
 
+def battens(size=1024, name="battens", c0=(122, 82, 50), c1=(176, 126, 82), slats=14, seed=191):
+    """Ripado vertical de madeira (tile = 1 m): ripas de 7 cm com friso escuro e veio."""
+    r = rng(seed)
+    y, x = np.mgrid[0:size, 0:size] / size
+    grain = fnoise(size, 3.0, seed, ax=1.0, ay=8.0)
+    fine = fnoise(size, 0.8, seed + 1, ax=1.0, ay=14.0)
+    u = (x * slats) % 1.0
+    idx = np.floor(x * slats).astype(int)
+    tint = r.uniform(0.82, 1.1, slats)[idx % slats]
+    rings = (0.5 + 0.5 * np.sin(2 * math.pi * (6 * x * slats + 2.0 * grain))) ** 2
+    tone = 0.55 * rings + 0.45 * fine
+    col = colorize(tone, c0, c1) * tint[..., None]
+    groove = np.exp(-(np.minimum(u, 1 - u) / 0.07) ** 2)
+    bevel = np.clip(1 - np.minimum(u, 1 - u) / 0.12, 0, 1)
+    col *= (1 - 0.78 * groove)[..., None]
+    h = -groove * 1.5 - 0.4 * bevel + 0.15 * fine
+    rough = (0.55 + 0.25 * groove + 0.1 * fine).clip(0, 1)
+    save_set(name, col, h, rough, 2.2)
+
+
 def cloud(size=256):
-    """Sprite de nuvem: vários "puffs" suaves sobre ruído (canal alfa)."""
+    """Sprite de nuvem: soma de blobs gaussianos com borda totalmente difusa (canal alfa)."""
     r = rng(181)
     y, x = (np.mgrid[0:size, 0:size] / size - 0.5) * 2
     a = np.zeros((size, size))
-    for _ in range(14):
-        cx, cy = r.normal(0, 0.28, 2)
-        rad = r.uniform(0.22, 0.42)
-        a = np.maximum(a, np.clip(1 - ((x - cx) ** 2 + (y - cy) ** 2) / rad**2, 0, 1) ** 1.6)
-    n = band(size, 4, 40, 182)
-    a = np.clip(a * (0.65 + 0.6 * n) * np.clip(1.2 - np.sqrt(x**2 + y**2), 0, 1), 0, 1)
-    img = np.dstack([np.ones_like(a), np.ones_like(a), np.ones_like(a), a])
-    save("cloud", img, quality=90)
+    for _ in range(18):
+        cx, cy = r.normal(0, 0.22, 2)
+        sg = r.uniform(0.16, 0.3)
+        a += np.exp(-((x - cx) ** 2 + (y - cy) ** 2) / (2 * sg**2)) * r.uniform(0.5, 1.0)
+    a /= a.max()
+    n = fnoise(size, 2.2, 182)
+    a = a * (0.75 + 0.5 * n)
+    a = np.clip((a - 0.12) / 0.7, 0, 1) ** 1.3
+    a *= np.clip(1.15 - np.sqrt(x**2 + y**2), 0, 1) ** 1.5
+    img = Image.fromarray((a * 255).astype(np.uint8), "L").filter(ImageFilter.GaussianBlur(5))
+    a = np.asarray(img) / 255.0
+    rgba = np.dstack([np.ones_like(a), np.ones_like(a), np.ones_like(a), a])
+    save("cloud", rgba, quality=90)
 
 
 def stone_dark(size=512):
@@ -533,6 +558,8 @@ def main():
     artworks()
     stone_dark()
     cloud()
+    battens()
+    battens(1024, "fluted", (64, 42, 28), (104, 70, 46), 24, 197)
 
 
 if __name__ == "__main__":

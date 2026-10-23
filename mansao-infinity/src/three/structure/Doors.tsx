@@ -252,7 +252,7 @@ function GarageDoor({ spec }: { spec: DoorSpec }) {
     <group onClick={onClick} {...hover}>
       {Array.from({ length: n }, (_, i) => (
         <group key={i} ref={(el) => (sections.current[i] = el)} position={[cx, spec.y + i * sh + sh / 2, zFace]}>
-          <B s={[W, sh - 0.01, 0.05]} p={[0, 0, 0]} m={m.teak} tile={TILE.teak} />
+          <B s={[W, sh - 0.01, 0.05]} p={[0, 0, 0]} m={m.battens} tile={TILE.battens} />
           <B s={[W, 0.008, 0.052]} p={[0, sh / 2 - 0.005, 0]} m={m.blackMetal} shadow={false} />
         </group>
       ))}

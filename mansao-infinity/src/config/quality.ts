@@ -21,7 +21,7 @@ export interface QualityProfile {
 
 export const QUALITY: Record<QualityLevel, QualityProfile> = {
   low: { label: 'Baixa', dpr: [0.75, 1], shadows: true, shadowMapSize: 1024, postprocessing: false, ao: false, bloom: false, antialias: true, lightPool: 3, furnitureDistance: 26, vegetation: 0.45, envResolution: 64 },
-  medium: { label: 'Média', dpr: [1, 1.25], shadows: true, shadowMapSize: 2048, postprocessing: true, ao: false, bloom: true, antialias: false, lightPool: 5, furnitureDistance: 38, vegetation: 0.7, envResolution: 128 },
+  medium: { label: 'Média', dpr: [1, 1.25], shadows: true, shadowMapSize: 2048, postprocessing: true, ao: true, bloom: true, antialias: false, lightPool: 5, furnitureDistance: 38, vegetation: 0.7, envResolution: 128 },
   high: { label: 'Alta', dpr: [1, 1.75], shadows: true, shadowMapSize: 2048, postprocessing: true, ao: true, bloom: true, antialias: false, lightPool: 8, furnitureDistance: 60, vegetation: 1, envResolution: 256 },
   ultra: { label: 'Ultra', dpr: [1, 2], shadows: true, shadowMapSize: 4096, postprocessing: true, ao: true, bloom: true, antialias: false, lightPool: 12, furnitureDistance: 120, vegetation: 1.25, envResolution: 512 },
 };

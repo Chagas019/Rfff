@@ -53,20 +53,20 @@ interface PartProps {
 
 /** Caixa: tamanho [w, h, d]; posição pelo centro. */
 export function B({ s, p, r, m, tile = 1, shadow = true }: PartProps & { s: V3; tile?: number }) {
-  return <mesh geometry={boxGeo(s[0], s[1], s[2], tile)} material={m} position={p} rotation={r} castShadow={shadow} receiveShadow />;
+  return <mesh geometry={boxGeo(s[0], s[1], s[2], tile)} material={m} position={p} rotation={r} castShadow={shadow && Math.max(s[0], s[1], s[2]) >= 0.2} receiveShadow />;
 }
 
 /** Caixa com cantos arredondados (estofados, tampos, cantos suaves). */
 export function RB({ s, p, r, m, radius = 0.04, tile = 1, shadow = true, seg = 3 }: PartProps & { s: V3; radius?: number; tile?: number; seg?: number }) {
-  return <mesh geometry={roundGeo(s[0], s[1], s[2], radius, tile, seg)} material={m} position={p} rotation={r} castShadow={shadow} receiveShadow />;
+  return <mesh geometry={roundGeo(s[0], s[1], s[2], radius, tile, seg)} material={m} position={p} rotation={r} castShadow={shadow && Math.max(s[0], s[1], s[2]) >= 0.2} receiveShadow />;
 }
 
 export function Cyl({ rt, rb, h, p, r, m, seg = 24, shadow = true }: PartProps & { rt: number; rb?: number; h: number; seg?: number }) {
-  return <mesh geometry={cylGeo(rt, rb ?? rt, h, seg)} material={m} position={p} rotation={r} castShadow={shadow} receiveShadow />;
+  return <mesh geometry={cylGeo(rt, rb ?? rt, h, seg)} material={m} position={p} rotation={r} castShadow={shadow && Math.max(rt * 2, h) >= 0.2} receiveShadow />;
 }
 
 export function Sph({ radius, p, m, shadow = true, scale }: PartProps & { radius: number; scale?: V3 }) {
-  return <mesh geometry={sphereGeo(radius)} material={m} position={p} scale={scale} castShadow={shadow} receiveShadow />;
+  return <mesh geometry={sphereGeo(radius)} material={m} position={p} scale={scale} castShadow={shadow && radius >= 0.1} receiveShadow />;
 }
 
 /** Posiciona uma peça de mobiliário: centro no piso, rotação em graus. */

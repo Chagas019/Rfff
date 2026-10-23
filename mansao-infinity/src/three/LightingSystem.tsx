@@ -1,9 +1,10 @@
 import { useEffect, useLayoutEffect, useMemo, useRef } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
-import { Cloud, Clouds, Environment, Lightformer, Sky, Stars } from '@react-three/drei';
+import { Environment, Lightformer, Sky, Stars } from '@react-three/drei';
 import * as THREE from 'three';
 import { LIGHTING, STUDIO, type LightingPreset } from '../config/lighting';
-import { explodeState } from './structure/explode';
+import { explodeState, ExplodeLevel } from './structure/explode';
+import { useLevelVisibility } from './structure/visibility';
 import { QUALITY } from '../config/quality';
 import { ROOMS, LEVEL_Y, POOL, roomHeight } from '../data/plan';
 import { useMaterials, roomLightMaterials } from '../materials/library';
@@ -76,8 +77,7 @@ export function LightingSystem() {
         </>
       ) : (
         <>
-          <GradientSky preset={preset} sunDir={sunDir} />
-          {quality !== 'low' && <SkyClouds sunset={time === 'sunset'} />}
+          <GradientSky preset={preset} sunDir={sunDir} clouds={quality !== 'low'} />
         </>
       )}
       <Environment key={`${explode ? 'studio' : time}-${q.envResolution}`} frames={1} resolution={q.envResolution} background={false}>
@@ -104,6 +104,7 @@ export function LightingSystem() {
       <LightPool count={q.lightPool} />
       <EmissiveDriver />
       <Downlights />
+      <LightPools />
     </>
   );
 }
@@ -174,7 +175,8 @@ function SunAndSky({ preset, shadowSize, shadows }: { preset: LightingPreset; sh
         shadow-mapSize={[shadowSize, shadowSize]}
         shadow-bias={-0.0004}
         shadow-normalBias={0.035}
-        shadow-radius={4}
+        shadow-radius={7}
+        shadow-blurSamples={16}
         shadow-camera-left={-42}
         shadow-camera-right={42}
         shadow-camera-top={42}
@@ -192,7 +194,7 @@ function SunAndSky({ preset, shadowSize, shadows }: { preset: LightingPreset; sh
  * físico (Sky) continua sendo usado só para gerar o mapa de ambiente — no
  * fundo ele estoura no tone mapping e fica quase branco.
  */
-function GradientSky({ preset, sunDir }: { preset: LightingPreset; sunDir: THREE.Vector3 }) {
+function GradientSky({ preset, sunDir, clouds }: { preset: LightingPreset; sunDir: THREE.Vector3; clouds: boolean }) {
   const mat = useMemo(
     () =>
       new THREE.ShaderMaterial({
@@ -204,15 +206,28 @@ function GradientSky({ preset, sunDir }: { preset: LightingPreset; sunDir: THREE
           horizon: { value: new THREE.Color(preset.dome.horizon) },
           glow: { value: new THREE.Color(preset.dome.glow) },
           sunDir: { value: sunDir.clone() },
+          cloudAmt: { value: 0 },
         },
         vertexShader: `varying vec3 vDir; void main(){ vDir = normalize(position); vec4 p = modelViewMatrix * vec4(position,1.0); gl_Position = projectionMatrix * p; gl_Position.z = gl_Position.w; }`,
-        fragmentShader: `uniform vec3 zenith; uniform vec3 horizon; uniform vec3 glow; uniform vec3 sunDir; varying vec3 vDir;
+        fragmentShader: `uniform vec3 zenith; uniform vec3 horizon; uniform vec3 glow; uniform vec3 sunDir; uniform float cloudAmt; varying vec3 vDir;
+          float hash(vec2 p){ return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
+          float noise(vec2 p){ vec2 i = floor(p); vec2 f = fract(p); f = f*f*(3.0-2.0*f);
+            return mix(mix(hash(i), hash(i+vec2(1,0)), f.x), mix(hash(i+vec2(0,1)), hash(i+vec2(1,1)), f.x), f.y); }
+          float fbm(vec2 p){ float v = 0.0; float a = 0.5; for (int i = 0; i < 5; i++){ v += a * noise(p); p = p * 2.03 + 17.1; a *= 0.5; } return v; }
           void main(){
             vec3 d = normalize(vDir);
             float h = max(d.y, 0.0);
             vec3 col = mix(horizon, zenith, pow(h, 0.5));
             col = mix(col, horizon * 0.92, smoothstep(0.0, -0.08, d.y));
             float s = max(dot(d, normalize(sunDir)), 0.0);
+            // camada de nuvens (cirros/cúmulos achatados) projetada num plano alto
+            if (cloudAmt > 0.0 && d.y > 0.0) {
+              vec2 uv = d.xz / (d.y + 0.12) * 1.1;
+              float n = fbm(uv * vec2(0.9, 2.2) + vec2(3.0, 1.0));
+              float c = smoothstep(0.52, 0.78, n) * cloudAmt * smoothstep(0.0, 0.12, d.y);
+              vec3 cc = mix(horizon * 1.08, vec3(1.0), 0.35) + glow * pow(s, 4.0) * 0.6;
+              col = mix(col, cc, c * 0.85);
+            }
             col += glow * (pow(s, 7.0) * 0.35 + pow(s, 60.0) * 0.6) + glow * smoothstep(0.9993, 0.9997, s) * 6.0;
             gl_FragColor = vec4(col, 1.0);
           }`,
@@ -226,32 +241,12 @@ function GradientSky({ preset, sunDir }: { preset: LightingPreset; sunDir: THREE
     mat.uniforms.horizon.value.lerp(tmpColor.set(preset.dome.horizon), a);
     mat.uniforms.glow.value.lerp(tmpColor.set(preset.dome.glow), a);
     (mat.uniforms.sunDir.value as THREE.Vector3).lerp(sunDir, a).normalize();
+    mat.uniforms.cloudAmt.value += ((clouds ? 1 : 0) - mat.uniforms.cloudAmt.value) * a;
   });
   return (
     <mesh material={mat} renderOrder={-10} frustumCulled={false}>
       <sphereGeometry args={[1500, 48, 24]} />
     </mesh>
-  );
-}
-
-/** Nuvens volumétricas (sprites) distantes, sobre o mar e nas laterais. */
-function SkyClouds({ sunset }: { sunset: boolean }) {
-  const color = sunset ? '#f3c7aa' : '#f4f6fa';
-  const clouds: { p: [number, number, number]; seed: number; b: [number, number, number] }[] = [
-    { p: [-160, 150, -420], seed: 1, b: [90, 14, 30] },
-    { p: [120, 170, -520], seed: 2, b: [120, 16, 36] },
-    { p: [320, 140, -260], seed: 3, b: [80, 12, 30] },
-    { p: [-360, 160, -140], seed: 4, b: [90, 14, 30] },
-    { p: [20, 190, -700], seed: 5, b: [160, 20, 40] },
-    { p: [-260, 150, 260], seed: 6, b: [80, 12, 30] },
-    { p: [300, 170, 320], seed: 7, b: [90, 14, 30] },
-  ];
-  return (
-    <Clouds texture="/textures/cloud.webp" limit={260} material={THREE.MeshBasicMaterial} frustumCulled={false}>
-      {clouds.map((c) => (
-        <Cloud key={c.seed} seed={c.seed} position={c.p} bounds={c.b} segments={32} volume={70} smallestVolume={0.3} growth={6} speed={0.08} opacity={sunset ? 0.85 : 0.75} color={color} fade={300} />
-      ))}
-    </Clouds>
   );
 }
 
@@ -439,3 +434,63 @@ function Downlights() {
   return <instancedMesh ref={ref} args={[geo, mat, spots.length]} frustumCulled={false} />;
 }
 
+
+/**
+ * "Poças" de luz quente no piso de cada cômodo aceso — aproximação barata da
+ * luz rebatida das luminárias (o brilho que se vê nos renders de referência).
+ * Cada cômodo tem o próprio material para responder ao seu interruptor.
+ */
+function LightPools() {
+  const vis = useLevelVisibility();
+  const tex = useMemo(() => {
+    const c = document.createElement('canvas');
+    c.width = c.height = 256;
+    const g = c.getContext('2d')!;
+    const grd = g.createRadialGradient(128, 128, 0, 128, 128, 128);
+    grd.addColorStop(0, 'rgba(255,255,255,1)');
+    grd.addColorStop(0.45, 'rgba(255,255,255,0.55)');
+    grd.addColorStop(1, 'rgba(255,255,255,0)');
+    g.fillStyle = grd;
+    g.fillRect(0, 0, 256, 256);
+    const t = new THREE.CanvasTexture(c);
+    t.colorSpace = THREE.SRGBColorSpace;
+    return t;
+  }, []);
+  const pools = useMemo(
+    () =>
+      ROOMS.filter((rm) => !rm.outdoor).map((rm) => {
+        const { x0, x1, z0, z1 } = rm.rect;
+        const mat = new THREE.MeshBasicMaterial({ map: tex, color: '#ffb877', transparent: true, opacity: 0, blending: THREE.AdditiveBlending, depthWrite: false, polygonOffset: true, polygonOffsetFactor: -2 });
+        return { rm, mat, cx: (x0 + x1) / 2, cz: (z0 + z1) / 2, w: (x1 - x0) * 0.9, d: (z1 - z0) * 0.9 };
+      }),
+    [tex],
+  );
+  useFrame((_, dtRaw) => {
+    const dt = Math.min(dtRaw, 0.05);
+    const st = useExperience.getState();
+    const preset = activePreset(st);
+    const base = st.mode === 'explode' ? 0.42 : preset.artificial * (st.mode === 'walk' ? 0.22 : 0.32);
+    for (const p of pools) {
+      const target = st.lights[p.rm.id] ? base : 0;
+      p.mat.opacity = THREE.MathUtils.damp(p.mat.opacity, target, 4, dt);
+      p.mat.visible = p.mat.opacity > 0.003;
+    }
+  });
+  return (
+    <>
+      {([0, 1] as const).map((lv) => (
+        <ExplodeLevel key={lv} level={lv}>
+          <group visible={lv === 0 ? vis.L0 : vis.L1}>
+            {pools
+              .filter((p) => p.rm.level === lv)
+              .map((p) => (
+                <mesh key={p.rm.id} material={p.mat} position={[p.cx, LEVEL_Y[lv] + 0.025, p.cz]} rotation={[-Math.PI / 2, 0, 0]} renderOrder={1} raycast={() => null}>
+                  <planeGeometry args={[p.w, p.d]} />
+                </mesh>
+              ))}
+          </group>
+        </ExplodeLevel>
+      ))}
+    </>
+  );
+}

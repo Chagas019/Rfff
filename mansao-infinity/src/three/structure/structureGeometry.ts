@@ -5,13 +5,13 @@ import { boxGeometry, exteriorSide, subtractRects, wallBaseY, wallHeight, wallSo
 import { TILE } from '../../materials/library';
 
 /** Chaves de material usadas pela estrutura (todas existem na biblioteca de materiais). */
-export type StructMat = 'plaster' | 'travertine' | 'concrete' | 'teak' | 'frame' | 'glass' | 'lacquerWhite' | 'marble' | 'porcelain' | 'marbleBlack' | 'concreteWhite' | 'stoneDark' | 'walnut';
+export type StructMat = 'plaster' | 'travertine' | 'concrete' | 'teak' | 'frame' | 'glass' | 'lacquerWhite' | 'marble' | 'porcelain' | 'marbleBlack' | 'concreteWhite' | 'stoneDark' | 'walnut' | 'battens';
 
 /** Revestimento externo por parede (o padrão é travertino no térreo e concreto no superior). */
 const CLADDING: Record<string, StructMat> = {
   'g-front-garage': 'concrete',
-  'u-front': 'teak',
-  'u-foyer-bed5': 'teak',
+  'u-front': 'battens',
+  'u-foyer-bed5': 'battens',
   'u-living-terrace': 'concrete',
   'u-east-foyer': 'concrete',
   'u-east-corridor': 'concrete',
@@ -28,7 +28,7 @@ export const WALL_FINISH: Record<string, StructMat> = {
 };
 
 const tileOf = (m: StructMat) =>
-  ({ travertine: TILE.travertine, concrete: TILE.concrete, concreteWhite: TILE.concrete, teak: TILE.teak, marble: TILE.marble, marbleBlack: TILE.marbleBlack, porcelain: TILE.porcelain, stoneDark: TILE.stoneDark, walnut: TILE.walnut } as Record<string, number>)[m] ?? 1;
+  ({ travertine: TILE.travertine, concrete: TILE.concrete, concreteWhite: TILE.concrete, teak: TILE.teak, marble: TILE.marble, marbleBlack: TILE.marbleBlack, porcelain: TILE.porcelain, stoneDark: TILE.stoneDark, walnut: TILE.walnut, battens: TILE.battens } as Record<string, number>)[m] ?? 1;
 
 /** Grupo de visibilidade: pavimento 0, pavimento 1 (inclui a parte alta das paredes de pé-direito duplo) ou cobertura. */
 export type VisGroup = 'L0' | 'L0up' | 'L1' | 'roof';

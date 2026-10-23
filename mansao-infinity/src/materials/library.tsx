@@ -14,7 +14,7 @@ import * as THREE from 'three';
 
 const T = (name: string) => `/textures/${name}.webp`;
 
-const PBR_SETS = ['concrete', 'polished_concrete', 'travertine', 'oak_floor', 'walnut', 'teak', 'marble_white', 'marble_black', 'porcelain', 'grass', 'pavers', 'driveway', 'pool_tiles', 'linen', 'boucle', 'velvet_dark', 'rug', 'bark', 'stone_dark'] as const;
+const PBR_SETS = ['concrete', 'polished_concrete', 'travertine', 'oak_floor', 'walnut', 'teak', 'marble_white', 'marble_black', 'porcelain', 'grass', 'pavers', 'driveway', 'pool_tiles', 'linen', 'boucle', 'velvet_dark', 'rug', 'bark', 'stone_dark', 'battens', 'fluted'] as const;
 
 export const TEXTURE_URLS: Record<string, string> = Object.fromEntries([
   ...PBR_SETS.flatMap((s) => [
@@ -51,6 +51,8 @@ export const TILE = {
   velvet: 0.3,
   stoneDark: 0.8,
   bark: 1.0,
+  battens: 1.0,
+  fluted: 0.8,
 } as const;
 
 export type Materials = ReturnType<typeof buildMaterials>;
@@ -105,6 +107,8 @@ function buildMaterials(tx: Record<string, THREE.Texture>, anisotropy: number) {
     poolTiles: pbr('pool_tiles', {}, 0.8),
     bark: pbr('bark', {}, 1.0),
     deck: pbr('teak', { color: '#c9b39a' }, 0.9),
+    battens: pbr('battens', {}, 1.0),
+    fluted: pbr('fluted', {}, 1.0),
     carpet: pbr('velvet_dark', { color: '#5a5550' }, 1.4),
     acoustic: pbr('linen', { color: '#4a4744' }, 1.2),
 

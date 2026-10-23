@@ -68,7 +68,8 @@ function RendererSettings() {
     const q = QUALITY[quality];
     gl.toneMapping = q.postprocessing ? THREE.NoToneMapping : THREE.ACESFilmicToneMapping;
     gl.shadowMap.enabled = q.shadows;
-    gl.shadowMap.type = THREE.PCFShadowMap;
+    // sombras macias (VSM) nos perfis alta e ultra; PCF nos demais
+    gl.shadowMap.type = quality === 'high' || quality === 'ultra' ? THREE.VSMShadowMap : THREE.PCFShadowMap;
     gl.shadowMap.needsUpdate = true;
   }, [gl, quality]);
   return null;

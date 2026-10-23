@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import * as THREE from 'three';
-import { TILE, useMaterials, roomShadeMaterial, type Materials } from '../../materials/library';
+import { TILE, useMaterials, roomLedMaterial, roomShadeMaterial, type Materials } from '../../materials/library';
 import { B, Cyl, RB, Sph, cylGeo } from './primitives';
 import type { PieceProps } from './seating';
 
@@ -48,7 +48,12 @@ export function Bed({ item }: PieceProps) {
           ))}
         </group>
       ) : (
-        <RB s={[w + 0.3, 1.05, 0.1]} p={[0, 0.72, -d / 2 - 0.05]} m={accent} radius={0.04} tile={t} />
+        <>
+          <RB s={[w + 0.3, 1.05, 0.1]} p={[0, 0.72, -d / 2 - 0.05]} m={accent} radius={0.04} tile={t} />
+          {/* painel ripado de destaque na parede da cabeceira */}
+          <B s={[w + 1.6, 2.5, 0.03]} p={[0, 1.25, -d / 2 - 0.13]} m={m.fluted} tile={TILE.fluted} />
+          <B s={[w + 1.6, 0.012, 0.02]} p={[0, 2.49, -d / 2 - 0.1]} m={roomLedMaterial(item.room)} shadow={false} />
+        </>
       )}
     </group>
   );
