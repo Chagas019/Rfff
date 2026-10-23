@@ -48,7 +48,8 @@ function useRoomLodUpdater() {
     let sig = '';
     for (const rm of ROOMS) {
       let v: boolean;
-      if (cut === 0 && rm.level === 1) v = false;
+      if (mode === 'explode') v = cut === null || rm.level === cut;
+      else if (cut === 0 && rm.level === 1) v = false;
       else if ((mode === 'interior' || mode === 'top') && cut !== null) v = rm.level <= cut;
       else if (ALWAYS_VISIBLE.has(rm.id) && mode !== 'walk') v = true;
       else {

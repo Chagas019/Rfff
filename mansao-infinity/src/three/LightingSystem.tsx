@@ -2,7 +2,8 @@ import { useEffect, useLayoutEffect, useMemo, useRef } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
 import { Cloud, Clouds, Environment, Lightformer, Sky, Stars } from '@react-three/drei';
 import * as THREE from 'three';
-import { LIGHTING, type LightingPreset } from '../config/lighting';
+import { LIGHTING, STUDIO, type LightingPreset } from '../config/lighting';
+import { explodeState } from './structure/explode';
 import { QUALITY } from '../config/quality';
 import { ROOMS, LEVEL_Y, POOL, roomHeight } from '../data/plan';
 import { useMaterials, roomLightMaterials } from '../materials/library';
@@ -48,6 +49,7 @@ const SOURCES: LightSource[] = [
 ];
 
 const tmpColor = new THREE.Color();
+const activePreset = (st: { mode: string; time: keyof typeof LIGHTING }) => (st.mode === 'explode' ? STUDIO : LIGHTING[st.time]);
 
 /**
  * Sistema de iluminação: céu físico (dia e pôr do sol) ou céu noturno com
@@ -58,14 +60,15 @@ export function LightingSystem() {
   const time = useExperience((s) => s.time);
   const quality = useExperience((s) => s.quality);
   const q = QUALITY[quality];
-  const preset = LIGHTING[time];
+  const explode = useExperience((s) => s.mode === 'explode');
+  const preset = explode ? STUDIO : LIGHTING[time];
   const sunDir = useMemo(() => new THREE.Vector3(...preset.sunDir).normalize(), [preset]);
   const sunPos = useMemo(() => sunDir.clone().multiplyScalar(400), [sunDir]);
 
   return (
     <>
       <SunAndSky preset={preset} shadowSize={q.shadowMapSize} shadows={q.shadows} />
-      {time === 'night' ? (
+      {explode ? null : time === 'night' ? (
         <>
           <NightSky />
           <Stars radius={600} depth={80} count={2500} factor={6} saturation={0} fade speed={0.3} />
@@ -77,8 +80,15 @@ export function LightingSystem() {
           {quality !== 'low' && <SkyClouds sunset={time === 'sunset'} />}
         </>
       )}
-      <Environment key={`${time}-${q.envResolution}`} frames={1} resolution={q.envResolution} background={false}>
-        {time === 'night' ? (
+      <Environment key={`${explode ? 'studio' : time}-${q.envResolution}`} frames={1} resolution={q.envResolution} background={false}>
+        {explode ? (
+          <>
+            <Lightformer form="rect" intensity={1.4} color="#ffffff" position={[0, 60, 0]} rotation={[Math.PI / 2, 0, 0]} scale={[140, 140, 1]} />
+            <Lightformer form="rect" intensity={0.8} color="#fff4e6" position={[80, 30, 80]} rotation={[-0.25, Math.PI / 4, 0]} scale={[80, 40, 1]} />
+            <Lightformer form="rect" intensity={0.5} color="#eef3ff" position={[-80, 25, -60]} rotation={[-0.25, 0.93, 0]} scale={[80, 40, 1]} />
+            <Lightformer form="rect" intensity={0.35} color="#ffffff" position={[0, -20, 0]} rotation={[-Math.PI / 2, 0, 0]} scale={[140, 140, 1]} />
+          </>
+        ) : time === 'night' ? (
           <>
             <NightSky radius={400} />
             <Lightformer form="rect" intensity={0.6} color="#ffc58a" position={[0, 3, 30]} scale={[30, 4, 1]} />
@@ -288,15 +298,16 @@ function LightPool({ count }: { count: number }) {
   const refs = useRef<(THREE.PointLight | null)[]>([]);
   const last = useRef(0);
   const assigned = useRef<(LightSource | null)[]>([]);
+  const lastId = useRef<string[]>([]);
   useFrame(({ camera, clock }, dtRaw) => {
     const dt = Math.min(dtRaw, 0.05);
     const st = useExperience.getState();
-    const preset = LIGHTING[st.time];
+    const preset = activePreset(st);
     if (clock.elapsedTime - last.current > 0.3) {
       last.current = clock.elapsedTime;
       const cut = st.mode === 'walk' ? null : st.cutLevel;
       const lit = SOURCES.filter((s) => {
-        if (s.exterior) return st.exteriorLights && preset.artificial > 0;
+        if (s.exterior) return st.exteriorLights && preset.artificial > 0 && st.mode !== 'explode';
         if (!st.lights[s.room!]) return false;
         if (cut === 0 && s.pos.y > 4) return false;
         return true;
@@ -312,10 +323,12 @@ function LightPool({ count }: { count: number }) {
         return;
       }
       const factor = src.exterior ? preset.artificial : Math.max(preset.artificial, 0.15);
-      if (l.position.distanceToSquared(src.pos) > 0.01) {
-        l.position.copy(src.pos);
+      if (lastId.current[i] !== src.id) {
+        lastId.current[i] = src.id;
         l.intensity = 0;
       }
+      l.position.copy(src.pos);
+      if (!src.exterior && src.pos.y > 4) l.position.y += explodeState.y;
       l.color.copy(src.color);
       l.distance = src.distance;
       l.intensity = THREE.MathUtils.damp(l.intensity, src.intensity * factor, 6, dt);
@@ -336,7 +349,7 @@ function EmissiveDriver() {
   useFrame((_, dtRaw) => {
     const dt = Math.min(dtRaw, 0.05);
     const st = useExperience.getState();
-    const preset = LIGHTING[st.time];
+    const preset = activePreset(st);
     const ext = st.exteriorLights ? preset.artificial : 0;
     m.led.emissiveIntensity = THREE.MathUtils.damp(m.led.emissiveIntensity, 0.15 + ext * 3.2, 3, dt);
     m.ledCool.emissiveIntensity = THREE.MathUtils.damp(m.ledCool.emissiveIntensity, ext * 3, 3, dt);
@@ -360,7 +373,7 @@ function EmissiveDriver() {
 /** Spots embutidos em todos os forros (uma única malha instanciada; cor por cômodo = aceso/apagado). */
 function Downlights() {
   const ref = useRef<THREE.InstancedMesh>(null);
-  const vis = useExperience((s) => (s.mode === 'walk' ? null : s.cutLevel));
+  const vis = useExperience((s) => (s.mode === 'explode' ? 'explode' : s.mode === 'walk' ? null : s.cutLevel));
   const spots = useMemo(() => {
     const out: { room: string; level: number; x: number; y: number; z: number }[] = [];
     for (const rm of ROOMS) {
@@ -411,7 +424,7 @@ function Downlights() {
     spots.forEach((s, i) => {
       mesh.setColorAt(i, st.lights[s.room] ? on : off);
       // corte: forros escondidos levam os spots junto
-      const hide = (vis === 0 && s.level >= 0) || (vis === 1 && s.level === 1);
+      const hide = vis === 'explode' || (vis === 0 && s.level >= 0) || (vis === 1 && s.level === 1);
       if (hide) mesh.setMatrixAt(i, hidden);
       else {
         o.position.set(s.x, s.y, s.z);

@@ -42,9 +42,10 @@ Fonte única de verdade: `src/data/plan.ts` define cômodos, paredes (com espess
 | Abrir/fechar portas e portões | Clique na folha, **E** na caminhada ou todas (**O**): portas de giro, duplas, de correr, pivotante de 4,5 m, portão seccionado da garagem e portões da rua |
 | Informações de área, materiais e destaques | `RoomInfoPanel` |
 | Visita guiada cinematográfica | `TourController` + `src/data/tour.ts`: 14 planos com legenda, pausa e avanço; cortes com fade entre interiores |
+| Prancha de apresentação (modo 5) | Isométrica teleobjetiva com o superior flutuando sobre o térreo (separação ajustável), topo das paredes em preto (poché), pé-direito duplo cortado a 4 m, linhas de projeção tracejadas, cômodos legendados em colunas com linhas de chamada, escala gráfica e norte, fundo de prancha quadriculado ou estúdio escuro e luz de estúdio com luminárias acesas; layouts explodida, só térreo ou só superior |
 | Planta baixa integrada | `FloorPlan`: paredes com espessura, janelas, portas com arco de abertura, mobiliário em escala, áreas e cotas, escada, norte, escala e posição/direção da câmera ao vivo; clicar leva a câmera ao cômodo |
 
-Atalhos: `1` Externa · `2` Interna · `3` Superior · `4` Caminhar · `P` Planta · `T` Visita · `L` Luzes · `O` Portas · `N` Horário · `Esc` fecha painéis.
+Atalhos: `1` Externa · `2` Interna · `3` Superior · `4` Caminhar · `5` Apresentação · `P` Planta · `T` Visita · `L` Luzes · `O` Portas · `N` Horário · `Esc` fecha painéis.
 
 ## Arquitetura do código
 

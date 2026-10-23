@@ -87,6 +87,30 @@ export const LIGHTING: Record<TimeOfDay, LightingPreset> = {
 
 export const TIME_ORDER: TimeOfDay[] = ['day', 'sunset', 'night'];
 
+/**
+ * Luz de estúdio da prancha de apresentação: luz-chave suave de sudeste, muito
+ * céu (preenchimento) e as luminárias internas acesas e quentes — o aspecto
+ * das maquetes eletrônicas de entrega de projeto.
+ */
+export const STUDIO: LightingPreset = {
+  label: 'Estúdio',
+  sunDir: [0.42, 0.9, 0.62],
+  sunColor: '#fff3e4',
+  sunIntensity: 2.4,
+  hemiSky: '#ffffff',
+  hemiGround: '#d9cfc0',
+  hemiIntensity: 0.85,
+  envIntensity: 0.85,
+  sky: { turbidity: 2, rayleigh: 1, mieCoefficient: 0.003, mieDirectionalG: 0.8 },
+  dome: { zenith: '#ffffff', horizon: '#ffffff', glow: '#ffffff' },
+  fogColor: '#ffffff',
+  fogDensity: 0,
+  exposure: 1.0,
+  artificial: 0.9,
+  stars: false,
+  poolGlow: 0,
+};
+
 /** Temperatura de cor das luminárias internas (2700 K). */
 export const WARM_LIGHT = '#ffc98f';
 export const NEUTRAL_LIGHT = '#ffe4c4';

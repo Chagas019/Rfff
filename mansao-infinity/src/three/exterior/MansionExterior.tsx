@@ -5,6 +5,7 @@ import { TILE, useMaterials } from '../../materials/library';
 import { FurniturePiece } from '../furniture/registry';
 import { B, Cyl } from '../furniture/primitives';
 import { useLevelVisibility } from '../structure/visibility';
+import { ExplodeLevel } from '../structure/explode';
 
 /**
  * Elementos de fachada e áreas externas ligadas à casa: marquise em balanço
@@ -16,14 +17,18 @@ export function MansionExterior() {
   return (
     <group name="MansionExterior">
       <Marquise visible={vis.roof} />
-      <BladeWall />
-      <SlatScreen visible={vis.L1} />
-      <FacadeLights visible={vis.roof} />
-      <Gourmet />
-      <OutdoorFurniture ids={['pool', 'terraceGround', 'gourmet']} />
-      <group visible={vis.L1}>
-        <OutdoorFurniture ids={['terrace', 'balcony']} />
+      <group visible={!vis.explode}>
+        <BladeWall />
+        <Gourmet />
+        <OutdoorFurniture ids={['pool', 'terraceGround', 'gourmet']} />
       </group>
+      <FacadeLights visible={vis.roof} />
+      <ExplodeLevel level={1}>
+        <SlatScreen visible={vis.L1} />
+        <group visible={vis.L1}>
+          <OutdoorFurniture ids={['terrace', 'balcony', 'sacada4']} />
+        </group>
+      </ExplodeLevel>
       <RoofDetails visible={vis.roof} />
     </group>
   );

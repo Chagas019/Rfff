@@ -17,22 +17,36 @@ import { CameraController } from './controls/CameraController';
 import { FirstPersonController } from './controls/FirstPersonController';
 import { TourController } from './controls/TourController';
 import { PostFX } from './PostFX';
+import { ExplodeDriver } from './structure/explode';
+import { PresentationBoard } from './PresentationBoard';
 
 /** Toda a propriedade (casa + implantação), dentro do provedor de materiais. */
 function Mansion() {
   return (
     <MaterialsProvider>
+      <ExplodeDriver />
       <MansionStructure />
       <Doors />
       <Stairs />
       <InteriorRooms />
       <MansionExterior />
-      <SwimmingPool />
-      <Landscape />
+      <Site />
+      <PresentationBoard />
       <LightingSystem />
       <PostFX />
       <Preload all />
     </MaterialsProvider>
+  );
+}
+
+/** Implantação (terreno, piscina, paisagismo) — some na prancha de apresentação. */
+function Site() {
+  const explode = useExperience((s) => s.mode === 'explode');
+  return (
+    <group visible={!explode}>
+      <SwimmingPool />
+      <Landscape />
+    </group>
   );
 }
 

@@ -31,7 +31,7 @@ const tileOf = (m: StructMat) =>
   ({ travertine: TILE.travertine, concrete: TILE.concrete, concreteWhite: TILE.concrete, teak: TILE.teak, marble: TILE.marble, marbleBlack: TILE.marbleBlack, porcelain: TILE.porcelain, stoneDark: TILE.stoneDark, walnut: TILE.walnut } as Record<string, number>)[m] ?? 1;
 
 /** Grupo de visibilidade: pavimento 0, pavimento 1 (inclui a parte alta das paredes de pé-direito duplo) ou cobertura. */
-export type VisGroup = 'L0' | 'L1' | 'roof';
+export type VisGroup = 'L0' | 'L0up' | 'L1' | 'roof';
 
 type Bucket = Map<string, THREE.BufferGeometry[]>;
 const push = (b: Bucket, key: string, g: THREE.BufferGeometry) => {
@@ -48,10 +48,10 @@ function splitByLevel(b: BoxSpec, level: Level): { box: BoxSpec; group: VisGroup
   const y1 = b.cy + b.sy / 2;
   if (level === 1) return [{ box: b, group: 'L1' }];
   if (y1 <= SPLIT_Y + 0.01) return [{ box: b, group: 'L0' }];
-  if (y0 >= SPLIT_Y - 0.01) return [{ box: b, group: 'L1' }];
+  if (y0 >= SPLIT_Y - 0.01) return [{ box: b, group: 'L0up' }];
   return [
     { box: { ...b, cy: (y0 + SPLIT_Y) / 2, sy: SPLIT_Y - y0 }, group: 'L0' },
-    { box: { ...b, cy: (SPLIT_Y + y1) / 2, sy: y1 - SPLIT_Y }, group: 'L1' },
+    { box: { ...b, cy: (SPLIT_Y + y1) / 2, sy: y1 - SPLIT_Y }, group: 'L0up' },
   ];
 }
 
@@ -252,6 +252,16 @@ export function buildStructure(): StructureGeometry {
       else if (o.kind === 'door' || o.kind === 'double') doorJambs(bucket, w, o);
       else if (o.kind === 'slide') slideFrame(bucket, w, o);
     }
+  }
+
+  // "poché": tampa preta no topo de cada parede, vista nos cortes e na prancha.
+  // O pé-direito duplo do térreo é cortado a 4 m.
+  for (const w of WALLS) {
+    const t = wallThickness(w);
+    const top = Math.min(wallBaseY(w) + wallHeight(w), w.level === 0 ? SPLIT_Y : 99);
+    const ext = t / 2;
+    const cap = wallBoxAt(w, w.from - ext, w.to + ext, top, top + 0.05, 0, t + 0.02);
+    push(bucket, `${w.level === 0 ? 'L0cap' : 'L1cap'}|cap`, boxGeometry(cap, 1));
   }
 
   // rodapés e revestimentos de áreas molhadas

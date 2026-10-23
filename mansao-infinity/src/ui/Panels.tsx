@@ -156,7 +156,7 @@ export function HelpPanel() {
     ['W A S D / setas', 'Caminhar (modo caminhada)'],
     ['Shift', 'Andar mais rápido'],
     ['E', 'Porta ou elevador mais próximo'],
-    ['1 · 2 · 3 · 4', 'Externa · Interna · Superior · Caminhar'],
+    ['1 · 2 · 3 · 4 · 5', 'Externa · Interna · Superior · Caminhar · Apresentação'],
     ['P · T · L · O · N', 'Planta · Visita · Luzes · Portas · Horário'],
     ['Esc', 'Fechar painéis / soltar o mouse'],
   ];

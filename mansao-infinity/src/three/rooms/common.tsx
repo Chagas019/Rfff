@@ -5,6 +5,8 @@ import { furnitureForRoom } from '../../data/furniture';
 import { FurniturePiece } from '../furniture/registry';
 import { useMaterials, roomLedMaterial } from '../../materials/library';
 import { B, Cyl, Sph } from '../furniture/primitives';
+import { roomById } from '../../data/plan';
+import { ExplodeLevel } from '../structure/explode';
 
 /** Visibilidade de cada cômodo calculada pelo LOD (InteriorRooms). */
 export const useRoomLOD = create<{ vis: Record<string, boolean>; set: (v: Record<string, boolean>) => void }>((set) => ({
@@ -15,10 +17,13 @@ export const useRoomLOD = create<{ vis: Record<string, boolean>; set: (v: Record
 /** Agrupa tudo o que pertence a um cômodo para ligar/desligar pelo LOD. */
 export function RoomGroup({ id, children }: { id: string; children: ReactNode }) {
   const visible = useRoomLOD((s) => s.vis[id] ?? true);
+  const level = roomById(id)?.level ?? 0;
   return (
-    <group name={`room:${id}`} visible={visible}>
-      {children}
-    </group>
+    <ExplodeLevel level={level}>
+      <group name={`room:${id}`} visible={visible}>
+        {children}
+      </group>
+    </ExplodeLevel>
   );
 }
 

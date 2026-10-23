@@ -7,6 +7,10 @@ import { useExperience } from '../../store/useExperience';
 import { applyWorldUV } from '../../utils/geometry';
 import { buildStructure, type VisGroup } from './structureGeometry';
 import { useLevelVisibility } from './visibility';
+import { ExplodeLevel } from './explode';
+
+type Bucket = VisGroup | 'L0cap' | 'L1cap';
+const capMaterial = new THREE.MeshStandardMaterial({ color: '#161616', roughness: 0.85 });
 
 const FLOOR_MAT: Record<FloorFinish, { key: keyof Materials; tile: number }> = {
   oak: { key: 'oak', tile: TILE.oak },
@@ -29,17 +33,17 @@ export function MansionStructure() {
   const vis = useLevelVisibility();
 
   const byGroup = useMemo(() => {
-    const out: Record<VisGroup, { key: string; mat: string; geometry: THREE.BufferGeometry }[]> = { L0: [], L1: [], roof: [] };
+    const out: Record<Bucket, { key: string; mat: string; geometry: THREE.BufferGeometry }[]> = { L0: [], L0up: [], L1: [], roof: [], L0cap: [], L1cap: [] };
     for (const [key, geometry] of geo.merged) {
-      const [group, mat] = key.split('|') as [VisGroup, string];
+      const [group, mat] = key.split('|') as [Bucket, string];
       out[group].push({ key, mat, geometry });
     }
     return out;
   }, [geo]);
 
-  const render = (group: VisGroup) =>
+  const render = (group: Bucket) =>
     byGroup[group].map(({ key, mat, geometry }) => {
-      const material = mats[mat as keyof Materials] as THREE.Material;
+      const material = mat === 'cap' ? capMaterial : (mats[mat as keyof Materials] as THREE.Material);
       const isGlass = mat === 'glass';
       return <mesh key={key} geometry={geometry} material={material} castShadow={!isGlass} receiveShadow={!isGlass} renderOrder={isGlass ? 2 : 0} />;
     });
@@ -47,7 +51,13 @@ export function MansionStructure() {
   return (
     <group name="MansionStructure">
       <group visible={vis.L0}>{render('L0')}</group>
-      <group visible={vis.L1}>{render('L1')}</group>
+      <group visible={vis.L0 && vis.L0up}>{render('L0up')}</group>
+      {/* topo preto das paredes cortadas: térreo só quando o superior não está em cima */}
+      <group visible={vis.L0 && (!vis.L1 || vis.explode)}>{render('L0cap')}</group>
+      <ExplodeLevel level={1}>
+        <group visible={vis.L1}>{render('L1')}</group>
+        <group visible={vis.L1 && !vis.roof}>{render('L1cap')}</group>
+      </ExplodeLevel>
       <group visible={vis.roof}>{render('roof')}</group>
       <Floors />
       <Ceilings />
@@ -61,7 +71,7 @@ function Floors() {
   const focusRoom = useExperience((s) => s.focusRoom);
   const hoverRoom = useExperience((s) => s.hoverRoom);
   const mode = useExperience((s) => s.mode);
-  const pickable = mode === 'interior' || mode === 'top';
+  const pickable = mode === 'interior' || mode === 'top' || mode === 'explode';
 
   const floors = useMemo(
     () =>
@@ -84,7 +94,9 @@ function Floors() {
 
   return (
     <group name="Floors">
-      {floors.map(({ rm, g, material }) => (
+      {([0, 1] as const).map((lv) => (
+        <ExplodeLevel key={lv} level={lv}>
+      {floors.filter(({ rm }) => rm.level === lv).map(({ rm, g, material }) => (
         <mesh
           key={rm.id}
           geometry={g}
@@ -105,19 +117,21 @@ function Floors() {
           userData={{ roomId: rm.id }}
         />
       ))}
-      <RoomHighlight />
+          <RoomHighlight level={lv} />
+        </ExplodeLevel>
+      ))}
     </group>
   );
 }
 
 /** Contorno luminoso no piso do cômodo selecionado ou sob o cursor. */
-function RoomHighlight() {
+function RoomHighlight({ level }: { level: 0 | 1 }) {
   const selected = useExperience((s) => s.selectedRoom);
   const hovered = useExperience((s) => s.hoveredRoom);
   const mode = useExperience((s) => s.mode);
   const vis = useLevelVisibility();
-  if (mode !== 'interior' && mode !== 'top') return null;
-  const ids = [...new Set([selected, hovered].filter(Boolean) as string[])];
+  if (mode !== 'interior' && mode !== 'top' && mode !== 'explode') return null;
+  const ids = [...new Set([selected, hovered].filter(Boolean) as string[])].filter((id) => ROOMS.find((r) => r.id === id)?.level === level);
   return (
     <>
       {ids.map((id) => {
@@ -164,7 +178,9 @@ function Ceilings() {
   );
   return (
     <group name="Ceilings">
-      {ceilings.map(({ rm, y, cx, cz, w, d }) => (
+      {([0, 1] as const).map((lv) => (
+        <ExplodeLevel key={lv} level={lv}>
+      {ceilings.filter(({ rm }) => rm.level === lv).map(({ rm, y, cx, cz, w, d }) => (
         <mesh
           key={rm.id}
           position={[cx, y - 0.005, cz]}
@@ -176,6 +192,8 @@ function Ceilings() {
         >
           <planeGeometry args={[w, d]} />
         </mesh>
+      ))}
+        </ExplodeLevel>
       ))}
     </group>
   );

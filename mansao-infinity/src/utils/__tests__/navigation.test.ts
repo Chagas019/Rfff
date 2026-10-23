@@ -78,8 +78,14 @@ describe('geometria', () => {
 
 describe('corte casa de bonecas', () => {
   it('esconde o pavimento certo', () => {
-    expect(levelVisibility(null)).toEqual({ L0: true, L1: true, roof: true, ceil0: true, ceil1: true });
+    expect(levelVisibility(null)).toEqual({ L0: true, L0up: true, L1: true, roof: true, ceil0: true, ceil1: true, explode: false });
     expect(levelVisibility(0)).toMatchObject({ L1: false, roof: false, ceil0: false });
     expect(levelVisibility(1)).toMatchObject({ L1: true, roof: false, ceil0: true, ceil1: false });
+  });
+
+  it('prancha: sem cobertura e forros, pé-direito duplo cortado e layout por pavimento', () => {
+    expect(levelVisibility(null, true)).toMatchObject({ L0: true, L0up: false, L1: true, roof: false, ceil0: false, ceil1: false, explode: true });
+    expect(levelVisibility(0, true)).toMatchObject({ L0: true, L1: false });
+    expect(levelVisibility(1, true)).toMatchObject({ L0: false, L1: true });
   });
 });

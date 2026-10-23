@@ -3,6 +3,7 @@ import { STAIR, ELEVATOR, LEVEL_Y, GUARDRAILS } from '../../data/plan';
 import { TILE, useMaterials, roomLedMaterial } from '../../materials/library';
 import { B } from '../furniture/primitives';
 import { useLevelVisibility } from './visibility';
+import { ExplodeLevel } from './explode';
 
 /**
  * Escada escultural: degraus maciços de nogueira em balanço, presos a uma
@@ -22,7 +23,7 @@ export function Stairs() {
   const cx = (STAIR.x0 + STAIR.x1) / 2;
   const led = roomLedMaterial('foyer');
   return (
-    <group name="Stairs">
+    <group name="Stairs" visible={vis.L0}>
       {steps.map((s, i) => (
         <group key={i}>
           <B s={[w, 0.075, s.run + 0.02]} p={[cx, s.y - 0.0375, s.z]} m={m.walnut} tile={TILE.walnut} />
@@ -37,9 +38,11 @@ export function Stairs() {
       <mesh position={[STAIR.x1 + 0.1, LEVEL_Y[1] / 2 + 0.5, (STAIR.zBottom + STAIR.zTop) / 2]} rotation={[Math.atan2(LEVEL_Y[1], STAIR.zBottom - STAIR.zTop), 0, 0]} material={m.glassGuard} renderOrder={2}>
         <boxGeometry args={[0.02, 1.0, Math.hypot(LEVEL_Y[1], STAIR.zBottom - STAIR.zTop)]} />
       </mesh>
-      <group visible={vis.L1}>
-        <Guardrails />
-      </group>
+      <ExplodeLevel level={1}>
+        <group visible={vis.L1}>
+          <Guardrails />
+        </group>
+      </ExplodeLevel>
       <Elevator />
     </group>
   );

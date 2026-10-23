@@ -18,6 +18,7 @@ export function CameraController() {
   const mode = useExperience((s) => s.mode);
   const shot = useExperience((s) => s.shot);
   const camera = useThree((s) => s.camera);
+  const size = useThree((s) => s.size);
   const reduced = useRef(prefersReducedMotion());
   const lastPose = useRef(0);
 
@@ -42,14 +43,21 @@ export function CameraController() {
     const c = ref.current;
     if (!c) return;
     c.enabled = mode !== 'intro' && mode !== 'tour';
-    c.minDistance = mode === 'interior' ? 1 : mode === 'top' ? 10 : 2;
-    c.maxDistance = mode === 'top' ? 130 : mode === 'interior' ? 70 : 170;
+    c.minDistance = mode === 'interior' ? 1 : mode === 'top' ? 10 : mode === 'explode' ? 40 : 2;
+    c.maxDistance = mode === 'top' ? 130 : mode === 'interior' ? 70 : mode === 'explode' ? 360 : 170;
+    // prancha: teleobjetiva de longe, quase sem fuga de perspectiva (aspecto isométrico)
+    const persp = camera as THREE.PerspectiveCamera;
+    const fov = mode === 'explode' ? 20 : 50;
+    if (persp.isPerspectiveCamera && persp.fov !== fov) {
+      persp.fov = fov;
+      persp.updateProjectionMatrix();
+    }
     c.minPolarAngle = 0;
     c.maxPolarAngle = mode === 'top' ? 0.55 : Math.PI * 0.495;
     c.dollyToCursor = mode !== 'intro';
     c.smoothTime = reduced.current ? 0.12 : 0.9;
     c.draggingSmoothTime = 0.12;
-  }, [mode]);
+  }, [mode, camera]);
 
   // revelação ao sair da tela inicial
   const prevMode = useRef(mode);
@@ -72,7 +80,14 @@ export function CameraController() {
     const st = useExperience.getState();
     if (st.mode === 'intro') return;
     c.smoothTime = reduced.current ? 0.12 : (shot.travel ?? 0.9);
-    c.setLookAt(...shot.position, ...shot.target, shot.smooth !== false).then(() => {
+    let pos = shot.position;
+    if (st.mode === 'explode') {
+      // telas em retrato: afasta a câmera para a prancha caber na largura
+      const aspect = size.width / Math.max(size.height, 1);
+      const k = Math.min(2.4, Math.max(1, 0.95 / aspect));
+      pos = [shot.target[0] + (pos[0] - shot.target[0]) * k, shot.target[1] + (pos[1] - shot.target[1]) * k, shot.target[2] + (pos[2] - shot.target[2]) * k];
+    }
+    c.setLookAt(...pos, ...shot.target, shot.smooth !== false).then(() => {
       if (ref.current && useExperience.getState().mode !== 'tour') ref.current.smoothTime = reduced.current ? 0.12 : 0.9;
     });
   }, [shot]);

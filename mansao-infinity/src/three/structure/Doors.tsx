@@ -6,6 +6,7 @@ import { TILE, useMaterials } from '../../materials/library';
 import { useExperience } from '../../store/useExperience';
 import { B, Cyl } from '../furniture/primitives';
 import { useLevelVisibility } from './visibility';
+import { ExplodeLevel } from './explode';
 
 /**
  * Esquadrias interativas: portas de giro (simples e duplas), portas de correr
@@ -17,9 +18,11 @@ export function Doors() {
   return (
     <group name="Doors">
       {DOORS.map((d) => (
-        <group key={d.id} visible={d.level === 0 ? vis.L0 : vis.L1}>
-          <Door spec={d} />
-        </group>
+        <ExplodeLevel key={d.id} level={d.level}>
+          <group visible={d.level === 0 ? vis.L0 : vis.L1}>
+            <Door spec={d} />
+          </group>
+        </ExplodeLevel>
       ))}
     </group>
   );

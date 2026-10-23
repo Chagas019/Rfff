@@ -11,8 +11,9 @@ import { ROOMS, roomById, LEVEL_Y, OPERABLE_IDS, type Level } from '../data/plan
  *  top        — vista superior em corte, como uma planta 3D
  *  walk       — caminhada em primeira pessoa
  *  tour       — visita guiada cinematográfica
+ *  explode    — prancha de apresentação: isométrica com pavimentos separados e legendas
  */
-export type ViewMode = 'intro' | 'exterior' | 'interior' | 'top' | 'walk' | 'tour';
+export type ViewMode = 'intro' | 'exterior' | 'interior' | 'top' | 'walk' | 'tour' | 'explode';
 
 export interface CameraShot {
   position: [number, number, number];
@@ -63,6 +64,12 @@ interface ExperienceState {
   tourStep: number;
   tourPlaying: boolean;
   toast: { text: string; nonce: number } | null;
+  /** Separação vertical (m) entre térreo e superior na prancha de apresentação. */
+  explodeAmount: number;
+  /** Fundo da prancha: claro quadriculado ou estúdio escuro. */
+  boardTheme: 'light' | 'dark';
+  /** Legendas dos cômodos na prancha. */
+  boardLabels: boolean;
   /** Pedido de fade para cortes de câmera. */
   fade: number;
 
@@ -90,6 +97,9 @@ interface ExperienceState {
   setTourPlaying: (p: boolean) => void;
   notify: (text: string) => void;
   requestFade: () => void;
+  setExplodeAmount: (m: number) => void;
+  setBoardTheme: (t: 'light' | 'dark') => void;
+  setBoardLabels: (on: boolean) => void;
 }
 
 const allRoomLights = (on: boolean) => Object.fromEntries(ROOMS.map((rm) => [rm.id, on]));
@@ -124,6 +134,8 @@ export function roomShot(id: string): CameraShot | null {
 
 export const EXTERIOR_SHOT: CameraShot = { position: [42, 17, 48], target: [-2, 3, -2], smooth: true };
 export const TOP_SHOT: CameraShot = { position: [-2, 78, 4], target: [-2, 0, 0.5], smooth: true };
+/** Isométrica da prancha (teleobjetiva de longe, quase ortogonal): vista de sudeste, como nas pranchas de arquitetura. */
+export const EXPLODE_SHOT: CameraShot = { position: [72, 76, 100], target: [-2, 7.5, 1], smooth: true, travel: 1.4 };
 
 export const useExperience = create<ExperienceState>((set, get) => ({
   started: false,
@@ -148,6 +160,9 @@ export const useExperience = create<ExperienceState>((set, get) => ({
   tourPlaying: false,
   toast: null,
   fade: 0,
+  explodeAmount: 14,
+  boardTheme: 'light',
+  boardLabels: true,
 
   start: (mode = 'exterior') => {
     set({ started: true });
@@ -180,6 +195,10 @@ export const useExperience = create<ExperienceState>((set, get) => ({
       if (!get().walkSpawn) {
         patch.walkSpawn = { x: -1, z: 14, level: 0, lookX: -1, lookZ: 0, nonce: ++nonce };
       }
+    } else if (mode === 'explode') {
+      patch.cutLevel = null;
+      patch.selectedRoom = null;
+      patch.shot = { ...EXPLODE_SHOT, nonce: ++nonce };
     } else if (mode === 'tour') {
       patch.tourStep = 0;
       patch.tourPlaying = true;
@@ -206,6 +225,10 @@ export const useExperience = create<ExperienceState>((set, get) => ({
     if (mode === 'walk') {
       get().walkInto(id);
       set({ selectedRoom: id });
+      return;
+    }
+    if (mode === 'explode') {
+      set({ selectedRoom: id, planLevel: rm.level });
       return;
     }
     const s = roomShot(id);
@@ -242,4 +265,7 @@ export const useExperience = create<ExperienceState>((set, get) => ({
   setTourPlaying: (p) => set({ tourPlaying: p }),
   notify: (text) => set({ toast: { text, nonce: ++nonce } }),
   requestFade: () => set({ fade: ++nonce }),
+  setExplodeAmount: (m) => set({ explodeAmount: Math.max(0, Math.min(16, m)) }),
+  setBoardTheme: (t) => set({ boardTheme: t }),
+  setBoardLabels: (on) => set({ boardLabels: on }),
 }));

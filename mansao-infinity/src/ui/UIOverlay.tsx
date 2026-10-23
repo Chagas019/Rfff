@@ -10,14 +10,16 @@ import { RoomNavigation } from './RoomNavigation';
 import { RoomInfoPanel } from './RoomInfoPanel';
 import { HelpPanel, PlanPanel, SettingsPanel, TourPanel } from './Panels';
 import { WalkHUD } from './WalkHUD';
+import { PresentationHUD } from './PresentationHUD';
 import { Monogram, Wordmark } from './brand';
-import { IconArrowRight, IconBulb, IconDoor, IconHelp, IconList, IconPlan, IconPlay, IconSettings } from './icons';
+import { IconArrowRight, IconBulb, IconDoor, IconHelp, IconLayers, IconList, IconPlan, IconPlay, IconSettings } from './icons';
 
 const MODES: { id: ViewMode; label: string; key: string }[] = [
   { id: 'exterior', label: 'Externa', key: '1' },
   { id: 'interior', label: 'Interna', key: '2' },
   { id: 'top', label: 'Superior', key: '3' },
   { id: 'walk', label: 'Caminhar', key: '4' },
+  { id: 'explode', label: 'Apresentação', key: '5' },
 ];
 
 const ease = [0.22, 1, 0.36, 1] as const;
@@ -79,6 +81,9 @@ function IntroScreen() {
           </button>
           <button onClick={() => start('tour')} className="btn-line">
             <IconPlay size={14} /> Iniciar visita guiada
+          </button>
+          <button onClick={() => start('explode')} className="btn-line">
+            <IconLayers size={15} /> Prancha de apresentação
           </button>
         </motion.div>
         <motion.dl className="mt-12 grid max-w-2xl grid-cols-2 border-t border-white/12 sm:grid-cols-4" initial={{ opacity: 0 }} animate={{ opacity: 1, transition: { delay: 1.5, duration: 1.2 } }}>
@@ -282,11 +287,11 @@ export function UIOverlay({ ready }: { ready: boolean }) {
           {!tour && (
             <div className="pointer-events-auto absolute inset-x-3 bottom-3 flex flex-col gap-2 sm:inset-x-6 sm:bottom-6 sm:flex-row sm:items-end sm:justify-between" style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}>
               {st.mode !== 'walk' ? (
-                <nav className="glass flex justify-between px-3 sm:justify-start sm:gap-7 sm:px-6" aria-label="Modo de visualização">
+                <nav className="glass scroll-thin flex justify-between overflow-x-auto px-3 sm:justify-start sm:gap-7 sm:px-6" aria-label="Modo de visualização">
                   {MODES.map(({ id, label, key }) => (
                     <button key={id} onClick={() => st.setMode(id)} aria-pressed={st.mode === id} title={`${label} (${key})`} className="tab flex items-center gap-2 px-1">
                       <span className="numeral text-[13px] tracking-normal text-gold">0{key}</span>
-                      <span>{label}</span>
+                      <span className="hidden sm:inline">{label}</span>
                     </button>
                   ))}
                 </nav>
@@ -296,13 +301,14 @@ export function UIOverlay({ ready }: { ready: boolean }) {
                 </button>
               )}
               <div className="flex items-center justify-between gap-6">
-                <Readout />
+                {st.mode !== 'explode' && <Readout />}
                 <EnvironmentSelector />
               </div>
             </div>
           )}
 
           {st.mode === 'walk' && <WalkHUD />}
+          {st.mode === 'explode' && <PresentationHUD />}
 
           <div className="pointer-events-none absolute inset-x-0 bottom-0 z-[1]">
             <AnimatePresence>{tour && <TourPanel key="tour" />}</AnimatePresence>
