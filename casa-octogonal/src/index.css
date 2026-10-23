@@ -1,0 +1,95 @@
+@import "tailwindcss";
+
+@theme {
+  --font-display: "Cormorant Garamond", "Times New Roman", serif;
+  --font-sans: "Manrope", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --color-ink: #14120f;
+  --color-bone: #f4efe6;
+  --color-sand: #d8c3a0;
+  --ease-lux: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+  background: #14120f;
+  color: var(--color-bone);
+  font-family: var(--font-sans);
+  overflow: hidden;
+  overscroll-behavior: none;
+  -webkit-font-smoothing: antialiased;
+}
+
+canvas {
+  touch-action: none;
+  outline: none;
+}
+
+@layer components {
+  .panel {
+    background: rgba(20, 18, 15, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(20px) saturate(120%);
+    -webkit-backdrop-filter: blur(20px) saturate(120%);
+  }
+  .eyebrow {
+    font-size: 0.6875rem;
+    font-weight: 500;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: rgba(244, 239, 230, 0.68);
+  }
+  .seg {
+    position: relative;
+    min-height: 44px;
+    padding: 0 1rem;
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: rgba(244, 239, 230, 0.66);
+    transition: color 250ms var(--ease-lux);
+  }
+  .seg:hover {
+    color: var(--color-bone);
+  }
+  .seg[aria-pressed="true"] {
+    color: var(--color-bone);
+  }
+  .seg[aria-pressed="true"]::after {
+    content: "";
+    position: absolute;
+    left: 1rem;
+    right: 1rem;
+    bottom: 9px;
+    height: 1px;
+    background: var(--color-sand);
+  }
+  .seg:focus-visible {
+    outline: 1px solid var(--color-sand);
+    outline-offset: -4px;
+  }
+  .room-label {
+    display: inline-block;
+    white-space: nowrap;
+    padding: 4px 10px;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: #1b1a17;
+    background: rgba(255, 255, 255, 0.86);
+    border: 1px solid rgba(27, 26, 23, 0.18);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 1ms !important;
+    animation-duration: 1ms !important;
+  }
+}
