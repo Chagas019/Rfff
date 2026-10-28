@@ -1,12 +1,9 @@
 import React from "react";
-import { AbsoluteFill, useCurrentFrame } from "remotion";
-import { Camera, useLayout } from "../componentes/Visual";
+import { AbsoluteFill, interpolate, useCurrentFrame } from "remotion";
+import { Camera, clamp, useLayout } from "../componentes/Visual";
 import {
   Cartela,
-  FadePreto,
   Flare,
-  FundoCinema,
-  LuzVolumetrica,
   Poeira,
   Rotulo,
   Surge,
@@ -35,8 +32,7 @@ export const Cena1Contagem: React.FC<{
 
   return (
     <AbsoluteFill>
-      <FundoCinema />
-      <LuzVolumetrica />
+      <AbsoluteFill style={{ opacity: interpolate(f, [duracao - 12, duracao], [1, 0], clamp) }}>
       <Camera de={1} ate={1.08} duracao={duracao} balanco={0.3}>
         <BolaHeroi
           tamanho={(vertical ? 780 : 600) * u}
@@ -47,6 +43,7 @@ export const Cena1Contagem: React.FC<{
         />
         <Poeira semente="c1" />
       </Camera>
+      </AbsoluteFill>
 
       <Cartela em={momentoFaltam} ate={duracao}>
         <Rotulo tamanho={vertical ? 40 : 34}>Faltam</Rotulo>
@@ -59,8 +56,6 @@ export const Cena1Contagem: React.FC<{
       </Cartela>
 
       <Flare em={trava - 10} />
-      <FadePreto de={0} ate={20} entrada />
-      <FadePreto de={duracao - 10} ate={duracao} />
     </AbsoluteFill>
   );
 };

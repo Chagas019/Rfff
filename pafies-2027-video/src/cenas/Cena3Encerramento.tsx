@@ -3,11 +3,8 @@ import { AbsoluteFill } from "remotion";
 import { CORES } from "../config";
 import { Camera, useLayout } from "../componentes/Visual";
 import {
-  FadePreto,
   Flare,
-  FundoCinema,
   Linha,
-  LuzVolumetrica,
   Poeira,
   Rotulo,
   Surge,
@@ -27,8 +24,6 @@ export const Cena3Encerramento: React.FC<{
 
   return (
     <AbsoluteFill>
-      <FundoCinema quente={0.4} />
-      <LuzVolumetrica intensidade={0.9} />
       <Camera de={1.06} ate={1} duracao={duracao} balanco={0.2}>
         <Poeira semente="c3" />
         <RaquetesCameraLenta
@@ -74,8 +69,6 @@ export const Cena3Encerramento: React.FC<{
       </AbsoluteFill>
 
       <Flare em={0} cor={CORES.dourado} />
-      <FadePreto de={0} ate={8} entrada />
-      <FadePreto de={duracao - 22} ate={duracao} />
     </AbsoluteFill>
   );
 };

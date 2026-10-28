@@ -49,7 +49,7 @@ export const Gradacao: React.FC = () => (
     />
     <AbsoluteFill
       style={{
-        background: "radial-gradient(ellipse 70% 60% at 50% 50%, transparent 40%, rgba(0,0,0,0.75) 100%)",
+        background: "radial-gradient(ellipse 70% 60% at 50% 50%, transparent 40%, rgba(0,0,0,0.45) 100%)",
         pointerEvents: "none",
       }}
     />
@@ -102,29 +102,6 @@ export const Flare: React.FC<{ em: number; y?: string; cor?: string; duracao?: n
   );
 };
 
-/** Um único facho de luz volumétrica vindo do alto, varrendo devagar. */
-export const LuzVolumetrica: React.FC<{ cor?: string; intensidade?: number; lado?: number }> = ({
-  cor = CORES.azulLuz,
-  intensidade = 1,
-  lado = 1,
-}) => {
-  const f = useCurrentFrame();
-  const { u } = useLayout();
-  const x = 50 + lado * (12 + Math.sin(f / 90) * 6);
-  return (
-    <AbsoluteFill style={{ mixBlendMode: "screen", pointerEvents: "none", overflow: "hidden" }}>
-      <AbsoluteFill
-        style={{
-          clipPath: `polygon(${x - 3}% -5%, ${x + 3}% -5%, ${x - lado * 10 + 30}% 105%, ${x - lado * 10 - 30}% 105%)`,
-          background: `linear-gradient(180deg, ${cor}aa 0%, ${cor}33 50%, transparent 100%)`,
-          filter: `blur(${40 * u}px)`,
-          opacity: 0.55 * intensidade,
-        }}
-      />
-    </AbsoluteFill>
-  );
-};
-
 /** Poeira no ar com profundidade de campo: grãos nítidos e bokeh desfocado à frente. */
 export const Poeira: React.FC<{ quantidade?: number; semente?: string }> = ({ quantidade = 45, semente = "p" }) => {
   const f = useCurrentFrame();
@@ -159,25 +136,6 @@ export const Poeira: React.FC<{ quantidade?: number; semente?: string }> = ({ qu
     </AbsoluteFill>
   );
 };
-
-/** Fundo escuro com um brilho profundo no centro. */
-export const FundoCinema: React.FC<{ quente?: number }> = ({ quente = 0 }) => (
-  <AbsoluteFill
-    style={{
-      background: `radial-gradient(ellipse 80% 55% at 50% 55%, #0B2A6B 0%, ${CORES.marinho} 35%, #02050F 80%)`,
-    }}
-  >
-    {quente > 0 && (
-      <AbsoluteFill
-        style={{
-          background: `radial-gradient(ellipse 90% 40% at 50% 110%, ${CORES.laranja}66 0%, transparent 70%)`,
-          opacity: quente,
-          mixBlendMode: "screen",
-        }}
-      />
-    )}
-  </AbsoluteFill>
-);
 
 /**
  * Cartela de trailer: entra devagar (desfoque → nítido, leve aproximação),
@@ -234,7 +192,7 @@ export const Surge: React.FC<{ em: number; children: React.ReactNode; style?: Re
 export const Rotulo: React.FC<{ children: React.ReactNode; tamanho?: number; cor?: string; style?: React.CSSProperties }> = ({
   children,
   tamanho = 30,
-  cor = "#DCE8FF",
+  cor = "#FFFFFF",
   style,
 }) => {
   const { u } = useLayout();
@@ -277,7 +235,7 @@ export const TituloCinema: React.FC<{
         lineHeight: 1.05,
         letterSpacing: tamanho * 0.04 * u,
         textAlign: "center",
-        filter: `drop-shadow(0 0 ${tamanho * 0.12 * u}px ${quente ? CORES.laranja : CORES.azul}88)`,
+        filter: `drop-shadow(0 ${tamanho * 0.03 * u}px ${tamanho * 0.08 * u}px rgba(5,12,45,0.55))`,
         ...style,
       }}
     >

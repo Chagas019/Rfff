@@ -1,8 +1,9 @@
 import React from "react";
 import { AbsoluteFill, Audio, interpolate, Sequence, staticFile } from "remotion";
-import { CENAS, cena, diasAte, FPS, hojeEmBrasilia, IdCena, INICIO_DAS_PROVAS, PropsVideo, s } from "./config";
+import { CENAS, cena, diasAte, DURACAO_FRAMES, FPS, hojeEmBrasilia, IdCena, INICIO_DAS_PROVAS, PropsVideo, s } from "./config";
 import { carregarFontes } from "./fontes";
-import { Gradacao, Grao, Letterbox } from "./componentes/Cinema";
+import { FadePreto, Gradacao, Grao, Letterbox } from "./componentes/Cinema";
+import { FundoGeometrico } from "./componentes/FundoGeometrico";
 import { Cena1Contagem } from "./cenas/Cena1Contagem";
 import { Cena2Aviso } from "./cenas/Cena2Aviso";
 import { Cena3Encerramento } from "./cenas/Cena3Encerramento";
@@ -56,6 +57,7 @@ export const Pafies: React.FC<PropsVideo> = ({ dataReferencia }) => {
 
   return (
     <AbsoluteFill style={{ backgroundColor: "#000" }}>
+      <FundoGeometrico />
       {seq(
         "contagem",
         <Cena1Contagem
@@ -85,6 +87,8 @@ export const Pafies: React.FC<PropsVideo> = ({ dataReferencia }) => {
         />,
       )}
       <Gradacao />
+      <FadePreto de={0} ate={18} entrada />
+      <FadePreto de={DURACAO_FRAMES - 24} ate={DURACAO_FRAMES} />
       <Grao />
       <Letterbox />
 

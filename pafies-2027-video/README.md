@@ -54,6 +54,10 @@ npx remotion render src/index.ts PafiesVertical out/pafies-2027-vertical-9x16.mp
 - `src/componentes/Cinema.tsx` — a linguagem de cinema: faixas pretas (2,39:1 no 16:9), granulação de
   filme, correção de cor azul/laranja, reflexos anamórficos, luz volumétrica, poeira com profundidade de
   campo, cartelas de trailer (entram do desfoque ao nítido) e tipografia Cinzel + Montserrat espaçada.
+- `src/componentes/FundoGeometrico.tsx` — o fundo enviado pela equipe (azul de papel envelhecido com
+  meias-luas e círculos laranja/amarelos, estrela de quatro pontas e estrela-explosão), refeito em vetor
+  para servir ao 9:16 e ao 16:9. As formas entram deslizando, respiram devagar, a estrela cintila e a
+  explosão gira.
 - `src/componentes/Esportes.tsx` — bola de basquete em câmera lenta com *rack focus* e raquetes de
   pingue-pongue suspensas com a bolinha no meio do lance.
 - `src/componentes/Visual.tsx` e `Elementos.tsx` — layout 9:16/16:9, câmera simulada e logotipo.

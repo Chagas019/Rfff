@@ -5,11 +5,8 @@ import { FONTE_CINEMA } from "../fontes";
 import { Camera, clamp, suave, useLayout } from "../componentes/Visual";
 import {
   Cartela,
-  FadePreto,
   Flare,
-  FundoCinema,
   Linha,
-  LuzVolumetrica,
   Poeira,
   Rotulo,
   Surge,
@@ -38,9 +35,6 @@ export const Cena2Aviso: React.FC<{
 
   return (
     <AbsoluteFill>
-      <FundoCinema quente={0.8} />
-      <LuzVolumetrica cor={CORES.laranja} intensidade={0.6} lado={-1} />
-      <LuzVolumetrica intensidade={0.7} />
       <Camera de={1.02} ate={1.1} duracao={duracao} balanco={0.25}>
         <Poeira semente="c2" quantidade={55} />
       </Camera>
@@ -89,7 +83,7 @@ export const Cena2Aviso: React.FC<{
               fontWeight: 600,
               fontSize: (vertical ? 104 : 120) * u,
               letterSpacing: 4 * u,
-              color: "#8C98AE",
+              color: "#C3CCE4",
               textAlign: "center",
               lineHeight: 1.1,
             }}
@@ -120,8 +114,6 @@ export const Cena2Aviso: React.FC<{
 
       <Flare em={momentoNumero + 34} />
       <Flare em={momentoToneladas + 26} cor={CORES.laranja} forca={0.7} />
-      <FadePreto de={0} ate={10} entrada />
-      <FadePreto de={duracao - 8} ate={duracao} />
     </AbsoluteFill>
   );
 };
