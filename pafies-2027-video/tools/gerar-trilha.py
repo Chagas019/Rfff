@@ -168,6 +168,31 @@ def shepard(dur):
     return s / 3 * (t / dur) ** 1.5
 
 
+def succao(dur=0.8):
+    """'Puxar o ar' antes do golpe: ruído que cresce e sobe de tom, cortado seco."""
+    n = int(dur * SR)
+    t = t_(n)
+    out = np.zeros(n)
+    ruido = rng.standard_normal(n)
+    for b in range(30):
+        a_, z = b * n // 30, (b + 1) * n // 30
+        out[a_:z] = bandpass(ruido[a_:z], 300 + 4000 * (b / 30) ** 2, 9000, 1)
+    return out * (t / dur) ** 3
+
+
+def queda_grave(dur=2.4):
+    """Sub que despenca (de 75 Hz para 28 Hz) no impacto."""
+    n = int(dur * SR)
+    t = t_(n)
+    f = 28 + 47 * np.exp(-t * 2.2)
+    return np.sin(2 * np.pi * np.cumsum(f) / SR) * np.exp(-t * 1.3)
+
+
+def estalo(dur=0.25):
+    n = int(dur * SR)
+    return highpass(rng.standard_normal(n), 1500) * np.exp(-t_(n) * 28)
+
+
 def reverb(x, dur=2.6, mix=0.32):
     """Reverberação de sala grande: convolução com ruído decaindo."""
     from scipy.signal import fftconvolve
@@ -195,7 +220,7 @@ put(musica, final, cordas([74, 78, 81, 86], fim - final), 0.14, pan=-0.2)
 
 # braams + tambores nas viradas de cartela (as mesmas marcas do Remotion)
 golpes = [
-    (cont_ini + mc["faltam"] + 4 * 0.5, "Dm", 0.9),  # o "86" trava
+    (cont_ini + mc["impacto"], "Dm", 1.0),  # o "86" desaba
     (aviso_ini, "Dm", 0.9),  # atenção
     (aviso_ini + ma["numero"], "F", 0.85),  # +50.000
     (aviso_ini + ma["toneladas"], "Bb", 0.7),  # e não toneladas
@@ -222,15 +247,25 @@ musica *= curva([(0, 0.0), (0.6, 1.0), (fim - 1.0, 1.0), (fim, 0.0)])
 
 # ---------------------------------------------------------------- efeitos
 fx = np.zeros((2, N))
-# relógio durante a contagem; acelera junto com o número 90 → 86
-t = cont_ini  # alinhado com o passo de 15 frames do número (Cena1Contagem)
+# relógio acelerando junto com o número 90 → 87 (FRACOES_TIQUES em Cena1Contagem.tsx)
+FRACOES_TIQUES = [0, 0.4, 0.7, 0.88]
+ini_t, impacto = cont_ini + mc["faltam"], cont_ini + mc["impacto"]
+for k, p in enumerate(FRACOES_TIQUES):
+    put(fx, ini_t + p * (impacto - ini_t), tique(k % 2 == 0), 0.3 + 0.05 * k, pan=0.15)
+# o impacto do 86: sucção, estalo, sub despencando e brilho de vidro
+put(fx, impacto - 0.8, succao(0.8), 0.35)
+put(fx, impacto, estalo(), 0.5)
+put(fx, impacto, queda_grave(), 0.9)
+put(fx, impacto + 0.05, brilho(2.0), 0.35)
+# depois, o relógio segue batendo, mais calmo, até o aviso
+t = impacto + 1.0
 k = 0
 while t < aviso_ini - 0.3:
-    put(fx, t, tique(k % 2 == 0), 0.22 if k % 2 == 0 else 0.16, pan=0.15)
+    put(fx, t, tique(k % 2 == 0), 0.14, pan=0.15)
     t += BEAT
     k += 1
 # reflexos de lente e entradas de cartela
-for t in (cont_ini + mc["faltam"] + 1.7, aviso_ini + ma["numero"] + 1.1,
+for t in (aviso_ini + ma["numero"] + 1.1,
           aviso_ini + ma["toneladas"] + 0.9, final):
     put(fx, t, brilho(1.6), 0.18, pan=-0.2)
 for t in (aviso_ini - 0.5, aviso_ini + ma["numeroCorreto"] - 0.4,

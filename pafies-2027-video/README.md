@@ -16,7 +16,7 @@ em estilo **trailer de cinema**, com dois recados apenas:
 
 | Tempo | Cena | Na tela | Locução |
 | --- | --- | --- | --- |
-| 0–6 s | `Cena1Contagem` | Bola de basquete em câmera lenta sai de foco; "Faltam **90 → 86** dias para a gincana" ao som de um relógio | — (relógio e trilha) |
+| 0–6 s | `Cena1Contagem` | Bola de basquete em câmera lenta sai de foco; o relógio acelera (90, 89, 88, 87), a tela "puxa o ar" e o **86 desaba** com clarão, onda de choque, faíscas, raios de luz, aberração cromática e tremor de câmera; "dias para a gincana" | — (relógio, sucção, estalo e sub despencando) |
 | 6–24,8 s | `Cena2Aviso` | Cartelas: "Aviso importante — Atenção — correção sobre a arrecadação de alimentos" → "O número correto é" → "+50.000 quilos de alimentos — mais de 50 mil quilos arrecadados" → "e não ~~50 mil toneladas~~ — +50.000 kg de alimentos" | Correção completa ("…mais de cinquenta mil quilos, e não cinquenta mil toneladas!") |
 | 24,8–29,5 s | `Cena3Encerramento` | Logo, "PAFIES 2027", "Faltam 86 dias", "+50 mil quilos de alimentos arrecadados", raquetes de pingue-pongue em "bullet time" | — (só música) |
 
@@ -58,6 +58,7 @@ npx remotion render src/index.ts PafiesVertical out/pafies-2027-vertical-9x16.mp
   meias-luas e círculos laranja/amarelos, estrela de quatro pontas e estrela-explosão), refeito em vetor
   para servir ao 9:16 e ao 16:9. As formas entram deslizando, respiram devagar, a estrela cintila e a
   explosão gira.
+- `src/componentes/Impacto.tsx` — efeitos do golpe do "86": tremor, clarão, onda de choque, faíscas e raios de luz.
 - `src/componentes/Esportes.tsx` — bola de basquete em câmera lenta com *rack focus* e raquetes de
   pingue-pongue suspensas com a bolinha no meio do lance.
 - `src/componentes/Visual.tsx` e `Elementos.tsx` — layout 9:16/16:9, câmera simulada e logotipo.
