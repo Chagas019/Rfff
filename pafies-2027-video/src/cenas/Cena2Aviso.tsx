@@ -1,7 +1,7 @@
 import React from "react";
 import { AbsoluteFill, interpolate, useCurrentFrame } from "remotion";
 import { CORES } from "../config";
-import { FONTE_CINEMA } from "../fontes";
+import { FONTE, OBLIQUO } from "../fontes";
 import { Camera, clamp, suave, useLayout } from "../componentes/Visual";
 import {
   Cartela,
@@ -79,10 +79,12 @@ export const Cena2Aviso: React.FC<{
         <div style={{ position: "relative", marginTop: 16 * u }}>
           <div
             style={{
-              fontFamily: FONTE_CINEMA,
-              fontWeight: 600,
-              fontSize: (vertical ? 104 : 120) * u,
-              letterSpacing: 4 * u,
+              fontFamily: FONTE,
+              fontWeight: 900,
+              fontSize: (vertical ? 150 : 160) * u,
+              letterSpacing: 1 * u,
+              textTransform: "uppercase",
+              transform: OBLIQUO,
               color: "#C3CCE4",
               textAlign: "center",
               lineHeight: 1.1,

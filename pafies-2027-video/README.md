@@ -53,7 +53,7 @@ npx remotion render src/index.ts PafiesVertical out/pafies-2027-vertical-9x16.mp
 - `src/cenas/` — `Cena1Contagem`, `Cena2Aviso`, `Cena3Encerramento`.
 - `src/componentes/Cinema.tsx` — a linguagem de cinema: faixas pretas (2,39:1 no 16:9), granulação de
   filme, correção de cor azul/laranja, reflexos anamórficos, luz volumétrica, poeira com profundidade de
-  campo, cartelas de trailer (entram do desfoque ao nítido) e tipografia Cinzel + Montserrat espaçada.
+  campo e cartelas de trailer (entram do desfoque ao nítido).
 - `src/componentes/FundoGeometrico.tsx` — o fundo enviado pela equipe (azul de papel envelhecido com
   meias-luas e círculos laranja/amarelos, estrela de quatro pontas e estrela-explosão), refeito em vetor
   para servir ao 9:16 e ao 16:9. As formas entram deslizando, respiram devagar, a estrela cintila e a
@@ -98,6 +98,13 @@ Para a locutora falar o número:
    (por exemplo, 3.2, logo depois de o número travar) e `"falaDuracao"` (use `ffprobe`); aumente o
    `fim` da cena se a fala não couber.
 4. `npm run audio && npm run render`.
+
+## Tipografia
+
+A referência enviada é a **Base Neue Super Condensed Extra Bold Oblique**, uma fonte paga, que não está
+no Google Fonts. Usamos a alternativa livre mais próxima, **Saira Extra Condensed** (pesos 600 e 900,
+licença OFL), inclinada em 10° (`OBLIQUO` em `src/fontes.ts`). Para usar a Base Neue, coloque o arquivo
+licenciado em `public/fontes/` e aponte os `FontFace` de `src/fontes.ts` para ele.
 
 ## Imagens
 

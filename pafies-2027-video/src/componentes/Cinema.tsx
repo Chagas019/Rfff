@@ -1,7 +1,7 @@
 import React from "react";
 import { AbsoluteFill, Easing, interpolate, random, useCurrentFrame } from "remotion";
 import { CORES } from "../config";
-import { FONTE_CINEMA, FONTE_TEXTO } from "../fontes";
+import { FONTE, OBLIQUO } from "../fontes";
 import { clamp, gradienteTexto, useLayout } from "./Visual";
 
 const lento = Easing.bezier(0.33, 0, 0.15, 1);
@@ -199,11 +199,12 @@ export const Rotulo: React.FC<{ children: React.ReactNode; tamanho?: number; cor
   return (
     <div
       style={{
-        fontFamily: FONTE_TEXTO,
-        fontWeight: 500,
-        fontSize: tamanho * u,
-        letterSpacing: tamanho * 0.42 * u,
-        marginRight: -tamanho * 0.42 * u, // compensa o espaço depois da última letra
+        fontFamily: FONTE,
+        fontWeight: 600,
+        fontSize: tamanho * 1.5 * u,
+        letterSpacing: tamanho * 0.2 * u,
+        marginRight: -tamanho * 0.2 * u, // compensa o espaço depois da última letra
+        transform: OBLIQUO,
         color: cor,
         textAlign: "center",
         textTransform: "uppercase",
@@ -215,7 +216,7 @@ export const Rotulo: React.FC<{ children: React.ReactNode; tamanho?: number; cor
   );
 };
 
-/** Título serifado metálico (Cinzel) com brilho suave. */
+/** Título em condensada extra-negrito inclinada, com leve degradê e sombra. */
 export const TituloCinema: React.FC<{
   children: React.ReactNode;
   tamanho: number;
@@ -225,16 +226,18 @@ export const TituloCinema: React.FC<{
   const { u } = useLayout();
   const metal = quente
     ? gradienteTexto("#FFF4E0", CORES.dourado, 180)
-    : gradienteTexto("#FFFFFF", "#9CC8FF", 180);
+    : gradienteTexto("#FFFFFF", "#DCE8FF", 180);
   return (
     <div
       style={{
-        fontFamily: FONTE_CINEMA,
-        fontWeight: 600,
-        fontSize: tamanho * u,
-        lineHeight: 1.05,
-        letterSpacing: tamanho * 0.04 * u,
+        fontFamily: FONTE,
+        fontWeight: 900,
+        fontSize: tamanho * 1.3 * u,
+        lineHeight: 0.92,
+        letterSpacing: tamanho * 0.01 * u,
         textAlign: "center",
+        textTransform: "uppercase",
+        transform: OBLIQUO,
         filter: `drop-shadow(0 ${tamanho * 0.03 * u}px ${tamanho * 0.08 * u}px rgba(5,12,45,0.55))`,
         ...style,
       }}

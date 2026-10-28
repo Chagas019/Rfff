@@ -1,7 +1,7 @@
 import React from "react";
 import { AbsoluteFill, interpolate, spring, useCurrentFrame, useVideoConfig } from "remotion";
 import { CORES } from "../config";
-import { FONTE_CINEMA } from "../fontes";
+import { FONTE, OBLIQUO } from "../fontes";
 import { Camera, clamp, gradienteTexto, useLayout } from "../componentes/Visual";
 import { Cartela, Flare, Poeira, Rotulo, Surge } from "../componentes/Cinema";
 import { BolaHeroi } from "../componentes/Esportes";
@@ -17,11 +17,11 @@ export const FRACOES_TIQUES = [0, 0.4, 0.7, 0.88];
 /** Número em Cinzel com separação RGB (aberração cromática) logo após o impacto. */
 const Numero: React.FC<{ valor: number; tamanho: number; separacao: number }> = ({ valor, tamanho, separacao }) => {
   const base: React.CSSProperties = {
-    fontFamily: FONTE_CINEMA,
-    fontWeight: 700,
+    fontFamily: FONTE,
+    fontWeight: 900,
     fontSize: tamanho,
-    lineHeight: 1,
-    letterSpacing: tamanho * 0.02,
+    lineHeight: 0.9,
+    letterSpacing: tamanho * 0.01,
   };
   const canal = (cor: string, dx: number): React.CSSProperties => ({
     ...base,
@@ -33,7 +33,7 @@ const Numero: React.FC<{ valor: number; tamanho: number; separacao: number }> = 
     opacity: 0.8,
   });
   return (
-    <div style={{ position: "relative" }}>
+    <div style={{ position: "relative", transform: OBLIQUO }}>
       {separacao > 0.5 && (
         <>
           <div style={canal("#FF3B3B", -separacao)}>{valor}</div>
@@ -119,7 +119,7 @@ export const Cena1Contagem: React.FC<{
               margin: `${-10 * u}px 0`,
             }}
           >
-            <Numero valor={valor} tamanho={(vertical ? 600 : 430) * u} separacao={separacao} />
+            <Numero valor={valor} tamanho={(vertical ? 760 : 560) * u} separacao={separacao} />
           </div>
           <Surge em={momentoImpacto + 10}>
             <Rotulo tamanho={vertical ? 36 : 32}>{dias === 1 ? "dia" : "dias"} para a gincana</Rotulo>
