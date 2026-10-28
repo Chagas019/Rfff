@@ -1,7 +1,7 @@
 import React from "react";
 import { AbsoluteFill, interpolate, useCurrentFrame } from "remotion";
 import { CORES } from "../config";
-import { FONTE_TEXTO } from "../fontes";
+import { FONTE_TEXTO, FONTE_TITULO } from "../fontes";
 import {
   Camera,
   Centro,
@@ -17,14 +17,20 @@ import {
   Titulo,
   useLayout,
 } from "../componentes/Visual";
-import { LogoPafies, No3D } from "./Cena2Gincana";
-import { BolaQuicando } from "../componentes/Esportes";
+import { LogoPafies, No3D } from "../componentes/Elementos";
+import { RallyPinguePongue } from "../componentes/Esportes";
 
-/** Cena 6 — explosão de luz azul e laranja e a assinatura final. */
-export const Cena6Encerramento: React.FC<{ duracao: number; momentoFrase: number; momentoBola: number }> = ({
+/** Cena 3 — explosão de luz e a assinatura final, retomando os dois recados. */
+export const Cena3Encerramento: React.FC<{
+  duracao: number;
+  dias: number;
+  momentoFrase: number;
+  momentoRally: number;
+}> = ({
   duracao,
+  dias,
   momentoFrase,
-  momentoBola,
+  momentoRally,
 }) => {
   const f = useCurrentFrame();
   const { u, vertical, width, height } = useLayout();
@@ -52,18 +58,12 @@ export const Cena6Encerramento: React.FC<{ duracao: number; momentoFrase: number
       <Camera de={1.2} ate={1} duracao={45} balanco={0.6}>
         <Particulas quantidade={140} velocidade={1.8} semente="c6" />
         <No3D tamanho={260 * u} x={vertical ? "85%" : "86%"} y={vertical ? "12%" : "20%"} fase={40} />
-        <BolaQuicando
-          em={momentoBola}
-          tamanho={(vertical ? 200 : 190) * u}
-          x={vertical ? width * 0.17 : width * 0.09}
-          chao={vertical ? height * 0.97 : height * 0.94}
-          altura={(vertical ? 200 : 260) * u}
-        />
+        <No3D tamanho={200 * u} x={vertical ? "15%" : "10%"} y={vertical ? "12%" : "80%"} fase={200} desfoque={2 * u} />
       </Camera>
       <FaixasDeLuz inicio={0} duracao={24} quantidade={5} />
 
       <Centro style={{ padding: `0 ${50 * u}px`, flexDirection: vertical ? "column" : "row", gap: vertical ? 0 : 70 * u }}>
-        <LogoPafies tamanho={(vertical ? 360 : 440) * u} em={4} />
+        <LogoPafies tamanho={(vertical ? 300 : 400) * u} em={4} />
         <div style={{ display: "flex", flexDirection: "column", alignItems: "center", marginTop: vertical ? 36 * u : 0 }}>
           <TextoSurge em={10}>
             <div
@@ -80,7 +80,7 @@ export const Cena6Encerramento: React.FC<{ duracao: number; momentoFrase: number
             </div>
           </TextoSurge>
           <TextoSurge em={14} de="zoom">
-            <Titulo tamanho={vertical ? 220 : 190}>PAFIES 2027</Titulo>
+            <Titulo tamanho={vertical ? 200 : 170}>PAFIES 2027</Titulo>
           </TextoSurge>
           <TextoSurge em={22}>
             <div
@@ -98,30 +98,35 @@ export const Cena6Encerramento: React.FC<{ duracao: number; momentoFrase: number
                 boxShadow: `0 0 ${30 * u}px ${CORES.laranja}88`,
               }}
             >
-              22 DE JANEIRO DE 2027
+              FALTAM <span style={{ color: CORES.dourado }}>{dias}</span> {dias === 1 ? "DIA" : "DIAS"}
             </div>
           </TextoSurge>
           <TextoSurge em={momentoFrase}>
             <div
               style={{
-                marginTop: 34 * u,
-                fontFamily: FONTE_TEXTO,
-                fontWeight: 800,
-                fontSize: (vertical ? 44 : 38) * u,
-                lineHeight: 1.3,
+                marginTop: 26 * u,
+                fontFamily: FONTE_TITULO,
+                fontSize: (vertical ? 66 : 56) * u,
+                lineHeight: 1.1,
                 textAlign: "center",
                 color: CORES.branco,
                 textShadow: `0 0 ${18 * u}px ${CORES.azulLuz}`,
                 maxWidth: (vertical ? 960 : 900) * u,
               }}
             >
-              JUNTOS, TRANSFORMAMOS
+              <span style={gradienteTexto(CORES.azulLuz, CORES.branco, 90)}>+50 MIL QUILOS</span>
               <br />
-              <span style={gradienteTexto(CORES.azulLuz, CORES.branco, 90)}>SOLIDARIEDADE EM AÇÃO!</span>
+              DE ALIMENTOS ARRECADADOS!
             </div>
           </TextoSurge>
         </div>
       </Centro>
+      <RallyPinguePongue
+        em={momentoRally}
+        largura={(vertical ? 820 : 640) * u}
+        x={width / 2}
+        y={height * 0.9}
+      />
       <Clarao em={0} cor={CORES.laranja} duracao={22} />
     </AbsoluteFill>
   );

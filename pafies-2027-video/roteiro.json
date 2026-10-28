@@ -1,83 +1,44 @@
 {
   "fps": 30,
-  "duracao": 65,
+  "duracao": 33.5,
   "cenas": [
     {
-      "id": "chamado",
-      "inicio": 0,
-      "fim": 8.0,
-      "narracao": "cena1.mp3",
-      "falaInicio": 1.0,
-      "marcas": {
-        "rotulo": 1.0,
-        "titulo": 2.5
-      },
-      "falaDuracao": 6.792
-    },
-    {
-      "id": "gincana",
-      "inicio": 8.0,
-      "fim": 18.9,
-      "narracao": "cena2.mp3",
-      "falaInicio": 8.3,
-      "marcas": {
-        "titulo": 2.5,
-        "rally": 2.9
-      },
-      "falaDuracao": 10.344
-    },
-    {
       "id": "contagem",
-      "inicio": 18.9,
-      "fim": 30.6,
-      "narracao": "cena3.mp3",
-      "falaInicio": 19.1,
+      "inicio": 0,
+      "fim": 10.0,
+      "narracao": "contagem.mp3",
+      "falaInicio": 2.6,
+      "falaDuracao": 6.792,
       "marcas": {
-        "data": 2.7,
-        "provas": 5.0,
-        "basquete": 0.2
-      },
-      "falaDuracao": 11.233
+        "basquete": 0.0,
+        "data": 4.8,
+        "provas": 7.4
+      }
     },
     {
       "id": "aviso",
-      "inicio": 30.6,
-      "fim": 48.6,
-      "narracao": "cena4.mp3",
-      "falaInicio": 31.0,
+      "inicio": 10.0,
+      "fim": 28.8,
+      "narracao": "aviso.mp3",
+      "falaInicio": 10.4,
+      "falaDuracao": 16.98,
       "marcas": {
         "correcao": 1.8,
         "numero": 7.6,
         "toneladas": 15.2
-      },
-      "falaDuracao": 16.98
-    },
-    {
-      "id": "gratidao",
-      "inicio": 48.6,
-      "fim": 59.9,
-      "narracao": "cena5.mp3",
-      "falaInicio": 48.8,
-      "marcas": {
-        "esperanca": 2.4,
-        "cuidado": 3.1,
-        "amor": 3.7,
-        "obrigado": 5.0,
-        "juntos": 8.2
-      },
-      "falaDuracao": 10.945
+      }
     },
     {
       "id": "encerramento",
-      "inicio": 59.9,
-      "fim": 65.0,
+      "inicio": 28.8,
+      "fim": 33.5,
       "narracao": null,
       "falaInicio": null,
+      "falaDuracao": 0,
       "marcas": {
-        "frase": 2.0,
-        "basquete": 0.4
-      },
-      "falaDuracao": 0
+        "frase": 1.4,
+        "rally": 0.5
+      }
     }
   ]
 }

@@ -3,9 +3,9 @@ import { Img, interpolate, spring, staticFile, useCurrentFrame, useVideoConfig }
 import { CORES } from "../config";
 import { clamp } from "./Visual";
 
-/** Um tempo da trilha (96 BPM): quiques e raquetadas caem no ritmo da música
+/** Um tempo da trilha (120 BPM): quiques e raquetadas caem no ritmo da música
  *  (tools/gerar-trilha.py usa o mesmo tempo para os sons de quique e raquetada). */
-export const TEMPO_BATIDA = 60 / 96;
+export const TEMPO_BATIDA = 60 / 120;
 
 const bolinhaEstilo = (tam: number): React.CSSProperties => ({
   position: "absolute",

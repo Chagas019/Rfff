@@ -24,14 +24,14 @@ CENA = {c["id"]: c for c in ROTEIRO["cenas"]}
 N = int(DUR * SR)
 rng = np.random.default_rng(2027)
 
-BPM = 96
+BPM = 120  # o mesmo tempo de TEMPO_BATIDA em src/componentes/Esportes.tsx
 BEAT = 60 / BPM
-# I–V–vi–IV em ré maior: esperança e celebração
+# Hino eletrônico esportivo em mi menor: i–VI–III–VII (Em–C–G–D), energia de torcida
 ACORDES = [
-    [50, 57, 62, 66, 69],  # D
-    [45, 57, 61, 64, 69],  # A
-    [47, 54, 59, 62, 66],  # Bm
+    [40, 52, 55, 59, 64],  # Em
+    [36, 52, 55, 60, 64],  # C
     [43, 55, 59, 62, 67],  # G
+    [38, 54, 57, 62, 66],  # D
 ]
 
 
@@ -82,37 +82,6 @@ def curva(pontos):
 
 
 # ---------------------------------------------------------------- instrumentos
-def pad(freqs, dur, brilho=1800):
-    n = int(dur * SR)
-    t = t_(n)
-    s = np.zeros(n)
-    for f in freqs:
-        for d in (-0.08, 0.0, 0.08):
-            ff = f * 2 ** (d / 12)
-            ph = rng.uniform(0, 1)
-            s += 2 * ((t * ff + ph) % 1) - 1  # serra
-    s = lowpass(s / (len(freqs) * 3), brilho)
-    return s * env(n, min(1.2, dur / 3), min(1.0, dur / 3))
-
-
-def piano(f, dur=2.6):
-    n = int(dur * SR)
-    t = t_(n)
-    s = sum(np.sin(2 * np.pi * f * k * t) * a * np.exp(-t * (1.6 + k * 1.1))
-            for k, a in ((1, 1.0), (2, 0.45), (3, 0.2), (4, 0.1)))
-    s += 0.25 * np.sin(2 * np.pi * f * 1.003 * t) * np.exp(-t * 2.0)
-    return s * env(n, 0.004, 0.3)
-
-
-def tom(f0=70, dur=0.9):
-    n = int(dur * SR)
-    t = t_(n)
-    f = f0 * (1 + 1.2 * np.exp(-t * 18))
-    s = np.sin(2 * np.pi * np.cumsum(f) / SR) * np.exp(-t * 4.5)
-    s += lowpass(rng.standard_normal(n), 900) * np.exp(-t * 30) * 0.5
-    return s
-
-
 def kick(dur=0.5):
     n = int(dur * SR)
     t = t_(n)
@@ -187,100 +156,128 @@ def whoosh(dur=0.8):
     return s * np.sin(np.pi * t / dur) ** 2
 
 
+def supersaw(freqs, dur, corte=3500):
+    """Acorde largo de serras desafinadas, com 'pump' (sidechain) a cada tempo."""
+    n = int(dur * SR)
+    t = t_(n)
+    s = np.zeros(n)
+    for f in freqs:
+        for d in (-0.12, -0.05, 0.0, 0.05, 0.12):
+            s += 2 * ((t * f * 2 ** (d / 12) + rng.uniform(0, 1)) % 1) - 1
+    s = lowpass(s / (len(freqs) * 5), corte)
+    bomba = 1 - 0.75 * np.exp(-((t % BEAT) / 0.09))
+    return s * bomba * env(n, 0.01, 0.05)
+
+
+def pluck(f, dur=0.22):
+    n = int(dur * SR)
+    t = t_(n)
+    s = (2 * ((t * f) % 1) - 1) * 0.6 + np.sign(np.sin(2 * np.pi * f * t)) * 0.4
+    return lowpass(s, 2600) * np.exp(-t * 16)
+
+
+def baixo(f, dur):
+    n = int(dur * SR)
+    t = t_(n)
+    s = np.sin(2 * np.pi * f * t) + 0.35 * np.sin(2 * np.pi * 2 * f * t)
+    return np.tanh(s * 1.4) * env(n, 0.005, 0.04)
+
+
+def caixa(dur=0.3):
+    n = int(dur * SR)
+    t = t_(n)
+    corpo = np.sin(2 * np.pi * 190 * t) * np.exp(-t * 25)
+    return corpo * 0.5 + bandpass(rng.standard_normal(n), 1500, 8000) * np.exp(-t * 18)
+
+
 # ---------------------------------------------------------------- música
 musica = np.zeros((2, N))
 fim = DUR
+aviso_ini, aviso_fim = CENA["aviso"]["inicio"], CENA["aviso"]["fim"]
+final = CENA["encerramento"]["inicio"]
+COMPASSO = BEAT * 4
 
-# pads em toda a música, progressão a cada 4 tempos
-t0 = 0.0
-i = 0
-while t0 < fim:
-    d = BEAT * 4
-    put(musica, t0, pad([hz(m) for m in ACORDES[i % 4]], d + 0.6), 0.22, pan=-0.15)
-    put(musica, t0, pad([hz(ACORDES[i % 4][0] - 12)], d + 0.6, 400), 0.35)
-    t0 += d
-    i += 1
 
-# piano: suave na abertura, volta no momento de gratidão e no final
-def arpejo(ini, fim_, vel=0.5, passo=BEAT / 2):
+def acorde_em(t):
+    return ACORDES[int(t / COMPASSO) % 4]
+
+
+# acordes largos: cheios na contagem e no final, abafados durante o aviso
+t = 0.0
+while t < fim:
+    abafado = aviso_ini <= t < aviso_fim
+    put(musica, t, supersaw([hz(m) for m in acorde_em(t)[1:]], COMPASSO + 0.05, 900 if abafado else 3800),
+        0.22 if abafado else 0.3, pan=-0.1)
+    t += COMPASSO
+
+# arpejo em semicolcheias (o "motor" da trilha)
+t = 0.0
+k = 0
+while t < fim - 0.6:
+    acorde = acorde_em(t)
+    nota = acorde[1:][[0, 1, 2, 3, 2, 1, 3, 2][k % 8]] + 12
+    nivel = 0.07 if aviso_ini <= t < aviso_fim else 0.13
+    put(musica, t, pluck(hz(nota)), nivel, pan=0.35 if k % 2 else -0.35)
+    t += BEAT / 4
+    k += 1
+
+# baixo nos contratempos
+t = BEAT / 2
+while t < fim - 0.6:
+    put(musica, t, baixo(hz(acorde_em(t)[0]), BEAT / 2 - 0.02), 0.32)
+    t += BEAT
+
+# bateria: bumbo 4x4, palmas e caixa no 2 e 4, chimbal aberto no contratempo
+def bateria(ini, fim_, nivel, com_caixa=True):
     t = ini
     k = 0
     while t < fim_:
-        acorde = ACORDES[int(t / (BEAT * 4)) % 4]
-        nota = acorde[[1, 2, 3, 4, 3, 2][k % 6]] + 12
-        put(musica, t, piano(hz(nota)), vel, pan=0.3 if k % 2 else -0.3)
-        t += passo
-        k += 1
-
-
-arpejo(0.6, CENA["gincana"]["inicio"], 0.32, BEAT)
-arpejo(CENA["gincana"]["inicio"], CENA["contagem"]["inicio"], 0.22)
-arpejo(CENA["aviso"]["inicio"] + 1, CENA["aviso"]["fim"], 0.14, BEAT)
-arpejo(CENA["gratidao"]["inicio"], fim - 1.5, 0.3)
-
-# pulsação e percussão crescendo
-def bateria(ini, fim_, nivel):
-    t = ini
-    k = 0
-    while t < fim_:
-        if k % 2 == 0:
-            put(musica, t, kick(), 0.55 * nivel)
-        if k % 4 == 2:
-            put(musica, t, clap(), 0.18 * nivel, pan=0.1)
-        put(musica, t + BEAT / 2, hat(), 0.06 * nivel, pan=0.4)
+        put(musica, t, kick(), 0.7 * nivel)
+        if k % 2 == 1:
+            put(musica, t, clap(), 0.22 * nivel, pan=0.1)
+            if com_caixa:
+                put(musica, t, caixa(), 0.18 * nivel, pan=-0.1)
+        put(musica, t + BEAT / 2, hat(0.14), 0.09 * nivel, pan=0.4)
         t += BEAT
         k += 1
 
 
-bateria(CENA["gincana"]["inicio"], CENA["contagem"]["inicio"], 0.7)
-bateria(CENA["contagem"]["inicio"], CENA["aviso"]["inicio"], 1.0)
-bateria(CENA["gratidao"]["inicio"] + BEAT * 4, CENA["encerramento"]["inicio"], 0.6)
-bateria(CENA["encerramento"]["inicio"], fim - 2.0, 1.0)
+bateria(BEAT * 4, aviso_ini, 1.0)
+bateria(aviso_ini + COMPASSO, aviso_fim - COMPASSO, 0.45, com_caixa=False)
+# virada de caixa acelerando antes do final
+t = aviso_fim - COMPASSO
+passo = BEAT / 2
+while t < final - 0.05:
+    put(musica, t, caixa(0.18), 0.12 + 0.2 * (t - (aviso_fim - COMPASSO)) / COMPASSO)
+    t += passo
+    passo = max(BEAT / 8, passo * 0.82)
+bateria(final, fim - 1.2, 1.1)
 
-# tambores épicos na contagem regressiva
-t = CENA["contagem"]["inicio"]
-k = 0
-while t < CENA["aviso"]["inicio"] - 0.2:
-    for off, f, g in ((0, 70, 0.5), (BEAT * 0.75, 95, 0.32), (BEAT * 1.5, 82, 0.4)):
-        put(musica, t + off, tom(f), g, pan=[-0.4, 0.4, 0][k % 3])
-    t += BEAT * 2
-    k += 1
-t = CENA["encerramento"]["inicio"]
-while t < fim - 2.2:
-    put(musica, t, tom(65), 0.5, pan=-0.3)
-    put(musica, t + BEAT, tom(90), 0.35, pan=0.3)
-    t += BEAT * 2
-
-# dinâmica geral: começa baixa, cresce, recua no aviso, emociona no fim
+# dinâmica geral
 musica *= curva([
-    (0, 0.0), (0.4, 0.35), (CENA["gincana"]["inicio"], 0.6),
-    (CENA["contagem"]["inicio"], 0.85), (CENA["aviso"]["inicio"] - 0.2, 1.0),
-    (CENA["aviso"]["inicio"] + 0.4, 0.45), (CENA["aviso"]["fim"] - 0.5, 0.45),
-    (CENA["gratidao"]["inicio"], 0.7), (CENA["encerramento"]["inicio"], 0.95),
-    (fim - 2.4, 1.0), (fim, 0.0),
+    (0, 0.0), (0.3, 0.7), (BEAT * 4, 1.0), (aviso_ini - 0.1, 1.0),
+    (aviso_ini + 0.3, 0.6), (aviso_fim - COMPASSO, 0.6), (final, 1.0),
+    (fim - 1.4, 1.0), (fim, 0.0),
 ])
 
 # ---------------------------------------------------------------- efeitos
 fx = np.zeros((2, N))
-put(fx, 0.15, impacto(4.0), 0.55)  # grave suave da abertura
-put(fx, 2.0, brilho(), 0.35, pan=0.3)
-put(fx, CENA["gincana"]["inicio"] - 2.4, subida(2.4), 0.12)
-put(fx, CENA["gincana"]["inicio"], impacto(), 0.7)
-put(fx, CENA["gincana"]["inicio"] + 0.1, brilho(), 0.3, pan=-0.3)
-put(fx, CENA["gincana"]["inicio"] + 4.2, whoosh(), 0.14, pan=0.5)
-put(fx, CENA["contagem"]["inicio"] - 2.0, subida(2.0), 0.14)
-put(fx, CENA["contagem"]["inicio"], impacto(), 0.75)
-for k in range(3):  # um toque para cada dígito que entra
-    put(fx, CENA["contagem"]["inicio"] + 0.5 + k * 0.35, tom(110 + k * 20, 0.5), 0.25)
-put(fx, CENA["contagem"]["inicio"] + 4.2, whoosh(), 0.14, pan=-0.5)
-put(fx, CENA["contagem"]["inicio"] + 4.5, impacto(2.5), 0.45)
-put(fx, CENA["aviso"]["inicio"], impacto(2.2), 0.6)  # corte para o aviso
-put(fx, CENA["aviso"]["inicio"] + 0.05, brilho(1.2), 0.25)
-put(fx, CENA["gratidao"]["inicio"], whoosh(1.2), 0.12)
-put(fx, CENA["encerramento"]["inicio"] - 1.8, subida(1.8), 0.16)
-put(fx, CENA["encerramento"]["inicio"], impacto(4.5), 0.85)  # explosão de luz
-put(fx, CENA["encerramento"]["inicio"] + 0.1, brilho(2.0), 0.4)
-put(fx, fim - 2.3, impacto(2.3), 0.75)  # golpe final
+put(fx, 0.0, impacto(3.0), 0.7)  # abertura direto na contagem
+put(fx, 0.05, brilho(), 0.3, pan=0.3)
+data = CENA["contagem"]["marcas"]["data"]
+provas = CENA["contagem"]["marcas"]["provas"]
+put(fx, data - 0.8, whoosh(0.8), 0.14, pan=-0.5)
+put(fx, data, impacto(2.2), 0.55)
+put(fx, provas, brilho(1.2), 0.3, pan=-0.2)
+put(fx, aviso_ini - 1.5, subida(1.5), 0.14)
+put(fx, aviso_ini, impacto(2.2), 0.65)  # corte para o aviso
+put(fx, aviso_ini + 0.05, brilho(1.2), 0.25)
+put(fx, aviso_ini + CENA["aviso"]["marcas"]["numero"], impacto(1.8), 0.4)
+put(fx, final - 1.8, subida(1.8), 0.16)
+put(fx, final, impacto(3.5), 0.85)  # explosão de luz do encerramento
+put(fx, final + 0.1, brilho(2.0), 0.4)
+put(fx, fim - 1.3, impacto(1.3), 0.7)  # golpe final
+
 
 # Esportes animados (src/componentes/Esportes.tsx): um toque por tempo da música.
 def batidas(cena, marca, ate):
@@ -290,14 +287,12 @@ def batidas(cena, marca, ate):
         t += BEAT
 
 
+for t in batidas("contagem", "basquete", CENA["contagem"]["fim"] - 0.2):
+    put(fx, t, quique(), 0.2, pan=-0.4)
 lado = -1
-for t in batidas("gincana", "rally", CENA["gincana"]["fim"] - 0.2):
+for t in batidas("encerramento", "rally", fim - 0.5):
     put(fx, t, raquetada(), 0.16, pan=0.5 * lado)  # alterna esquerda/direita
     lado = -lado
-for t in batidas("contagem", "basquete", CENA["contagem"]["fim"] - 0.2):
-    put(fx, t, quique(), 0.22, pan=-0.4)
-for t in batidas("encerramento", "basquete", fim - 0.5):
-    put(fx, t, quique(), 0.16, pan=-0.5)
 
 fx *= curva([(0, 1), (fim - 0.4, 1), (fim, 0)])
 

@@ -38,8 +38,8 @@ const Alerta: React.FC<{ tamanho: number }> = ({ tamanho }) => {
   );
 };
 
-/** Cena 4 — aviso oficial: são mais de 50 mil QUILOS (não toneladas). */
-export const Cena4Aviso: React.FC<{
+/** Cena 2 — aviso oficial: são mais de 50 mil QUILOS (não toneladas). */
+export const Cena2Aviso: React.FC<{
   duracao: number;
   momentoCorrecao: number;
   momentoNumero: number;

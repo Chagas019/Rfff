@@ -1,14 +1,11 @@
 import React from "react";
 import { AbsoluteFill, Audio, interpolate, Sequence, staticFile } from "remotion";
-import { CENAS, cena, diasAte, FPS, hojeEmBrasilia, INICIO_DAS_PROVAS, PropsVideo, s } from "./config";
+import { CENAS, cena, diasAte, FPS, hojeEmBrasilia, IdCena, INICIO_DAS_PROVAS, PropsVideo, s } from "./config";
 import { carregarFontes } from "./fontes";
 import { Vinheta } from "./componentes/Visual";
-import { Cena1Chamado } from "./cenas/Cena1Chamado";
-import { Cena2Gincana } from "./cenas/Cena2Gincana";
-import { Cena3Contagem } from "./cenas/Cena3Contagem";
-import { Cena4Aviso } from "./cenas/Cena4Aviso";
-import { Cena5Gratidao } from "./cenas/Cena5Gratidao";
-import { Cena6Encerramento } from "./cenas/Cena6Encerramento";
+import { Cena1Contagem } from "./cenas/Cena1Contagem";
+import { Cena2Aviso } from "./cenas/Cena2Aviso";
+import { Cena3Encerramento } from "./cenas/Cena3Encerramento";
 
 carregarFontes();
 
@@ -40,31 +37,28 @@ const ducking = (frame: number) => {
 const volumeTrilha = (frame: number) =>
   interpolate(ducking(frame), [0, 1], [VOLUME_TRILHA, VOLUME_TRILHA_SOB_VOZ]);
 
-const m = (id: Parameters<typeof cena>[0], chave: string) => {
+const m = (id: IdCena, chave: string) => {
   const v = cena(id).marcas[chave];
   if (v === undefined) throw new Error(`Marca "${chave}" ausente na cena ${id} (roteiro.json)`);
   return s(v);
 };
 
+const dur = (id: IdCena) => s(cena(id).fim) - s(cena(id).inicio);
+
+const seq = (id: IdCena, el: React.ReactNode) => (
+  <Sequence key={id} from={s(cena(id).inicio)} durationInFrames={dur(id)} name={id}>
+    {el}
+  </Sequence>
+);
+
 export const Pafies: React.FC<PropsVideo> = ({ dataReferencia }) => {
   const dias = diasAte(INICIO_DAS_PROVAS, dataReferencia || hojeEmBrasilia());
-  const dur = (id: Parameters<typeof cena>[0]) => s(cena(id).fim) - s(cena(id).inicio);
-  const seq = (id: Parameters<typeof cena>[0], el: React.ReactNode) => (
-    <Sequence key={id} from={s(cena(id).inicio)} durationInFrames={dur(id)} name={id}>
-      {el}
-    </Sequence>
-  );
 
   return (
     <AbsoluteFill style={{ backgroundColor: "#000" }}>
       {seq(
-        "chamado",
-        <Cena1Chamado duracao={dur("chamado")} momentoRotulo={m("chamado", "rotulo")} momentoTitulo={m("chamado", "titulo")} />,
-      )}
-      {seq("gincana", <Cena2Gincana duracao={dur("gincana")} corte={m("gincana", "titulo")} momentoRally={m("gincana", "rally")} />)}
-      {seq(
         "contagem",
-        <Cena3Contagem
+        <Cena1Contagem
           duracao={dur("contagem")}
           dias={dias}
           momentoData={m("contagem", "data")}
@@ -74,7 +68,7 @@ export const Pafies: React.FC<PropsVideo> = ({ dataReferencia }) => {
       )}
       {seq(
         "aviso",
-        <Cena4Aviso
+        <Cena2Aviso
           duracao={dur("aviso")}
           momentoCorrecao={m("aviso", "correcao")}
           momentoNumero={m("aviso", "numero")}
@@ -82,17 +76,14 @@ export const Pafies: React.FC<PropsVideo> = ({ dataReferencia }) => {
         />,
       )}
       {seq(
-        "gratidao",
-        <Cena5Gratidao
-          duracao={dur("gratidao")}
-          momentosCartoes={[m("gratidao", "esperanca"), m("gratidao", "cuidado"), m("gratidao", "amor")]}
-          momentoObrigado={m("gratidao", "obrigado")}
-          momentoJuntos={m("gratidao", "juntos")}
+        "encerramento",
+        <Cena3Encerramento
+          duracao={dur("encerramento")}
+          dias={dias}
+          momentoFrase={m("encerramento", "frase")}
+          momentoRally={m("encerramento", "rally")}
         />,
       )}
-      {seq("encerramento", <Cena6Encerramento duracao={dur("encerramento")} momentoFrase={m("encerramento", "frase")}
-          momentoBola={m("encerramento", "basquete")}
-        />)}
       <Vinheta />
 
       <Audio src={staticFile("audio/trilha.wav")} volume={volumeTrilha} />

@@ -12,13 +12,7 @@ export const CORES = {
 export const FPS = roteiro.fps;
 export const DURACAO_FRAMES = Math.round(roteiro.duracao * FPS);
 
-export type IdCena =
-  | "chamado"
-  | "gincana"
-  | "contagem"
-  | "aviso"
-  | "gratidao"
-  | "encerramento";
+export type IdCena = "contagem" | "aviso" | "encerramento";
 
 export type Cena = {
   id: IdCena;

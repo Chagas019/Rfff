@@ -67,8 +67,8 @@ const Numero3D: React.FC<{ valor: string; tamanho: number }> = ({ valor, tamanho
   );
 };
 
-/** Cena 3 — contagem regressiva até o início das provas. */
-export const Cena3Contagem: React.FC<{
+/** Cena 1 — faltam 86 dias: contagem regressiva até o início das provas. */
+export const Cena1Contagem: React.FC<{
   duracao: number;
   dias: number;
   momentoData: number;
