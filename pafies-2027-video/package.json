@@ -1,0 +1,24 @@
+{
+  "name": "pafies-2027-video",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Vídeo promocional da 10ª Gincana Solidária PAFIES 2027 (Remotion)",
+  "scripts": {
+    "studio": "remotion studio src/index.ts",
+    "audio": "python3 tools/gerar-trilha.py",
+    "render:vertical": "remotion render src/index.ts PafiesVertical out/pafies-2027-vertical-9x16.mp4 --codec=h264 --crf=20",
+    "render:horizontal": "remotion render src/index.ts PafiesHorizontal out/pafies-2027-horizontal-16x9.mp4 --codec=h264 --crf=20",
+    "render": "npm run render:vertical && npm run render:horizontal",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@remotion/cli": "4.0.539",
+    "react": "19.1.0",
+    "react-dom": "19.1.0",
+    "remotion": "4.0.539"
+  },
+  "devDependencies": {
+    "@types/react": "19.1.8",
+    "typescript": "5.8.3"
+  }
+}

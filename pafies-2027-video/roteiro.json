@@ -1,0 +1,45 @@
+{
+  "fps": 30,
+  "duracao": 29.5,
+  "cenas": [
+    {
+      "id": "contagem",
+      "inicio": 0,
+      "fim": 6.0,
+      "narracao": null,
+      "falaInicio": null,
+      "falaDuracao": 0,
+      "marcas": {
+        "faltam": 1.0,
+        "impacto": 2.4
+      }
+    },
+    {
+      "id": "aviso",
+      "inicio": 6.0,
+      "fim": 24.8,
+      "narracao": "aviso.mp3",
+      "falaInicio": 6.4,
+      "falaDuracao": 16.98,
+      "marcas": {
+        "correcao": 1.8,
+        "numeroCorreto": 5.8,
+        "numero": 7.6,
+        "issoMesmo": 11.8,
+        "toneladas": 15.2
+      }
+    },
+    {
+      "id": "encerramento",
+      "inicio": 24.8,
+      "fim": 29.5,
+      "narracao": null,
+      "falaInicio": null,
+      "falaDuracao": 0,
+      "marcas": {
+        "raquetes": 0.3,
+        "frase": 1.4
+      }
+    }
+  ]
+}

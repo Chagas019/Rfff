@@ -1,0 +1,26 @@
+{
+  "fps": 30,
+  "frames": 750,
+  "cenas": {
+    "despertar": [0, 90],
+    "explosao": [90, 210],
+    "energia": [210, 360],
+    "expectativa": [360, 480],
+    "correcao": [480, 630],
+    "revelacao": [630, 750]
+  },
+  "marcas": {
+    "textoComecou": 36,
+    "impacto86": 100,
+    "palavra1": 214,
+    "palavra2": 262,
+    "palavra3": 310,
+    "reaparece86": 378,
+    "historia": 408,
+    "atencao": 486,
+    "quilos": 508,
+    "toneladas": 566,
+    "revelacao": 642,
+    "assinatura": 690
+  }
+}

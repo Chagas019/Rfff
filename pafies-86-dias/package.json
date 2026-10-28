@@ -1,0 +1,23 @@
+{
+  "name": "pafies-86-dias",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Trailer vertical da contagem regressiva de 86 dias da 10ª Gincana Solidária PAFIES 2027 (Remotion)",
+  "scripts": {
+    "studio": "remotion studio src/index.ts",
+    "audio": "python3 tools/gerar-trilha.py",
+    "render": "remotion render src/index.ts Pafies86Dias out/pafies-2027-86-dias.mp4 --codec=h264 --crf=18",
+    "preview": "remotion still src/index.ts Pafies86Dias out/previa.png --frame=110",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@remotion/cli": "4.0.539",
+    "react": "19.1.0",
+    "react-dom": "19.1.0",
+    "remotion": "4.0.539"
+  },
+  "devDependencies": {
+    "@types/react": "19.1.8",
+    "typescript": "5.8.3"
+  }
+}
