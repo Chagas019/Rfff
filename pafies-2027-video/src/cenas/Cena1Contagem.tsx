@@ -1,241 +1,89 @@
 import React from "react";
-import { AbsoluteFill, Img, interpolate, spring, staticFile, useCurrentFrame, useVideoConfig } from "remotion";
+import { AbsoluteFill, useCurrentFrame } from "remotion";
 import { CORES } from "../config";
-import { FONTE_TEXTO, FONTE_TITULO } from "../fontes";
-import { BolaQuicando } from "../componentes/Esportes";
+import { Camera, useLayout } from "../componentes/Visual";
 import {
-  Camera,
-  Centro,
-  Clarao,
-  clamp,
-  Fachos,
-  FaixasDeLuz,
-  Fundo,
-  gradienteTexto,
-  Particulas,
-  suave,
-  TextoSurge,
-  Titulo,
-  useLayout,
-  useOpacidadeCena,
-} from "../componentes/Visual";
+  Cartela,
+  FadePreto,
+  Flare,
+  FundoCinema,
+  Linha,
+  LuzVolumetrica,
+  Poeira,
+  Rotulo,
+  Surge,
+  TituloCinema,
+} from "../componentes/Cinema";
+import { BolaHeroi } from "../componentes/Esportes";
 
-/** Número gigante com profundidade: camadas deslocadas formam a extrusão 3D. */
-const Numero3D: React.FC<{ valor: string; tamanho: number }> = ({ valor, tamanho }) => {
-  const camadas = 14;
-  return (
-    <div style={{ position: "relative", fontFamily: FONTE_TITULO, fontSize: tamanho, lineHeight: 1 }}>
-      {new Array(camadas).fill(0).map((_, i) => {
-        const k = camadas - i;
-        return (
-          <div
-            key={i}
-            style={{
-              position: "absolute",
-              inset: 0,
-              transform: `translate(${k * tamanho * 0.004}px, ${k * tamanho * 0.006}px)`,
-              color: i < camadas / 2 ? "#0A2A6E" : CORES.azul,
-              opacity: 0.9,
-            }}
-          >
-            {valor}
-          </div>
-        );
-      })}
-      <div
-        style={{
-          position: "relative",
-          ...gradienteTexto(CORES.branco, CORES.azulLuz, 175),
-          filter: `drop-shadow(0 0 ${tamanho * 0.05}px ${CORES.azulLuz})`,
-        }}
-      >
-        {valor}
-      </div>
-      {/* reflexo laranja correndo pelo número */}
-      <div
-        style={{
-          position: "absolute",
-          inset: 0,
-          ...gradienteTexto(`${CORES.laranja}00`, `${CORES.dourado}`, 200),
-          mixBlendMode: "screen",
-          opacity: 0.55,
-        }}
-      >
-        {valor}
-      </div>
-    </div>
-  );
-};
+/** Passo do "relógio": o número cai um dia a cada meio segundo até travar. */
+const PASSO = 15;
+const DIAS_A_MAIS = 4;
 
-/** Cena 1 — faltam 86 dias: contagem regressiva até o início das provas. */
+/**
+ * Cena 1 — faltam 86 dias. A bola gira em câmera lenta, sai de foco,
+ * e o número "86" trava com um reflexo de lente; depois, a data das provas.
+ */
 export const Cena1Contagem: React.FC<{
   duracao: number;
   dias: number;
+  momentoFaltam: number;
   momentoData: number;
   momentoProvas: number;
-  momentoBola: number;
-}> = ({ duracao, dias, momentoData, momentoProvas, momentoBola }) => {
+}> = ({ duracao, dias, momentoFaltam, momentoData, momentoProvas }) => {
   const f = useCurrentFrame();
-  const { fps } = useVideoConfig();
   const { u, vertical, width, height } = useLayout();
-  const opacidade = useOpacidadeCena(duracao, 3, 10);
-
-  // os dias "rolam" de um valor maior até o número real
-  const rolagem = interpolate(f, [8, 40], [0, 1], { ...clamp, easing: suave });
-  const inicioRolagem = dias + 60;
-  const valor = Math.round(inicioRolagem - (inicioRolagem - dias) * rolagem);
-  const pulso = spring({ frame: f - 40, fps, config: { damping: 8, stiffness: 160 } });
-  const escalaNumero = 1 + (1 - pulso) * 0.12;
-
-  const fase1 = interpolate(f, [momentoData - 8, momentoData], [1, 0], clamp);
-  const fase2 = interpolate(f, [momentoData - 4, momentoData + 4], [0, 1], clamp);
+  const passos = Math.min(DIAS_A_MAIS, Math.max(0, Math.floor((f - momentoFaltam) / PASSO)));
+  const valor = dias + DIAS_A_MAIS - passos;
+  const trava = momentoFaltam + DIAS_A_MAIS * PASSO;
 
   return (
-    <AbsoluteFill style={{ opacity: opacidade }}>
-      <Fundo intensidade={1.1} laranja={0.5} />
-      <Fachos quantidade={vertical ? 3 : 5} abertura={1} />
-      <Camera de={1} ate={1.1} duracao={duracao} balanco={1.5}>
-        <Particulas quantidade={110} velocidade={2.2} semente="c3" />
-        <Img
-          src={staticFile("imagens/raio-laranja.png")}
-          style={{
-            position: "absolute",
-            right: vertical ? "-6%" : "6%",
-            top: vertical ? "4%" : "12%",
-            height: (vertical ? 520 : 600) * u,
-            transform: `rotate(${12 + Math.sin(f / 20) * 3}deg)`,
-            opacity: 0.85 * fase1,
-            filter: `drop-shadow(0 0 ${30 * u}px ${CORES.laranja})`,
-          }}
+    <AbsoluteFill>
+      <FundoCinema />
+      <LuzVolumetrica />
+      <Camera de={1} ate={1.08} duracao={duracao} balanco={0.3}>
+        <BolaHeroi
+          tamanho={(vertical ? 780 : 600) * u}
+          x={width / 2}
+          y={height * (vertical ? 0.55 : 0.52)}
+          focoDe={momentoFaltam - 6}
+          focoAte={momentoFaltam + 20}
         />
-        <BolaQuicando
-          em={momentoBola}
-          tamanho={(vertical ? 250 : 230) * u}
-          x={vertical ? width * 0.2 : width * 0.13}
-          chao={vertical ? height * 0.93 : height * 0.9}
-          altura={(vertical ? 260 : 330) * u}
-        />
+        <Poeira semente="c1" />
       </Camera>
-      <FaixasDeLuz inicio={0} duracao={20} />
-      <FaixasDeLuz inicio={momentoData - 6} duracao={20} quantidade={3} />
 
-      {/* Fase 1: dias restantes */}
-      <Centro style={{ opacity: fase1 }}>
-        <TextoSurge em={2} de="cima">
-          <Titulo tamanho={vertical ? 92 : 84} degradê={[CORES.dourado, CORES.laranja]} brilho={CORES.laranja}>
-            A contagem regressiva
-            <br />
-            começou!
-          </Titulo>
-        </TextoSurge>
-        <TextoSurge em={8}>
-          <div
-            style={{
-              marginTop: 24 * u,
-              fontFamily: FONTE_TEXTO,
-              fontWeight: 900,
-              fontSize: 56 * u,
-              letterSpacing: 16 * u,
-              color: CORES.dourado,
-              textShadow: `0 0 ${18 * u}px ${CORES.laranja}`,
-            }}
-          >
-            FALTAM
-          </div>
-        </TextoSurge>
-        <div style={{ transform: `scale(${escalaNumero})`, marginTop: 4 * u }}>
-          <TextoSurge em={12} de="zoom">
-            <Numero3D valor={String(valor)} tamanho={(vertical ? 420 : 380) * u} />
-          </TextoSurge>
-        </div>
-        <TextoSurge em={30}>
-          <div
-            style={{
-              fontFamily: FONTE_TEXTO,
-              fontWeight: 900,
-              fontSize: (vertical ? 50 : 46) * u,
-              letterSpacing: 8 * u,
-              color: CORES.branco,
-              textShadow: `0 0 ${20 * u}px ${CORES.azulLuz}`,
-              marginTop: 10 * u,
-            }}
-          >
-            {dias === 1 ? "DIA" : "DIAS"} PARA A GINCANA
-          </div>
-        </TextoSurge>
-      </Centro>
+      <Cartela em={momentoFaltam} ate={momentoData - 2}>
+        <Rotulo tamanho={vertical ? 40 : 34}>Faltam</Rotulo>
+        <TituloCinema tamanho={vertical ? 560 : 400} style={{ margin: `${-20 * u}px 0` }}>
+          {valor}
+        </TituloCinema>
+        <Surge em={trava + 4}>
+          <Rotulo tamanho={vertical ? 34 : 30}>{dias === 1 ? "dia" : "dias"} para a gincana</Rotulo>
+        </Surge>
+      </Cartela>
 
-      {/* Fase 2: data confirmada */}
-      <Centro style={{ opacity: fase2, padding: `0 ${50 * u}px` }}>
-        <TextoSurge em={momentoData} de="zoom">
-          <div style={{ textAlign: "center", fontFamily: FONTE_TITULO, lineHeight: 0.95 }}>
-            <div
-              style={{
-                fontSize: (vertical ? 400 : 340) * u,
-                color: "transparent",
-                WebkitTextStroke: `${5 * u}px ${CORES.branco}`,
-                filter: `drop-shadow(0 0 ${16 * u}px ${CORES.azulLuz}) drop-shadow(0 0 ${40 * u}px ${CORES.azul})`,
-              }}
-            >
-              22
-            </div>
-            <div
-              style={{
-                fontSize: (vertical ? 120 : 110) * u,
-                ...gradienteTexto(CORES.dourado, CORES.laranja),
-                filter: `drop-shadow(0 0 ${14 * u}px ${CORES.laranja}aa)`,
-              }}
-            >
-              DE JANEIRO
-            </div>
-            <div
-              style={{
-                fontSize: (vertical ? 110 : 100) * u,
-                color: "transparent",
-                WebkitTextStroke: `${3 * u}px ${CORES.azulLuz}`,
-                letterSpacing: 8 * u,
-              }}
-            >
-              DE 2027
-            </div>
-          </div>
-        </TextoSurge>
-        <TextoSurge em={momentoProvas}>
-          <div
-            style={{
-              marginTop: 36 * u,
-              padding: `${18 * u}px ${44 * u}px`,
-              borderRadius: 18 * u,
-              background: `linear-gradient(90deg, ${CORES.laranja}, ${CORES.dourado})`,
-              boxShadow: `0 0 ${50 * u}px ${CORES.laranja}aa`,
-              fontFamily: FONTE_TITULO,
-              fontSize: (vertical ? 92 : 80) * u,
-              color: CORES.marinho,
-              letterSpacing: 2 * u,
-              whiteSpace: "nowrap",
-            }}
-          >
-            COMEÇAM AS PROVAS!
-          </div>
-        </TextoSurge>
-        <TextoSurge em={momentoProvas + 24}>
-          <div
-            style={{
-              marginTop: 26 * u,
-              fontFamily: FONTE_TEXTO,
-              fontWeight: 800,
-              fontSize: 40 * u,
-              letterSpacing: 6 * u,
-              color: CORES.branco,
-              textShadow: `0 0 ${16 * u}px ${CORES.azulLuz}`,
-            }}
-          >
-            FALTAM <span style={{ color: CORES.dourado }}>{dias}</span> {dias === 1 ? "DIA" : "DIAS"} PARA A GINCANA
-          </div>
-        </TextoSurge>
-      </Centro>
-      <Clarao em={momentoData} />
-      <Clarao em={momentoProvas} cor={CORES.laranja} duracao={10} />
+      <Cartela em={momentoData} ate={duracao}>
+        <Rotulo tamanho={vertical ? 30 : 26} cor={CORES.dourado}>
+          Faltam {dias} {dias === 1 ? "dia" : "dias"}
+        </Rotulo>
+        <TituloCinema tamanho={vertical ? 150 : 140} style={{ marginTop: 24 * u }}>
+          22 de janeiro
+        </TituloCinema>
+        <Rotulo tamanho={vertical ? 46 : 40} style={{ marginTop: 10 * u }}>
+          de 2027
+        </Rotulo>
+        <Linha em={momentoProvas - 6} largura={vertical ? 640 : 760} style={{ margin: `${36 * u}px 0` }} />
+        <Surge em={momentoProvas}>
+          <Rotulo tamanho={vertical ? 40 : 36} cor={CORES.dourado}>
+            Começam as provas
+          </Rotulo>
+        </Surge>
+      </Cartela>
+
+      <Flare em={trava - 10} />
+      <Flare em={momentoData - 8} cor={CORES.dourado} forca={0.8} />
+      <FadePreto de={0} ate={20} entrada />
+      <FadePreto de={duracao - 10} ate={duracao} />
     </AbsoluteFill>
   );
 };

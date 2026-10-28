@@ -43,29 +43,3 @@ export const LogoPafies: React.FC<{ tamanho: number; em?: number }> = ({ tamanho
     </div>
   );
 };
-
-/** Elemento 3D laranja flutuando para dar profundidade. */
-export const No3D: React.FC<{
-  tamanho: number;
-  x: string;
-  y: string;
-  fase?: number;
-  desfoque?: number;
-  opacidade?: number;
-}> = ({ tamanho, x, y, fase = 0, desfoque = 0, opacidade = 1 }) => {
-  const f = useCurrentFrame();
-  return (
-    <Img
-      src={staticFile("imagens/no-laranja.png")}
-      style={{
-        position: "absolute",
-        left: x,
-        top: y,
-        width: tamanho,
-        opacity: opacidade,
-        transform: `translate(-50%, -50%) rotate(${f * 0.4 + fase}deg) translateY(${Math.sin(f / 25 + fase) * 14}px)`,
-        filter: `blur(${desfoque}px) drop-shadow(0 0 30px ${CORES.laranja}88)`,
-      }}
-    />
-  );
-};

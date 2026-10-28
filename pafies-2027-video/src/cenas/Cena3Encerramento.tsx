@@ -1,133 +1,81 @@
 import React from "react";
-import { AbsoluteFill, interpolate, useCurrentFrame } from "remotion";
+import { AbsoluteFill } from "remotion";
 import { CORES } from "../config";
-import { FONTE_TEXTO, FONTE_TITULO } from "../fontes";
+import { Camera, useLayout } from "../componentes/Visual";
 import {
-  Camera,
-  Centro,
-  Clarao,
-  clamp,
-  Fachos,
-  FaixasDeLuz,
-  Fundo,
-  gradienteTexto,
-  Particulas,
-  suave,
-  TextoSurge,
-  Titulo,
-  useLayout,
-} from "../componentes/Visual";
-import { LogoPafies, No3D } from "../componentes/Elementos";
-import { RallyPinguePongue } from "../componentes/Esportes";
+  FadePreto,
+  Flare,
+  FundoCinema,
+  Linha,
+  LuzVolumetrica,
+  Poeira,
+  Rotulo,
+  Surge,
+  TituloCinema,
+} from "../componentes/Cinema";
+import { LogoPafies } from "../componentes/Elementos";
+import { RaquetesCameraLenta } from "../componentes/Esportes";
 
-/** Cena 3 — explosão de luz e a assinatura final, retomando os dois recados. */
+/** Cena 3 — assinatura final: logo, nome do evento e os dois recados. */
 export const Cena3Encerramento: React.FC<{
   duracao: number;
   dias: number;
+  momentoRaquetes: number;
   momentoFrase: number;
-  momentoRally: number;
-}> = ({
-  duracao,
-  dias,
-  momentoFrase,
-  momentoRally,
-}) => {
-  const f = useCurrentFrame();
+}> = ({ duracao, dias, momentoRaquetes, momentoFrase }) => {
   const { u, vertical, width, height } = useLayout();
-  const explosao = interpolate(f, [0, 30], [0, 1], { ...clamp, easing: suave });
-  const saida = interpolate(f, [duracao - 24, duracao], [1, 0], clamp);
 
   return (
-    <AbsoluteFill style={{ opacity: saida }}>
-      <Fundo intensidade={1.3} laranja={0.7} />
-      <Fachos quantidade={vertical ? 4 : 6} abertura={1.1} />
-      {/* onda de luz em anel */}
-      <Centro>
-        <div
-          style={{
-            width: explosao * 2600 * u,
-            height: explosao * 2600 * u,
-            borderRadius: "50%",
-            border: `${(1 - explosao) * 120 * u + 4 * u}px solid ${CORES.laranja}`,
-            boxShadow: `0 0 ${120 * u}px ${CORES.azulLuz}, inset 0 0 ${120 * u}px ${CORES.dourado}`,
-            opacity: 1 - explosao,
-            mixBlendMode: "screen",
-          }}
+    <AbsoluteFill>
+      <FundoCinema quente={0.4} />
+      <LuzVolumetrica intensidade={0.9} />
+      <Camera de={1.06} ate={1} duracao={duracao} balanco={0.2}>
+        <Poeira semente="c3" />
+        <RaquetesCameraLenta
+          em={momentoRaquetes}
+          x={width / 2}
+          y={height * (vertical ? 0.83 : 0.87)}
+          largura={(vertical ? 760 : 620) * u}
         />
-      </Centro>
-      <Camera de={1.2} ate={1} duracao={45} balanco={0.6}>
-        <Particulas quantidade={140} velocidade={1.8} semente="c6" />
-        <No3D tamanho={260 * u} x={vertical ? "85%" : "86%"} y={vertical ? "12%" : "20%"} fase={40} />
-        <No3D tamanho={200 * u} x={vertical ? "15%" : "10%"} y={vertical ? "12%" : "80%"} fase={200} desfoque={2 * u} />
       </Camera>
-      <FaixasDeLuz inicio={0} duracao={24} quantidade={5} />
 
-      <Centro style={{ padding: `0 ${50 * u}px`, flexDirection: vertical ? "column" : "row", gap: vertical ? 0 : 70 * u }}>
-        <LogoPafies tamanho={(vertical ? 300 : 400) * u} em={4} />
-        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", marginTop: vertical ? 36 * u : 0 }}>
-          <TextoSurge em={10}>
-            <div
-              style={{
-                fontFamily: FONTE_TEXTO,
-                fontWeight: 900,
-                fontSize: (vertical ? 56 : 50) * u,
-                letterSpacing: 3 * u,
-                ...gradienteTexto(CORES.dourado, CORES.laranja),
-                filter: `drop-shadow(0 0 ${12 * u}px ${CORES.laranja}aa)`,
-              }}
-            >
-              10ª GINCANA SOLIDÁRIA
-            </div>
-          </TextoSurge>
-          <TextoSurge em={14} de="zoom">
-            <Titulo tamanho={vertical ? 200 : 170}>PAFIES 2027</Titulo>
-          </TextoSurge>
-          <TextoSurge em={22}>
-            <div
-              style={{
-                marginTop: 14 * u,
-                padding: `${12 * u}px ${30 * u}px`,
-                borderRadius: 999,
-                border: `${3 * u}px solid ${CORES.laranja}`,
-                fontFamily: FONTE_TEXTO,
-                fontWeight: 900,
-                fontSize: (vertical ? 48 : 44) * u,
-                letterSpacing: 4 * u,
-                color: CORES.branco,
-                background: `${CORES.marinho}aa`,
-                boxShadow: `0 0 ${30 * u}px ${CORES.laranja}88`,
-              }}
-            >
-              FALTAM <span style={{ color: CORES.dourado }}>{dias}</span> {dias === 1 ? "DIA" : "DIAS"}
-            </div>
-          </TextoSurge>
-          <TextoSurge em={momentoFrase}>
-            <div
-              style={{
-                marginTop: 26 * u,
-                fontFamily: FONTE_TITULO,
-                fontSize: (vertical ? 66 : 56) * u,
-                lineHeight: 1.1,
-                textAlign: "center",
-                color: CORES.branco,
-                textShadow: `0 0 ${18 * u}px ${CORES.azulLuz}`,
-                maxWidth: (vertical ? 960 : 900) * u,
-              }}
-            >
-              <span style={gradienteTexto(CORES.azulLuz, CORES.branco, 90)}>+50 MIL QUILOS</span>
-              <br />
-              DE ALIMENTOS ARRECADADOS!
-            </div>
-          </TextoSurge>
-        </div>
-      </Centro>
-      <RallyPinguePongue
-        em={momentoRally}
-        largura={(vertical ? 820 : 640) * u}
-        x={width / 2}
-        y={height * 0.9}
-      />
-      <Clarao em={0} cor={CORES.laranja} duracao={22} />
+      <AbsoluteFill
+        style={{
+          justifyContent: "center",
+          alignItems: "center",
+          flexDirection: "column",
+          paddingBottom: (vertical ? 260 : 170) * u,
+        }}
+      >
+        <Surge em={4}>
+          <LogoPafies tamanho={(vertical ? 250 : 170) * u} em={4} />
+        </Surge>
+        <Surge em={12} style={{ marginTop: 34 * u }}>
+          <Rotulo tamanho={vertical ? 28 : 24} cor={CORES.dourado}>
+            10ª Gincana Solidária
+          </Rotulo>
+        </Surge>
+        <Surge em={18}>
+          <TituloCinema tamanho={vertical ? 150 : 118} style={{ marginTop: 10 * u }}>
+            PAFIES 2027
+          </TituloCinema>
+        </Surge>
+        <Linha em={26} largura={vertical ? 560 : 640} style={{ margin: `${26 * u}px 0` }} />
+        <Surge em={momentoFrase}>
+          <Rotulo tamanho={vertical ? 32 : 28}>
+            Faltam {dias} {dias === 1 ? "dia" : "dias"}
+          </Rotulo>
+        </Surge>
+        <Surge em={momentoFrase + 10} style={{ marginTop: 14 * u, maxWidth: vertical ? 860 * u : 1400 * u }}>
+          <Rotulo tamanho={vertical ? 24 : 22} cor={CORES.dourado} style={{ lineHeight: 1.7 }}>
+            +50 mil quilos de alimentos arrecadados
+          </Rotulo>
+        </Surge>
+      </AbsoluteFill>
+
+      <Flare em={0} cor={CORES.dourado} />
+      <FadePreto de={0} ate={8} entrada />
+      <FadePreto de={duracao - 22} ate={duracao} />
     </AbsoluteFill>
   );
 };

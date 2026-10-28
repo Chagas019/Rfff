@@ -10,7 +10,7 @@
       "falaInicio": 2.6,
       "falaDuracao": 6.792,
       "marcas": {
-        "basquete": 0.0,
+        "faltam": 1.0,
         "data": 4.8,
         "provas": 7.4
       }
@@ -24,7 +24,9 @@
       "falaDuracao": 16.98,
       "marcas": {
         "correcao": 1.8,
+        "numeroCorreto": 5.8,
         "numero": 7.6,
+        "issoMesmo": 11.8,
         "toneladas": 15.2
       }
     },
@@ -36,8 +38,8 @@
       "falaInicio": null,
       "falaDuracao": 0,
       "marcas": {
-        "frase": 1.4,
-        "rally": 0.5
+        "raquetes": 0.3,
+        "frase": 1.4
       }
     }
   ]

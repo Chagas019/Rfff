@@ -1,7 +1,7 @@
 # PAFIES 2027 — vídeo promocional
 
 Vídeo curto da **10ª Gincana Solidária PAFIES 2027**, feito em **Remotion + React + TypeScript**,
-com dois recados apenas:
+em estilo **trailer de cinema**, com dois recados apenas:
 
 1. **Faltam 86 dias para a gincana** — as provas começam em **22 de janeiro de 2027**.
 2. **Correção da arrecadação**: já foram arrecadados **mais de 50 mil quilos** de alimentos
@@ -16,9 +16,9 @@ com dois recados apenas:
 
 | Tempo | Cena | Na tela | Locução |
 | --- | --- | --- | --- |
-| 0–10 s | `Cena1Contagem` | "A contagem regressiva começou! **Faltam 86 dias para a gincana**" → "22 de janeiro de 2027 — começam as provas!" | "E já pode marcar no calendário! No dia vinte e dois de janeiro de dois mil e vinte e sete, começam as provas da nossa gincana!" |
-| 10–28,8 s | `Cena2Aviso` | "Atenção! Aviso importante — correção sobre a arrecadação de alimentos" → "+50.000 KG de alimentos" → "Mais de 50 mil quilos arrecadados!" → "~~Não são 50 mil toneladas~~" | Correção completa ("…mais de cinquenta mil quilos, e não cinquenta mil toneladas!") |
-| 28,8–33,5 s | `Cena3Encerramento` | Logo, "PAFIES 2027", "Faltam 86 dias", "+50 mil quilos de alimentos arrecadados!" | — (só música) |
+| 0–10 s | `Cena1Contagem` | Bola de basquete em câmera lenta sai de foco; "Faltam **90 → 86** dias para a gincana" ao som de um relógio → "22 de janeiro de 2027 — começam as provas" | "E já pode marcar no calendário! No dia vinte e dois de janeiro de dois mil e vinte e sete, começam as provas da nossa gincana!" |
+| 10–28,8 s | `Cena2Aviso` | Cartelas: "Aviso importante — Atenção — correção sobre a arrecadação de alimentos" → "O número correto é" → "+50.000 quilos de alimentos — mais de 50 mil quilos arrecadados" → "e não ~~50 mil toneladas~~ — +50.000 kg de alimentos" | Correção completa ("…mais de cinquenta mil quilos, e não cinquenta mil toneladas!") |
+| 28,8–33,5 s | `Cena3Encerramento` | Logo, "PAFIES 2027", "Faltam 86 dias", "+50 mil quilos de alimentos arrecadados", raquetes de pingue-pongue em "bullet time" | — (só música) |
 
 ## Comandos
 
@@ -51,14 +51,17 @@ npx remotion render src/index.ts PafiesVertical out/pafies-2027-vertical-9x16.mp
 - `src/Pafies.tsx` — monta as cenas com `Sequence`, a trilha, os efeitos e a narração, e faz o
   **ducking**: a música cai de 0,55 para 0,14 enquanto a locutora fala.
 - `src/cenas/` — `Cena1Contagem`, `Cena2Aviso`, `Cena3Encerramento`.
-- `src/componentes/` — `Visual.tsx` (fundo, fachos de luz, partículas, câmera, títulos, layout 9:16/16:9),
-  `Elementos.tsx` (logotipo e elemento 3D) e `Esportes.tsx` (bola de basquete quicando e rally de pingue-pongue).
-- `tools/gerar-trilha.py` — trilha **original**, sintetizada no próprio projeto: hino eletrônico
-  esportivo a 120 BPM em mi menor, com acordes que "pulsam", arpejo, baixo, bumbo 4×4 e virada de caixa
-  antes do final. Fica mais contida durante o aviso. Os efeitos (impactos, brilhos, subidas, quiques e
-  raquetadas) seguem o mesmo tempo.
-- `tools/preparar-imagens.py` e `tools/preparar-esportes.py` — recortes do logotipo oficial e dos
-  elementos enviados (nó e raio laranja, bola de basquete metálica, raquetes).
+- `src/componentes/Cinema.tsx` — a linguagem de cinema: faixas pretas (2,39:1 no 16:9), granulação de
+  filme, correção de cor azul/laranja, reflexos anamórficos, luz volumétrica, poeira com profundidade de
+  campo, cartelas de trailer (entram do desfoque ao nítido) e tipografia Cinzel + Montserrat espaçada.
+- `src/componentes/Esportes.tsx` — bola de basquete em câmera lenta com *rack focus* e raquetes de
+  pingue-pongue suspensas com a bolinha no meio do lance.
+- `src/componentes/Visual.tsx` e `Elementos.tsx` — layout 9:16/16:9, câmera simulada e logotipo.
+- `tools/gerar-trilha.py` — trilha **original**, sintetizada no próprio projeto, no estilo trailer:
+  drone grave em ré menor, "braams" de metais e tambores em cada virada de cartela, relógio batendo durante
+  a contagem, cordas em trêmolo no aviso, subida de Shepard antes do final e reverberação de sala grande.
+- `tools/preparar-imagens.py` e `tools/preparar-esportes.py` — recortes do logotipo oficial, da bola de
+  basquete metálica e das raquetes.
 
 ### Paleta
 
@@ -94,5 +97,5 @@ data das provas. Para a locutora falar o número:
 ## Imagens
 
 - Logotipo: o oficial, recortado do perfil (não foi redesenhado).
-- Nó e raio laranja, bola de basquete e raquetes: imagens de referência enviadas, com o fundo removido.
+- Bola de basquete e raquetes: imagens enviadas, com o fundo removido.
   A bolinha de pingue-pongue é desenhada em vetor, porque a da imagem tinha resolução baixa demais.

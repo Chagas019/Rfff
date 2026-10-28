@@ -24,15 +24,10 @@ CENA = {c["id"]: c for c in ROTEIRO["cenas"]}
 N = int(DUR * SR)
 rng = np.random.default_rng(2027)
 
-BPM = 120  # o mesmo tempo de TEMPO_BATIDA em src/componentes/Esportes.tsx
+BPM = 120  # o "relógio" bate a cada meio segundo, como o número da contagem
 BEAT = 60 / BPM
-# Hino eletrônico esportivo em mi menor: i–VI–III–VII (Em–C–G–D), energia de torcida
-ACORDES = [
-    [40, 52, 55, 59, 64],  # Em
-    [36, 52, 55, 60, 64],  # C
-    [43, 55, 59, 62, 67],  # G
-    [38, 54, 57, 62, 66],  # D
-]
+# Trailer em ré menor: drone em Ré e "braams" sobre Ré, Si bemol e Fá
+BRAAMS = {"Dm": [26, 38, 45, 50], "Bb": [22, 34, 41, 46], "F": [29, 41, 48, 53]}
 
 
 def hz(m):
@@ -82,33 +77,6 @@ def curva(pontos):
 
 
 # ---------------------------------------------------------------- instrumentos
-def kick(dur=0.5):
-    n = int(dur * SR)
-    t = t_(n)
-    f = 48 * (1 + 3 * np.exp(-t * 35))
-    return np.sin(2 * np.pi * np.cumsum(f) / SR) * np.exp(-t * 7)
-
-
-def clap(dur=0.35):
-    n = int(dur * SR)
-    t = t_(n)
-    return bandpass(rng.standard_normal(n), 900, 4000) * np.exp(-t * 16)
-
-
-def hat(dur=0.08):
-    n = int(dur * SR)
-    return highpass(rng.standard_normal(n), 7000) * np.exp(-t_(n) * 60)
-
-
-def impacto(dur=3.5):
-    n = int(dur * SR)
-    t = t_(n)
-    f = 38 * (1 + 2.5 * np.exp(-t * 6))
-    sub = np.sin(2 * np.pi * np.cumsum(f) / SR) * np.exp(-t * 1.2)
-    ruido = lowpass(rng.standard_normal(n), 2500) * np.exp(-t * 5) * 0.6
-    return np.tanh((sub + ruido) * 1.5)
-
-
 def brilho(dur=1.6):
     n = int(dur * SR)
     t = t_(n)
@@ -118,37 +86,6 @@ def brilho(dur=1.6):
     return s * 0.25
 
 
-def subida(dur=2.5):
-    n = int(dur * SR)
-    t = t_(n)
-    ruido = rng.standard_normal(n)
-    out = np.zeros(n)
-    passos = 40
-    for i in range(passos):  # filtro que abre aos poucos
-        a, b = i * n // passos, (i + 1) * n // passos
-        f = 300 + 7000 * (i / passos) ** 2
-        out[a:b] = lowpass(ruido[a:b], f, 1)
-    return out * (t / dur) ** 2
-
-
-def quique(dur=0.35):
-    """Bola de basquete batendo no chão: grave curto com estalo de borracha."""
-    n = int(dur * SR)
-    t = t_(n)
-    f = 95 * (1 + 0.8 * np.exp(-t * 40))
-    corpo = np.sin(2 * np.pi * np.cumsum(f) / SR) * np.exp(-t * 18)
-    estalo = bandpass(rng.standard_normal(n), 600, 2500) * np.exp(-t * 90) * 0.5
-    return corpo + estalo
-
-
-def raquetada(dur=0.12):
-    """Bolinha de pingue-pongue na raquete: 'toc' curto e agudo."""
-    n = int(dur * SR)
-    t = t_(n)
-    tom_ = np.sin(2 * np.pi * 1850 * t) * 0.6 + np.sin(2 * np.pi * 3100 * t) * 0.3
-    return (tom_ + bandpass(rng.standard_normal(n), 2000, 6000) * 0.4) * np.exp(-t * 70)
-
-
 def whoosh(dur=0.8):
     n = int(dur * SR)
     t = t_(n)
@@ -156,144 +93,153 @@ def whoosh(dur=0.8):
     return s * np.sin(np.pi * t / dur) ** 2
 
 
-def supersaw(freqs, dur, corte=3500):
-    """Acorde largo de serras desafinadas, com 'pump' (sidechain) a cada tempo."""
+def braam(notas, dur=3.2):
+    """Metais graves de trailer: serras desafinadas com filtro que abre e fecha."""
     n = int(dur * SR)
     t = t_(n)
     s = np.zeros(n)
-    for f in freqs:
-        for d in (-0.12, -0.05, 0.0, 0.05, 0.12):
-            s += 2 * ((t * f * 2 ** (d / 12) + rng.uniform(0, 1)) % 1) - 1
-    s = lowpass(s / (len(freqs) * 5), corte)
-    bomba = 1 - 0.75 * np.exp(-((t % BEAT) / 0.09))
-    return s * bomba * env(n, 0.01, 0.05)
+    for m in notas:
+        for d in (-0.15, 0.0, 0.15):
+            s += 2 * ((t * hz(m) * 2 ** (d / 12) + rng.uniform(0, 1)) % 1) - 1
+    s /= len(notas) * 3
+    # filtro varrendo em blocos: abre rápido, fecha devagar
+    out = np.zeros(n)
+    blocos = 60
+    for b in range(blocos):
+        a_, z = b * n // blocos, (b + 1) * n // blocos
+        tb = a_ / SR
+        corte = 180 + 2200 * np.exp(-tb * 1.6) * min(1, tb / 0.08)
+        out[a_:z] = lowpass(s[a_:z], corte, 1)
+    return np.tanh(out * 2.2) * env(n, 0.03, dur * 0.6)
 
 
-def pluck(f, dur=0.22):
+def drone(notas, dur):
     n = int(dur * SR)
     t = t_(n)
-    s = (2 * ((t * f) % 1) - 1) * 0.6 + np.sign(np.sin(2 * np.pi * f * t)) * 0.4
-    return lowpass(s, 2600) * np.exp(-t * 16)
+    s = np.zeros(n)
+    for m in notas:
+        for d in (-0.06, 0.06):
+            s += np.sin(2 * np.pi * hz(m) * 2 ** (d / 12) * t + rng.uniform(0, 6))
+    lfo = 0.75 + 0.25 * np.sin(2 * np.pi * 0.11 * t)
+    return s / (len(notas) * 2) * lfo * env(n, 2.0, 2.0)
 
 
-def baixo(f, dur):
+def cordas(notas, dur):
+    """Cordas agudas em trêmolo (brilho tenso)."""
     n = int(dur * SR)
     t = t_(n)
-    s = np.sin(2 * np.pi * f * t) + 0.35 * np.sin(2 * np.pi * 2 * f * t)
-    return np.tanh(s * 1.4) * env(n, 0.005, 0.04)
+    s = np.zeros(n)
+    for m in notas:
+        for d in (-0.1, 0.0, 0.1):
+            s += 2 * ((t * hz(m) * 2 ** (d / 12) + rng.uniform(0, 1)) % 1) - 1
+    s = bandpass(s / (len(notas) * 3), 500, 4500)
+    tremolo = 0.6 + 0.4 * np.sin(2 * np.pi * 9 * t)
+    return s * tremolo * env(n, 1.2, 1.2)
 
 
-def caixa(dur=0.3):
+def tique(agudo=True, dur=0.06):
+    """Relógio: 'tic' agudo e 'tac' um pouco mais grave."""
     n = int(dur * SR)
     t = t_(n)
-    corpo = np.sin(2 * np.pi * 190 * t) * np.exp(-t * 25)
-    return corpo * 0.5 + bandpass(rng.standard_normal(n), 1500, 8000) * np.exp(-t * 18)
+    f = 3200 if agudo else 2400
+    return (np.sin(2 * np.pi * f * t) + bandpass(rng.standard_normal(n), 2000, 7000) * 0.6) * np.exp(-t * 120)
+
+
+def tambor(dur=1.8):
+    """Taiko/tambor de guerra: grave encorpado com ataque de pele."""
+    n = int(dur * SR)
+    t = t_(n)
+    f = 55 * (1 + 1.5 * np.exp(-t * 25))
+    corpo = np.sin(2 * np.pi * np.cumsum(f) / SR) * np.exp(-t * 3.2)
+    pele = lowpass(rng.standard_normal(n), 1200) * np.exp(-t * 35) * 0.6
+    return np.tanh((corpo + pele) * 1.8)
+
+
+def shepard(dur):
+    """Subida infinita (tom de Shepard) para criar tensão antes do final."""
+    n = int(dur * SR)
+    t = t_(n)
+    s = np.zeros(n)
+    for k in range(6):
+        oit = (k + t / dur) % 6
+        f = 55 * 2 ** oit
+        amp = np.sin(np.pi * oit / 6) ** 2
+        s += np.sin(2 * np.pi * np.cumsum(f) / SR) * amp
+    return s / 3 * (t / dur) ** 1.5
+
+
+def reverb(x, dur=2.6, mix=0.32):
+    """Reverberação de sala grande: convolução com ruído decaindo."""
+    from scipy.signal import fftconvolve
+
+    n = int(dur * SR)
+    ir = rng.standard_normal(n) * np.exp(-t_(n) * 6.5 / dur)
+    ir = lowpass(ir, 5000)
+    ir /= np.sqrt(np.sum(ir**2))
+    molhado = np.stack([fftconvolve(c, ir)[: len(c)] for c in x])
+    return x * (1 - mix) + molhado * mix * 0.9
 
 
 # ---------------------------------------------------------------- música
 musica = np.zeros((2, N))
 fim = DUR
+cont_ini = CENA["contagem"]["inicio"]
 aviso_ini, aviso_fim = CENA["aviso"]["inicio"], CENA["aviso"]["fim"]
 final = CENA["encerramento"]["inicio"]
-COMPASSO = BEAT * 4
+mc, ma = CENA["contagem"]["marcas"], CENA["aviso"]["marcas"]
 
+# drone contínuo em Ré, com cordas tensas por cima no aviso
+put(musica, 0, drone([26, 38, 45], fim), 0.55)
+put(musica, aviso_ini, cordas([74, 77, 81], aviso_fim - aviso_ini + 1.5), 0.12, pan=0.2)
+put(musica, final, cordas([74, 78, 81, 86], fim - final), 0.14, pan=-0.2)
 
-def acorde_em(t):
-    return ACORDES[int(t / COMPASSO) % 4]
+# braams + tambores nas viradas de cartela (as mesmas marcas do Remotion)
+golpes = [
+    (cont_ini + mc["faltam"] + 4 * 0.5, "Dm", 0.9),  # o "86" trava
+    (cont_ini + mc["data"], "Bb", 0.8),  # 22 de janeiro
+    (aviso_ini, "Dm", 0.9),  # atenção
+    (aviso_ini + ma["numero"], "F", 0.85),  # +50.000
+    (aviso_ini + ma["toneladas"], "Bb", 0.7),  # e não toneladas
+    (final, "Dm", 1.0),  # encerramento
+]
+for t, acorde, g in golpes:
+    put(musica, t, braam(BRAAMS[acorde]), 0.5 * g)
+    put(musica, t, tambor(), 0.55 * g)
 
+# tambores em ostinato discreto durante o aviso (pulso de coração)
+t = aviso_ini + 1.0
+while t < aviso_fim - 2.2:
+    put(musica, t, tambor(0.9), 0.16)
+    put(musica, t + 0.32, tambor(0.7), 0.09)
+    t += 1.0
 
-# acordes largos: cheios na contagem e no final, abafados durante o aviso
-t = 0.0
-while t < fim:
-    abafado = aviso_ini <= t < aviso_fim
-    put(musica, t, supersaw([hz(m) for m in acorde_em(t)[1:]], COMPASSO + 0.05, 900 if abafado else 3800),
-        0.22 if abafado else 0.3, pan=-0.1)
-    t += COMPASSO
+# tensão antes do final e golpe derradeiro
+put(musica, final - 2.2, shepard(2.2), 0.22)
+put(musica, fim - 2.6, tambor(2.4), 0.7)
+put(musica, fim - 2.6, braam(BRAAMS["Dm"], 2.6), 0.45)
 
-# arpejo em semicolcheias (o "motor" da trilha)
-t = 0.0
-k = 0
-while t < fim - 0.6:
-    acorde = acorde_em(t)
-    nota = acorde[1:][[0, 1, 2, 3, 2, 1, 3, 2][k % 8]] + 12
-    nivel = 0.07 if aviso_ini <= t < aviso_fim else 0.13
-    put(musica, t, pluck(hz(nota)), nivel, pan=0.35 if k % 2 else -0.35)
-    t += BEAT / 4
-    k += 1
-
-# baixo nos contratempos
-t = BEAT / 2
-while t < fim - 0.6:
-    put(musica, t, baixo(hz(acorde_em(t)[0]), BEAT / 2 - 0.02), 0.32)
-    t += BEAT
-
-# bateria: bumbo 4x4, palmas e caixa no 2 e 4, chimbal aberto no contratempo
-def bateria(ini, fim_, nivel, com_caixa=True):
-    t = ini
-    k = 0
-    while t < fim_:
-        put(musica, t, kick(), 0.7 * nivel)
-        if k % 2 == 1:
-            put(musica, t, clap(), 0.22 * nivel, pan=0.1)
-            if com_caixa:
-                put(musica, t, caixa(), 0.18 * nivel, pan=-0.1)
-        put(musica, t + BEAT / 2, hat(0.14), 0.09 * nivel, pan=0.4)
-        t += BEAT
-        k += 1
-
-
-bateria(BEAT * 4, aviso_ini, 1.0)
-bateria(aviso_ini + COMPASSO, aviso_fim - COMPASSO, 0.45, com_caixa=False)
-# virada de caixa acelerando antes do final
-t = aviso_fim - COMPASSO
-passo = BEAT / 2
-while t < final - 0.05:
-    put(musica, t, caixa(0.18), 0.12 + 0.2 * (t - (aviso_fim - COMPASSO)) / COMPASSO)
-    t += passo
-    passo = max(BEAT / 8, passo * 0.82)
-bateria(final, fim - 1.2, 1.1)
-
-# dinâmica geral
-musica *= curva([
-    (0, 0.0), (0.3, 0.7), (BEAT * 4, 1.0), (aviso_ini - 0.1, 1.0),
-    (aviso_ini + 0.3, 0.6), (aviso_fim - COMPASSO, 0.6), (final, 1.0),
-    (fim - 1.4, 1.0), (fim, 0.0),
-])
+musica = reverb(musica)
+musica *= curva([(0, 0.0), (0.6, 1.0), (fim - 1.0, 1.0), (fim, 0.0)])
 
 # ---------------------------------------------------------------- efeitos
 fx = np.zeros((2, N))
-put(fx, 0.0, impacto(3.0), 0.7)  # abertura direto na contagem
-put(fx, 0.05, brilho(), 0.3, pan=0.3)
-data = CENA["contagem"]["marcas"]["data"]
-provas = CENA["contagem"]["marcas"]["provas"]
-put(fx, data - 0.8, whoosh(0.8), 0.14, pan=-0.5)
-put(fx, data, impacto(2.2), 0.55)
-put(fx, provas, brilho(1.2), 0.3, pan=-0.2)
-put(fx, aviso_ini - 1.5, subida(1.5), 0.14)
-put(fx, aviso_ini, impacto(2.2), 0.65)  # corte para o aviso
-put(fx, aviso_ini + 0.05, brilho(1.2), 0.25)
-put(fx, aviso_ini + CENA["aviso"]["marcas"]["numero"], impacto(1.8), 0.4)
-put(fx, final - 1.8, subida(1.8), 0.16)
-put(fx, final, impacto(3.5), 0.85)  # explosão de luz do encerramento
-put(fx, final + 0.1, brilho(2.0), 0.4)
-put(fx, fim - 1.3, impacto(1.3), 0.7)  # golpe final
+# relógio durante a contagem; acelera junto com o número 90 → 86
+t = cont_ini  # alinhado com o passo de 15 frames do número (Cena1Contagem)
+k = 0
+while t < aviso_ini - 0.3:
+    put(fx, t, tique(k % 2 == 0), 0.22 if k % 2 == 0 else 0.16, pan=0.15)
+    t += BEAT
+    k += 1
+# reflexos de lente e entradas de cartela
+for t in (cont_ini + mc["faltam"] + 1.7, cont_ini + mc["data"] - 0.3, aviso_ini + ma["numero"] + 1.1,
+          aviso_ini + ma["toneladas"] + 0.9, final):
+    put(fx, t, brilho(1.6), 0.18, pan=-0.2)
+for t in (cont_ini + mc["data"] - 0.5, aviso_ini - 0.5, aviso_ini + ma["numeroCorreto"] - 0.4,
+          aviso_ini + ma["numero"] - 0.4, aviso_ini + ma["toneladas"] - 0.4):
+    put(fx, t, whoosh(0.8), 0.1, pan=0.4)
+put(fx, aviso_ini + ma["toneladas"] + 0.55, whoosh(0.5), 0.12, pan=-0.4)  # o risco
 
-
-# Esportes animados (src/componentes/Esportes.tsx): um toque por tempo da música.
-def batidas(cena, marca, ate):
-    t = CENA[cena]["inicio"] + CENA[cena]["marcas"][marca]
-    while t < ate:
-        yield t
-        t += BEAT
-
-
-for t in batidas("contagem", "basquete", CENA["contagem"]["fim"] - 0.2):
-    put(fx, t, quique(), 0.2, pan=-0.4)
-lado = -1
-for t in batidas("encerramento", "rally", fim - 0.5):
-    put(fx, t, raquetada(), 0.16, pan=0.5 * lado)  # alterna esquerda/direita
-    lado = -lado
-
+fx = reverb(fx, 1.8, 0.2)
 fx *= curva([(0, 1), (fim - 0.4, 1), (fim, 0)])
 
 

@@ -1,7 +1,7 @@
 import { continueRender, delayRender, staticFile } from "remotion";
 
-export const FONTE_TITULO = "Anton, Impact, sans-serif";
 export const FONTE_TEXTO = "Montserrat, Arial, sans-serif";
+export const FONTE_CINEMA = "Cinzel, 'Times New Roman', serif";
 
 let carregado = false;
 
@@ -11,7 +11,7 @@ export const carregarFontes = () => {
   carregado = true;
   const handle = delayRender("Carregando fontes");
   const fontes = [
-    new FontFace("Anton", `url(${staticFile("fontes/Anton.woff2")})`),
+    new FontFace("Cinzel", `url(${staticFile("fontes/Cinzel.woff2")})`, { weight: "400 900" }),
     new FontFace("Montserrat", `url(${staticFile("fontes/Montserrat.woff2")})`, {
       weight: "100 900",
     }),

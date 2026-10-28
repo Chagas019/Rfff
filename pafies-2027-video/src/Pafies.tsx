@@ -2,7 +2,7 @@ import React from "react";
 import { AbsoluteFill, Audio, interpolate, Sequence, staticFile } from "remotion";
 import { CENAS, cena, diasAte, FPS, hojeEmBrasilia, IdCena, INICIO_DAS_PROVAS, PropsVideo, s } from "./config";
 import { carregarFontes } from "./fontes";
-import { Vinheta } from "./componentes/Visual";
+import { Gradacao, Grao, Letterbox } from "./componentes/Cinema";
 import { Cena1Contagem } from "./cenas/Cena1Contagem";
 import { Cena2Aviso } from "./cenas/Cena2Aviso";
 import { Cena3Encerramento } from "./cenas/Cena3Encerramento";
@@ -61,9 +61,9 @@ export const Pafies: React.FC<PropsVideo> = ({ dataReferencia }) => {
         <Cena1Contagem
           duracao={dur("contagem")}
           dias={dias}
+          momentoFaltam={m("contagem", "faltam")}
           momentoData={m("contagem", "data")}
           momentoProvas={m("contagem", "provas")}
-          momentoBola={m("contagem", "basquete")}
         />,
       )}
       {seq(
@@ -71,7 +71,9 @@ export const Pafies: React.FC<PropsVideo> = ({ dataReferencia }) => {
         <Cena2Aviso
           duracao={dur("aviso")}
           momentoCorrecao={m("aviso", "correcao")}
+          momentoNumeroCorreto={m("aviso", "numeroCorreto")}
           momentoNumero={m("aviso", "numero")}
+          momentoIssoMesmo={m("aviso", "issoMesmo")}
           momentoToneladas={m("aviso", "toneladas")}
         />,
       )}
@@ -80,11 +82,13 @@ export const Pafies: React.FC<PropsVideo> = ({ dataReferencia }) => {
         <Cena3Encerramento
           duracao={dur("encerramento")}
           dias={dias}
+          momentoRaquetes={m("encerramento", "raquetes")}
           momentoFrase={m("encerramento", "frase")}
-          momentoRally={m("encerramento", "rally")}
         />,
       )}
-      <Vinheta />
+      <Gradacao />
+      <Grao />
+      <Letterbox />
 
       <Audio src={staticFile("audio/trilha.wav")} volume={volumeTrilha} />
       <Audio src={staticFile("audio/efeitos.wav")} volume={VOLUME_EFEITOS} />

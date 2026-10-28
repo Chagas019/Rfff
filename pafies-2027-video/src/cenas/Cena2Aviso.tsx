@@ -1,211 +1,127 @@
 import React from "react";
-import { AbsoluteFill, interpolate, spring, useCurrentFrame, useVideoConfig } from "remotion";
+import { AbsoluteFill, interpolate, useCurrentFrame } from "remotion";
 import { CORES } from "../config";
-import { FONTE_TEXTO, FONTE_TITULO } from "../fontes";
+import { FONTE_CINEMA } from "../fontes";
+import { Camera, clamp, suave, useLayout } from "../componentes/Visual";
 import {
-  Centro,
-  Clarao,
-  clamp,
-  Fachos,
-  Fundo,
-  gradienteTexto,
-  Particulas,
-  suave,
-  TextoSurge,
-  Titulo,
-  useLayout,
-  useOpacidadeCena,
-} from "../componentes/Visual";
+  Cartela,
+  FadePreto,
+  Flare,
+  FundoCinema,
+  Linha,
+  LuzVolumetrica,
+  Poeira,
+  Rotulo,
+  Surge,
+  TituloCinema,
+} from "../componentes/Cinema";
 
-const formatarMilhar = (n: number) => n.toLocaleString("pt-BR");
+const milhar = (n: number) => n.toLocaleString("pt-BR");
 
-/** Placa de alerta com triângulo pulsando. */
-const Alerta: React.FC<{ tamanho: number }> = ({ tamanho }) => {
-  const f = useCurrentFrame();
-  const pulso = 1 + Math.sin(f / 4) * 0.05;
-  return (
-    <svg width={tamanho} height={tamanho} viewBox="0 0 100 100" style={{ transform: `scale(${pulso})` }}>
-      <defs>
-        <linearGradient id="alerta" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" stopColor={CORES.dourado} />
-          <stop offset="1" stopColor={CORES.laranja} />
-        </linearGradient>
-      </defs>
-      <path d="M50 6 L96 90 H4 Z" fill="url(#alerta)" stroke={CORES.branco} strokeWidth="3" strokeLinejoin="round" />
-      <rect x="45" y="34" width="10" height="32" rx="4" fill={CORES.marinho} />
-      <circle cx="50" cy="77" r="6" fill={CORES.marinho} />
-    </svg>
-  );
-};
-
-/** Cena 2 — aviso oficial: são mais de 50 mil QUILOS (não toneladas). */
+/**
+ * Cena 2 — aviso oficial em cartelas de trailer: são mais de 50 mil QUILOS
+ * de alimentos, e não 50 mil toneladas.
+ */
 export const Cena2Aviso: React.FC<{
   duracao: number;
   momentoCorrecao: number;
+  momentoNumeroCorreto: number;
   momentoNumero: number;
+  momentoIssoMesmo: number;
   momentoToneladas: number;
-}> = ({ duracao, momentoCorrecao, momentoNumero, momentoToneladas }) => {
+}> = ({ duracao, momentoCorrecao, momentoNumeroCorreto, momentoNumero, momentoIssoMesmo, momentoToneladas }) => {
   const f = useCurrentFrame();
-  const { fps } = useVideoConfig();
   const { u, vertical } = useLayout();
-  const opacidade = useOpacidadeCena(duracao, 3, 10);
-
-  const contagem = interpolate(f, [momentoNumero, momentoNumero + 50], [0, 50000], {
-    ...clamp,
-    easing: suave,
-  });
-  const fixo = spring({ frame: f - (momentoNumero + 50), fps, config: { damping: 9, stiffness: 180 } });
-  const risco = interpolate(f, [momentoToneladas + 10, momentoToneladas + 22], [0, 1], clamp);
-
-  // o cabeçalho sobe e encolhe quando o número entra, mas continua visível
-  const sobe = interpolate(f, [momentoNumero - 10, momentoNumero + 10], [0, 1], { ...clamp, easing: suave });
+  const contagem = interpolate(f, [momentoNumero + 4, momentoNumero + 50], [0, 50000], { ...clamp, easing: suave });
+  const risco = interpolate(f, [momentoToneladas + 16, momentoToneladas + 34], [0, 1], { ...clamp, easing: suave });
+  const larguraTexto = vertical ? 860 * u : 1300 * u;
 
   return (
-    <AbsoluteFill style={{ opacity: opacidade, backgroundColor: CORES.marinho }}>
-      <Fundo intensidade={0.7} laranja={0.55} />
-      <Fachos quantidade={2} abertura={0.8} cor={CORES.azulLuz} />
-      <Particulas quantidade={50} velocidade={0.7} semente="c4" />
+    <AbsoluteFill>
+      <FundoCinema quente={0.8} />
+      <LuzVolumetrica cor={CORES.laranja} intensidade={0.6} lado={-1} />
+      <LuzVolumetrica intensidade={0.7} />
+      <Camera de={1.02} ate={1.1} duracao={duracao} balanco={0.25}>
+        <Poeira semente="c2" quantidade={55} />
+      </Camera>
 
-      <Centro style={{ padding: `0 ${60 * u}px`, justifyContent: "flex-start", paddingTop: vertical ? 230 * u : 70 * u }}>
-        <div
-          style={{
-            transform: `translateY(${-sobe * (vertical ? 40 : 10) * u}px) scale(${1 - sobe * (vertical ? 0.08 : 0.28)})`,
-            transformOrigin: "top center",
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-          }}
-        >
-          <TextoSurge em={4} de="zoom">
-            <Alerta tamanho={(vertical ? 200 : 150) * u} />
-          </TextoSurge>
-          <TextoSurge em={8}>
-            <Titulo tamanho={vertical ? 132 : 120} degradê={[CORES.dourado, CORES.laranja]} brilho={CORES.laranja}>
-              Atenção!
-            </Titulo>
-          </TextoSurge>
-          <TextoSurge em={16}>
-            <div
-              style={{
-                fontFamily: FONTE_TEXTO,
-                fontWeight: 900,
-                fontSize: 50 * u,
-                letterSpacing: 8 * u,
-                color: CORES.branco,
-                textAlign: "center",
-              }}
-            >
-              AVISO IMPORTANTE
-            </div>
-          </TextoSurge>
-          <TextoSurge em={momentoCorrecao}>
-            <div
-              style={{
-                marginTop: 34 * u,
-                padding: `${16 * u}px ${30 * u}px`,
-                borderLeft: `${8 * u}px solid ${CORES.laranja}`,
-                background: `linear-gradient(90deg, ${CORES.azul}cc, ${CORES.marinho}00)`,
-                fontFamily: FONTE_TEXTO,
-                fontWeight: 800,
-                fontSize: (vertical ? 44 : 40) * u,
-                lineHeight: 1.25,
-                color: CORES.branco,
-                textAlign: "left",
-                maxWidth: vertical ? 900 * u : 1300 * u,
-              }}
-            >
-              CORREÇÃO SOBRE A ARRECADAÇÃO DE ALIMENTOS
-            </div>
-          </TextoSurge>
+      <Cartela em={0} ate={momentoNumeroCorreto - 2}>
+        <Linha em={4} largura={vertical ? 420 : 520} />
+        <Rotulo tamanho={vertical ? 30 : 28} cor={CORES.dourado} style={{ margin: `${22 * u}px 0` }}>
+          Aviso importante
+        </Rotulo>
+        <TituloCinema tamanho={vertical ? 190 : 170} quente>
+          Atenção
+        </TituloCinema>
+        <Surge em={momentoCorrecao} style={{ maxWidth: larguraTexto, marginTop: 30 * u }}>
+          <Rotulo tamanho={vertical ? 28 : 26} style={{ lineHeight: 1.7 }}>
+            Correção sobre a arrecadação de alimentos
+          </Rotulo>
+        </Surge>
+      </Cartela>
+
+      <Cartela em={momentoNumeroCorreto} ate={momentoNumero - 2}>
+        <Rotulo tamanho={vertical ? 40 : 36}>O número correto é</Rotulo>
+      </Cartela>
+
+      <Cartela em={momentoNumero} ate={momentoToneladas - 2}>
+        <TituloCinema tamanho={vertical ? 230 : 210}>
+          <span style={{ fontSize: "0.55em", verticalAlign: "0.45em" }}>+</span>
+          {milhar(Math.round(contagem / 10) * 10)}
+        </TituloCinema>
+        <Surge em={momentoNumero + 10} style={{ marginTop: 10 * u }}>
+          <Rotulo tamanho={vertical ? 40 : 38}>quilos de alimentos</Rotulo>
+        </Surge>
+        <Linha em={momentoIssoMesmo - 6} largura={vertical ? 640 : 760} style={{ margin: `${40 * u}px 0` }} />
+        <Surge em={momentoIssoMesmo} style={{ maxWidth: larguraTexto }}>
+          <Rotulo tamanho={vertical ? 32 : 30} cor={CORES.dourado} style={{ lineHeight: 1.7 }}>
+            Mais de 50 mil quilos arrecadados
+          </Rotulo>
+        </Surge>
+      </Cartela>
+
+      <Cartela em={momentoToneladas} ate={duracao}>
+        <Rotulo tamanho={vertical ? 34 : 30}>e não</Rotulo>
+        <div style={{ position: "relative", marginTop: 16 * u }}>
+          <div
+            style={{
+              fontFamily: FONTE_CINEMA,
+              fontWeight: 600,
+              fontSize: (vertical ? 104 : 120) * u,
+              letterSpacing: 4 * u,
+              color: "#8C98AE",
+              textAlign: "center",
+              lineHeight: 1.1,
+            }}
+          >
+            50 mil toneladas
+          </div>
+          <div
+            style={{
+              position: "absolute",
+              left: "-3%",
+              top: "50%",
+              width: `${risco * 106}%`,
+              height: 6 * u,
+              background: CORES.laranja,
+              boxShadow: `0 0 ${14 * u}px ${CORES.laranja}`,
+              transform: "rotate(-4deg)",
+            }}
+          />
         </div>
-      </Centro>
+        <Linha em={momentoToneladas + 30} largura={vertical ? 640 : 760} cor={CORES.azulLuz} style={{ margin: `${44 * u}px 0` }} />
+        <Surge em={momentoToneladas + 36}>
+          <TituloCinema tamanho={vertical ? 92 : 84}>+50.000 kg</TituloCinema>
+          <Rotulo tamanho={vertical ? 28 : 26} style={{ marginTop: 12 * u }}>
+            de alimentos
+          </Rotulo>
+        </Surge>
+      </Cartela>
 
-      {f >= momentoNumero - 2 && (
-        <Centro style={{ justifyContent: "flex-end", paddingBottom: vertical ? 300 * u : 90 * u }}>
-          <TextoSurge em={momentoNumero} de="zoom">
-            <div
-              style={{
-                fontFamily: FONTE_TITULO,
-                fontSize: (vertical ? 250 : 230) * u,
-                lineHeight: 1,
-                transform: `scale(${1 + (1 - fixo) * 0.1})`,
-                ...gradienteTexto(CORES.branco, CORES.azulLuz),
-                filter: `drop-shadow(0 0 ${22 * u}px ${CORES.azulLuz}) drop-shadow(0 0 ${8 * u}px ${CORES.laranja}88)`,
-                whiteSpace: "nowrap",
-                textAlign: "center",
-              }}
-            >
-              +{formatarMilhar(Math.round(contagem / 10) * 10)}
-              <span style={{ fontSize: "0.5em", marginLeft: 16 * u, ...gradienteTexto(CORES.dourado, CORES.laranja) }}>
-                KG
-              </span>
-            </div>
-          </TextoSurge>
-          <TextoSurge em={momentoNumero + 8}>
-            <div
-              style={{
-                fontFamily: FONTE_TEXTO,
-                fontWeight: 900,
-                fontSize: 50 * u,
-                letterSpacing: 8 * u,
-                color: CORES.dourado,
-                textAlign: "center",
-              }}
-            >
-              DE ALIMENTOS
-            </div>
-          </TextoSurge>
-          <TextoSurge em={momentoNumero + 50}>
-            <div
-              style={{
-                marginTop: 28 * u,
-                padding: `${16 * u}px ${36 * u}px`,
-                borderRadius: 16 * u,
-                background: `linear-gradient(90deg, ${CORES.azul}, ${CORES.azulLuz})`,
-                boxShadow: `0 0 ${40 * u}px ${CORES.azulLuz}88`,
-                fontFamily: FONTE_TITULO,
-                fontSize: (vertical ? 60 : 58) * u,
-                color: CORES.branco,
-                textAlign: "center",
-              }}
-            >
-              MAIS DE 50 MIL QUILOS ARRECADADOS!
-            </div>
-          </TextoSurge>
-          <TextoSurge em={momentoToneladas}>
-            <div
-              style={{
-                position: "relative",
-                marginTop: 26 * u,
-                fontFamily: FONTE_TEXTO,
-                fontWeight: 800,
-                fontSize: 46 * u,
-                letterSpacing: 3 * u,
-                color: "#D6E4FF",
-                textAlign: "center",
-              }}
-            >
-              <span style={{ color: CORES.laranja, marginRight: 14 * u }}>✕</span>
-              <span style={{ position: "relative" }}>
-                NÃO SÃO 50 MIL TONELADAS
-                <span
-                  style={{
-                    position: "absolute",
-                    left: 0,
-                    top: "52%",
-                    height: 5 * u,
-                    width: `${risco * 100}%`,
-                    background: CORES.laranja,
-                    boxShadow: `0 0 ${10 * u}px ${CORES.laranja}`,
-                  }}
-                />
-              </span>
-            </div>
-          </TextoSurge>
-        </Centro>
-      )}
-      <Clarao em={1} cor={CORES.laranja} duracao={12} />
-      <Clarao em={momentoNumero} duracao={10} />
+      <Flare em={momentoNumero + 34} />
+      <Flare em={momentoToneladas + 26} cor={CORES.laranja} forca={0.7} />
+      <FadePreto de={0} ate={10} entrada />
+      <FadePreto de={duracao - 8} ate={duracao} />
     </AbsoluteFill>
   );
 };
