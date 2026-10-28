@@ -1,13 +1,11 @@
 import React from "react";
 import { AbsoluteFill, useCurrentFrame } from "remotion";
-import { CORES } from "../config";
 import { Camera, useLayout } from "../componentes/Visual";
 import {
   Cartela,
   FadePreto,
   Flare,
   FundoCinema,
-  Linha,
   LuzVolumetrica,
   Poeira,
   Rotulo,
@@ -22,15 +20,13 @@ const DIAS_A_MAIS = 4;
 
 /**
  * Cena 1 — faltam 86 dias. A bola gira em câmera lenta, sai de foco,
- * e o número "86" trava com um reflexo de lente; depois, a data das provas.
+ * e o número "86" trava com um reflexo de lente.
  */
 export const Cena1Contagem: React.FC<{
   duracao: number;
   dias: number;
   momentoFaltam: number;
-  momentoData: number;
-  momentoProvas: number;
-}> = ({ duracao, dias, momentoFaltam, momentoData, momentoProvas }) => {
+}> = ({ duracao, dias, momentoFaltam }) => {
   const f = useCurrentFrame();
   const { u, vertical, width, height } = useLayout();
   const passos = Math.min(DIAS_A_MAIS, Math.max(0, Math.floor((f - momentoFaltam) / PASSO)));
@@ -52,7 +48,7 @@ export const Cena1Contagem: React.FC<{
         <Poeira semente="c1" />
       </Camera>
 
-      <Cartela em={momentoFaltam} ate={momentoData - 2}>
+      <Cartela em={momentoFaltam} ate={duracao}>
         <Rotulo tamanho={vertical ? 40 : 34}>Faltam</Rotulo>
         <TituloCinema tamanho={vertical ? 560 : 400} style={{ margin: `${-20 * u}px 0` }}>
           {valor}
@@ -62,26 +58,7 @@ export const Cena1Contagem: React.FC<{
         </Surge>
       </Cartela>
 
-      <Cartela em={momentoData} ate={duracao}>
-        <Rotulo tamanho={vertical ? 30 : 26} cor={CORES.dourado}>
-          Faltam {dias} {dias === 1 ? "dia" : "dias"}
-        </Rotulo>
-        <TituloCinema tamanho={vertical ? 150 : 140} style={{ marginTop: 24 * u }}>
-          22 de janeiro
-        </TituloCinema>
-        <Rotulo tamanho={vertical ? 46 : 40} style={{ marginTop: 10 * u }}>
-          de 2027
-        </Rotulo>
-        <Linha em={momentoProvas - 6} largura={vertical ? 640 : 760} style={{ margin: `${36 * u}px 0` }} />
-        <Surge em={momentoProvas}>
-          <Rotulo tamanho={vertical ? 40 : 36} cor={CORES.dourado}>
-            Começam as provas
-          </Rotulo>
-        </Surge>
-      </Cartela>
-
       <Flare em={trava - 10} />
-      <Flare em={momentoData - 8} cor={CORES.dourado} forca={0.8} />
       <FadePreto de={0} ate={20} entrada />
       <FadePreto de={duracao - 10} ate={duracao} />
     </AbsoluteFill>

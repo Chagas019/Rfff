@@ -196,7 +196,6 @@ put(musica, final, cordas([74, 78, 81, 86], fim - final), 0.14, pan=-0.2)
 # braams + tambores nas viradas de cartela (as mesmas marcas do Remotion)
 golpes = [
     (cont_ini + mc["faltam"] + 4 * 0.5, "Dm", 0.9),  # o "86" trava
-    (cont_ini + mc["data"], "Bb", 0.8),  # 22 de janeiro
     (aviso_ini, "Dm", 0.9),  # atenção
     (aviso_ini + ma["numero"], "F", 0.85),  # +50.000
     (aviso_ini + ma["toneladas"], "Bb", 0.7),  # e não toneladas
@@ -231,10 +230,10 @@ while t < aviso_ini - 0.3:
     t += BEAT
     k += 1
 # reflexos de lente e entradas de cartela
-for t in (cont_ini + mc["faltam"] + 1.7, cont_ini + mc["data"] - 0.3, aviso_ini + ma["numero"] + 1.1,
+for t in (cont_ini + mc["faltam"] + 1.7, aviso_ini + ma["numero"] + 1.1,
           aviso_ini + ma["toneladas"] + 0.9, final):
     put(fx, t, brilho(1.6), 0.18, pan=-0.2)
-for t in (cont_ini + mc["data"] - 0.5, aviso_ini - 0.5, aviso_ini + ma["numeroCorreto"] - 0.4,
+for t in (aviso_ini - 0.5, aviso_ini + ma["numeroCorreto"] - 0.4,
           aviso_ini + ma["numero"] - 0.4, aviso_ini + ma["toneladas"] - 0.4):
     put(fx, t, whoosh(0.8), 0.1, pan=0.4)
 put(fx, aviso_ini + ma["toneladas"] + 0.55, whoosh(0.5), 0.12, pan=-0.4)  # o risco

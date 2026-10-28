@@ -1,26 +1,24 @@
 {
   "fps": 30,
-  "duracao": 33.5,
+  "duracao": 29.5,
   "cenas": [
     {
       "id": "contagem",
       "inicio": 0,
-      "fim": 10.0,
-      "narracao": "contagem.mp3",
-      "falaInicio": 2.6,
-      "falaDuracao": 6.792,
+      "fim": 6.0,
+      "narracao": null,
+      "falaInicio": null,
+      "falaDuracao": 0,
       "marcas": {
-        "faltam": 1.0,
-        "data": 4.8,
-        "provas": 7.4
+        "faltam": 1.0
       }
     },
     {
       "id": "aviso",
-      "inicio": 10.0,
-      "fim": 28.8,
+      "inicio": 6.0,
+      "fim": 24.8,
       "narracao": "aviso.mp3",
-      "falaInicio": 10.4,
+      "falaInicio": 6.4,
       "falaDuracao": 16.98,
       "marcas": {
         "correcao": 1.8,
@@ -32,8 +30,8 @@
     },
     {
       "id": "encerramento",
-      "inicio": 28.8,
-      "fim": 33.5,
+      "inicio": 24.8,
+      "fim": 29.5,
       "narracao": null,
       "falaInicio": null,
       "falaDuracao": 0,

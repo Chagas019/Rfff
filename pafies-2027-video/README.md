@@ -3,22 +3,22 @@
 Vídeo curto da **10ª Gincana Solidária PAFIES 2027**, feito em **Remotion + React + TypeScript**,
 em estilo **trailer de cinema**, com dois recados apenas:
 
-1. **Faltam 86 dias para a gincana** — as provas começam em **22 de janeiro de 2027**.
+1. **Faltam 86 dias para a gincana**.
 2. **Correção da arrecadação**: já foram arrecadados **mais de 50 mil quilos** de alimentos
    (e **não** 50 mil toneladas).
 
 | Versão | Arquivo | Formato |
 | --- | --- | --- |
-| Vertical (Reels, Stories, WhatsApp) | `out/pafies-2027-vertical-9x16.mp4` | 1080 × 1920, 30 fps, 33,5 s |
-| Horizontal | `out/pafies-2027-horizontal-16x9.mp4` | 1920 × 1080, 30 fps, 33,5 s |
+| Vertical (Reels, Stories, WhatsApp) | `out/pafies-2027-vertical-9x16.mp4` | 1080 × 1920, 30 fps, 29,5 s |
+| Horizontal | `out/pafies-2027-horizontal-16x9.mp4` | 1920 × 1080, 30 fps, 29,5 s |
 
 ## Roteiro
 
 | Tempo | Cena | Na tela | Locução |
 | --- | --- | --- | --- |
-| 0–10 s | `Cena1Contagem` | Bola de basquete em câmera lenta sai de foco; "Faltam **90 → 86** dias para a gincana" ao som de um relógio → "22 de janeiro de 2027 — começam as provas" | "E já pode marcar no calendário! No dia vinte e dois de janeiro de dois mil e vinte e sete, começam as provas da nossa gincana!" |
-| 10–28,8 s | `Cena2Aviso` | Cartelas: "Aviso importante — Atenção — correção sobre a arrecadação de alimentos" → "O número correto é" → "+50.000 quilos de alimentos — mais de 50 mil quilos arrecadados" → "e não ~~50 mil toneladas~~ — +50.000 kg de alimentos" | Correção completa ("…mais de cinquenta mil quilos, e não cinquenta mil toneladas!") |
-| 28,8–33,5 s | `Cena3Encerramento` | Logo, "PAFIES 2027", "Faltam 86 dias", "+50 mil quilos de alimentos arrecadados", raquetes de pingue-pongue em "bullet time" | — (só música) |
+| 0–6 s | `Cena1Contagem` | Bola de basquete em câmera lenta sai de foco; "Faltam **90 → 86** dias para a gincana" ao som de um relógio | — (relógio e trilha) |
+| 6–24,8 s | `Cena2Aviso` | Cartelas: "Aviso importante — Atenção — correção sobre a arrecadação de alimentos" → "O número correto é" → "+50.000 quilos de alimentos — mais de 50 mil quilos arrecadados" → "e não ~~50 mil toneladas~~ — +50.000 kg de alimentos" | Correção completa ("…mais de cinquenta mil quilos, e não cinquenta mil toneladas!") |
+| 24,8–29,5 s | `Cena3Encerramento` | Logo, "PAFIES 2027", "Faltam 86 dias", "+50 mil quilos de alimentos arrecadados", raquetes de pingue-pongue em "bullet time" | — (só música) |
 
 ## Comandos
 
@@ -78,20 +78,20 @@ silêncio das pontas cortado, andamento 1,12× (sem mudar o tom) e volume normal
 ffmpeg -i narracao-original/cenaN.mp3 -af "silenceremove=start_periods=1:start_threshold=-45dB:start_silence=0.05,areverse,silenceremove=start_periods=1:start_threshold=-45dB:start_silence=0.1,areverse,atempo=1.12,loudnorm=I=-16:TP=-1.5:LRA=7" -ar 44100 -b:a 192k saida.mp3
 ```
 
-- `contagem.mp3` — trecho inicial da fala da contagem (até "…começam as provas da nossa gincana!").
-- `aviso.mp3` — a correção completa.
+- `aviso.mp3` — a correção completa (é a única fala do vídeo).
 
 ### ⚠️ Limitação: a locutora não fala "86 dias"
 
 A ElevenLabs bloqueou a conta gratuita ("atividade incomum… faça upgrade") antes que desse para gerar
-uma fala nova. Por isso, o **"Faltam 86 dias"** aparece em destaque **na tela**, enquanto a voz anuncia a
-data das provas. Para a locutora falar o número:
+uma fala nova. Por isso, o **"Faltam 86 dias"** aparece só **na tela**, com o relógio e a trilha.
+Para a locutora falar o número:
 
-1. Gere, com a mesma voz, algo como *"Faltam oitenta e seis dias para a nossa gincana! No dia vinte e
-   dois de janeiro de dois mil e vinte e sete, começam as provas!"* e salve em `narracao-original/`.
+1. Gere, com a mesma voz, algo como *"Faltam oitenta e seis dias para a nossa gincana!"* e salve em
+   `narracao-original/`.
 2. Trate com o comando ffmpeg acima, gerando `public/narracao/contagem.mp3`.
-3. Em `roteiro.json`, atualize `falaDuracao` da cena `contagem` (use `ffprobe`) e, se for preciso,
-   as marcas `data` e `provas` e o `fim` da cena.
+3. Em `roteiro.json`, na cena `contagem`, preencha `"narracao": "contagem.mp3"`, `"falaInicio"`
+   (por exemplo, 3.2, logo depois de o número travar) e `"falaDuracao"` (use `ffprobe`); aumente o
+   `fim` da cena se a fala não couber.
 4. `npm run audio && npm run render`.
 
 ## Imagens

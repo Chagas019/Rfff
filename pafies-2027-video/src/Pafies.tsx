@@ -62,8 +62,6 @@ export const Pafies: React.FC<PropsVideo> = ({ dataReferencia }) => {
           duracao={dur("contagem")}
           dias={dias}
           momentoFaltam={m("contagem", "faltam")}
-          momentoData={m("contagem", "data")}
-          momentoProvas={m("contagem", "provas")}
         />,
       )}
       {seq(
