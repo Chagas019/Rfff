@@ -18,11 +18,16 @@ import {
   useLayout,
 } from "../componentes/Visual";
 import { LogoPafies, No3D } from "./Cena2Gincana";
+import { BolaQuicando } from "../componentes/Esportes";
 
 /** Cena 6 — explosão de luz azul e laranja e a assinatura final. */
-export const Cena6Encerramento: React.FC<{ duracao: number; momentoFrase: number }> = ({ duracao, momentoFrase }) => {
+export const Cena6Encerramento: React.FC<{ duracao: number; momentoFrase: number; momentoBola: number }> = ({
+  duracao,
+  momentoFrase,
+  momentoBola,
+}) => {
   const f = useCurrentFrame();
-  const { u, vertical } = useLayout();
+  const { u, vertical, width, height } = useLayout();
   const explosao = interpolate(f, [0, 30], [0, 1], { ...clamp, easing: suave });
   const saida = interpolate(f, [duracao - 24, duracao], [1, 0], clamp);
 
@@ -47,7 +52,13 @@ export const Cena6Encerramento: React.FC<{ duracao: number; momentoFrase: number
       <Camera de={1.2} ate={1} duracao={45} balanco={0.6}>
         <Particulas quantidade={140} velocidade={1.8} semente="c6" />
         <No3D tamanho={260 * u} x={vertical ? "85%" : "86%"} y={vertical ? "12%" : "20%"} fase={40} />
-        <No3D tamanho={200 * u} x={vertical ? "15%" : "12%"} y={vertical ? "90%" : "82%"} fase={200} desfoque={2 * u} />
+        <BolaQuicando
+          em={momentoBola}
+          tamanho={(vertical ? 200 : 190) * u}
+          x={vertical ? width * 0.17 : width * 0.09}
+          chao={vertical ? height * 0.97 : height * 0.94}
+          altura={(vertical ? 200 : 260) * u}
+        />
       </Camera>
       <FaixasDeLuz inicio={0} duracao={24} quantidade={5} />
 

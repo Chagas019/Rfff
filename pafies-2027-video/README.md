@@ -86,6 +86,12 @@ impactos e textos. Para completar:
 
 - Logotipo: o oficial, recortado do perfil (não foi redesenhado).
 - Elementos 3D laranja (nó e raio): imagens de referência enviadas, com o fundo removido.
+- Esportes animados (`src/componentes/Esportes.tsx`, recortes em `tools/preparar-esportes.py`):
+  - **Pingue-pongue** na cena 2: as duas raquetes enviadas trocam a bolinha (desenhada em vetor,
+    com rastro), girando no punho a cada batida. Fica acima do título no 9:16 e abaixo no 16:9.
+  - **Bola de basquete metálica** quicando na contagem regressiva (cena 3) e no encerramento (cena 6),
+    girando e achatando ao tocar o chão.
+  - Quiques e raquetadas caem no tempo da música (96 BPM) e têm som próprio na faixa de efeitos.
 - Cena de gratidão: **ilustrações vetoriais** (caixa de mantimentos, mãos com coração,
   voluntários). Não havia fotos reais do PAFIES, e nada foi feito para parecer registro do evento.
   Para usar fotos reais, troque os componentes em `src/cenas/Cena5Gratidao.tsx` por `<Img>`

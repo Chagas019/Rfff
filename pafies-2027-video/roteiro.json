@@ -21,7 +21,8 @@
       "narracao": "cena2.mp3",
       "falaInicio": 8.3,
       "marcas": {
-        "titulo": 2.5
+        "titulo": 2.5,
+        "rally": 2.9
       },
       "falaDuracao": 10.344
     },
@@ -33,7 +34,8 @@
       "falaInicio": 19.1,
       "marcas": {
         "data": 2.7,
-        "provas": 5.0
+        "provas": 5.0,
+        "basquete": 0.2
       },
       "falaDuracao": 11.233
     },
@@ -72,7 +74,8 @@
       "narracao": null,
       "falaInicio": null,
       "marcas": {
-        "frase": 2.0
+        "frase": 2.0,
+        "basquete": 0.4
       },
       "falaDuracao": 0
     }

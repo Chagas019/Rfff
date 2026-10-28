@@ -162,6 +162,24 @@ def subida(dur=2.5):
     return out * (t / dur) ** 2
 
 
+def quique(dur=0.35):
+    """Bola de basquete batendo no chão: grave curto com estalo de borracha."""
+    n = int(dur * SR)
+    t = t_(n)
+    f = 95 * (1 + 0.8 * np.exp(-t * 40))
+    corpo = np.sin(2 * np.pi * np.cumsum(f) / SR) * np.exp(-t * 18)
+    estalo = bandpass(rng.standard_normal(n), 600, 2500) * np.exp(-t * 90) * 0.5
+    return corpo + estalo
+
+
+def raquetada(dur=0.12):
+    """Bolinha de pingue-pongue na raquete: 'toc' curto e agudo."""
+    n = int(dur * SR)
+    t = t_(n)
+    tom_ = np.sin(2 * np.pi * 1850 * t) * 0.6 + np.sin(2 * np.pi * 3100 * t) * 0.3
+    return (tom_ + bandpass(rng.standard_normal(n), 2000, 6000) * 0.4) * np.exp(-t * 70)
+
+
 def whoosh(dur=0.8):
     n = int(dur * SR)
     t = t_(n)
@@ -263,6 +281,24 @@ put(fx, CENA["encerramento"]["inicio"] - 1.8, subida(1.8), 0.16)
 put(fx, CENA["encerramento"]["inicio"], impacto(4.5), 0.85)  # explosão de luz
 put(fx, CENA["encerramento"]["inicio"] + 0.1, brilho(2.0), 0.4)
 put(fx, fim - 2.3, impacto(2.3), 0.75)  # golpe final
+
+# Esportes animados (src/componentes/Esportes.tsx): um toque por tempo da música.
+def batidas(cena, marca, ate):
+    t = CENA[cena]["inicio"] + CENA[cena]["marcas"][marca]
+    while t < ate:
+        yield t
+        t += BEAT
+
+
+lado = -1
+for t in batidas("gincana", "rally", CENA["gincana"]["fim"] - 0.2):
+    put(fx, t, raquetada(), 0.16, pan=0.5 * lado)  # alterna esquerda/direita
+    lado = -lado
+for t in batidas("contagem", "basquete", CENA["contagem"]["fim"] - 0.2):
+    put(fx, t, quique(), 0.22, pan=-0.4)
+for t in batidas("encerramento", "basquete", fim - 0.5):
+    put(fx, t, quique(), 0.16, pan=-0.5)
+
 fx *= curva([(0, 1), (fim - 0.4, 1), (fim, 0)])
 
 

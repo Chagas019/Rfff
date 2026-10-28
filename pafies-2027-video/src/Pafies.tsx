@@ -61,7 +61,7 @@ export const Pafies: React.FC<PropsVideo> = ({ dataReferencia }) => {
         "chamado",
         <Cena1Chamado duracao={dur("chamado")} momentoRotulo={m("chamado", "rotulo")} momentoTitulo={m("chamado", "titulo")} />,
       )}
-      {seq("gincana", <Cena2Gincana duracao={dur("gincana")} corte={m("gincana", "titulo")} />)}
+      {seq("gincana", <Cena2Gincana duracao={dur("gincana")} corte={m("gincana", "titulo")} momentoRally={m("gincana", "rally")} />)}
       {seq(
         "contagem",
         <Cena3Contagem
@@ -69,6 +69,7 @@ export const Pafies: React.FC<PropsVideo> = ({ dataReferencia }) => {
           dias={dias}
           momentoData={m("contagem", "data")}
           momentoProvas={m("contagem", "provas")}
+          momentoBola={m("contagem", "basquete")}
         />,
       )}
       {seq(
@@ -89,7 +90,9 @@ export const Pafies: React.FC<PropsVideo> = ({ dataReferencia }) => {
           momentoJuntos={m("gratidao", "juntos")}
         />,
       )}
-      {seq("encerramento", <Cena6Encerramento duracao={dur("encerramento")} momentoFrase={m("encerramento", "frase")} />)}
+      {seq("encerramento", <Cena6Encerramento duracao={dur("encerramento")} momentoFrase={m("encerramento", "frase")}
+          momentoBola={m("encerramento", "basquete")}
+        />)}
       <Vinheta />
 
       <Audio src={staticFile("audio/trilha.wav")} volume={volumeTrilha} />

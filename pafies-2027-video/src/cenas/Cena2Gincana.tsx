@@ -2,6 +2,7 @@ import React from "react";
 import { AbsoluteFill, Img, interpolate, spring, staticFile, useCurrentFrame, useVideoConfig } from "remotion";
 import { CORES } from "../config";
 import { FONTE_TEXTO } from "../fontes";
+import { RallyPinguePongue } from "../componentes/Esportes";
 import {
   Camera,
   Centro,
@@ -60,13 +61,14 @@ export const LogoPafies: React.FC<{ tamanho: number; em?: number }> = ({ tamanho
 };
 
 /** Elemento 3D laranja flutuando para dar profundidade. */
-export const No3D: React.FC<{ tamanho: number; x: string; y: string; fase?: number; desfoque?: number }> = ({
-  tamanho,
-  x,
-  y,
-  fase = 0,
-  desfoque = 0,
-}) => {
+export const No3D: React.FC<{
+  tamanho: number;
+  x: string;
+  y: string;
+  fase?: number;
+  desfoque?: number;
+  opacidade?: number;
+}> = ({ tamanho, x, y, fase = 0, desfoque = 0, opacidade = 1 }) => {
   const f = useCurrentFrame();
   return (
     <Img
@@ -76,6 +78,7 @@ export const No3D: React.FC<{ tamanho: number; x: string; y: string; fase?: numb
         left: x,
         top: y,
         width: tamanho,
+        opacity: opacidade,
         transform: `translate(-50%, -50%) rotate(${f * 0.4 + fase}deg) translateY(${Math.sin(f / 25 + fase) * 14}px)`,
         filter: `blur(${desfoque}px) drop-shadow(0 0 30px ${CORES.laranja}88)`,
       }}
@@ -84,9 +87,13 @@ export const No3D: React.FC<{ tamanho: number; x: string; y: string; fase?: numb
 };
 
 /** Cena 2 — o nome PAFIES surge com faixas de luz azul e laranja. */
-export const Cena2Gincana: React.FC<{ duracao: number; corte: number }> = ({ duracao, corte }) => {
+export const Cena2Gincana: React.FC<{ duracao: number; corte: number; momentoRally: number }> = ({
+  duracao,
+  corte,
+  momentoRally,
+}) => {
   const f = useCurrentFrame();
-  const { u, vertical } = useLayout();
+  const { u, vertical, width, height } = useLayout();
   const opacidade = useOpacidadeCena(duracao, 4, 8);
 
   const parte1 = interpolate(f, [corte - 8, corte], [1, 0], clamp);
@@ -97,7 +104,12 @@ export const Cena2Gincana: React.FC<{ duracao: number; corte: number }> = ({ dur
       <Fundo intensidade={1} laranja={0.45} />
       <Fachos quantidade={3} />
       <Camera de={1.05} ate={1.15} duracao={duracao}>
-        <No3D tamanho={vertical ? 300 * u : 340 * u} x={vertical ? "84%" : "88%"} y={vertical ? "16%" : "22%"} />
+        <No3D
+          tamanho={vertical ? 300 * u : 340 * u}
+          x={vertical ? "84%" : "88%"}
+          y={vertical ? "16%" : "22%"}
+          opacidade={vertical ? parte1 : 1}
+        />
         <No3D
           tamanho={vertical ? 220 * u : 240 * u}
           x={vertical ? "14%" : "10%"}
@@ -128,6 +140,14 @@ export const Cena2Gincana: React.FC<{ duracao: number; corte: number }> = ({ dur
           </div>
         </TextoSurge>
       </Centro>
+
+      {/* rally de pingue-pongue: acima do título no 9:16, abaixo no 16:9 */}
+      <RallyPinguePongue
+        em={momentoRally}
+        largura={820 * u}
+        x={width / 2}
+        y={vertical ? height * 0.215 : height * 0.9}
+      />
 
       {/* Parte 2: título completo */}
       <Centro style={{ opacity: parte2, padding: `0 ${60 * u}px` }}>

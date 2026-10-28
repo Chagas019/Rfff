@@ -2,6 +2,7 @@ import React from "react";
 import { AbsoluteFill, Img, interpolate, spring, staticFile, useCurrentFrame, useVideoConfig } from "remotion";
 import { CORES } from "../config";
 import { FONTE_TEXTO, FONTE_TITULO } from "../fontes";
+import { BolaQuicando } from "../componentes/Esportes";
 import {
   Camera,
   Centro,
@@ -72,10 +73,11 @@ export const Cena3Contagem: React.FC<{
   dias: number;
   momentoData: number;
   momentoProvas: number;
-}> = ({ duracao, dias, momentoData, momentoProvas }) => {
+  momentoBola: number;
+}> = ({ duracao, dias, momentoData, momentoProvas, momentoBola }) => {
   const f = useCurrentFrame();
   const { fps } = useVideoConfig();
-  const { u, vertical } = useLayout();
+  const { u, vertical, width, height } = useLayout();
   const opacidade = useOpacidadeCena(duracao, 3, 10);
 
   // os dias "rolam" de um valor maior até o número real
@@ -106,17 +108,12 @@ export const Cena3Contagem: React.FC<{
             filter: `drop-shadow(0 0 ${30 * u}px ${CORES.laranja})`,
           }}
         />
-        <Img
-          src={staticFile("imagens/raio-laranja.png")}
-          style={{
-            position: "absolute",
-            left: vertical ? "-8%" : "6%",
-            bottom: vertical ? "4%" : "8%",
-            height: (vertical ? 380 : 440) * u,
-            transform: `scaleX(-1) rotate(${10 + Math.cos(f / 22) * 3}deg)`,
-            opacity: 0.6,
-            filter: `blur(${2 * u}px) drop-shadow(0 0 ${20 * u}px ${CORES.laranja})`,
-          }}
+        <BolaQuicando
+          em={momentoBola}
+          tamanho={(vertical ? 250 : 230) * u}
+          x={vertical ? width * 0.2 : width * 0.13}
+          chao={vertical ? height * 0.93 : height * 0.9}
+          altura={(vertical ? 260 : 330) * u}
         />
       </Camera>
       <FaixasDeLuz inicio={0} duracao={20} />
