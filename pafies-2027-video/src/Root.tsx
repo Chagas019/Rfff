@@ -1,9 +1,10 @@
 import React from "react";
 import { CalculateMetadataFunction, Composition } from "remotion";
-import { DURACAO_FRAMES, FPS, hojeEmBrasilia, PropsVideo } from "./config";
+import { DATA_REFERENCIA_PADRAO, DURACAO_FRAMES, FPS, hojeEmBrasilia, PropsVideo } from "./config";
 import { Pafies } from "./Pafies";
 
-// Sem data informada, a contagem usa o dia em que o vídeo é renderizado.
+// Data de referência do roteiro: 28/10/2026 → faltam 86 dias.
+// Com dataReferencia vazia (--props='{"dataReferencia":""}'), a contagem usa o dia do render.
 const fixarData: CalculateMetadataFunction<PropsVideo> = ({ props }) => ({
   props: { ...props, dataReferencia: props.dataReferencia || hojeEmBrasilia() },
 });
@@ -17,7 +18,7 @@ export const RemotionRoot: React.FC = () => (
       height={1920}
       fps={FPS}
       durationInFrames={DURACAO_FRAMES}
-      defaultProps={{ dataReferencia: "" }}
+      defaultProps={{ dataReferencia: DATA_REFERENCIA_PADRAO }}
       calculateMetadata={fixarData}
     />
     <Composition
@@ -27,7 +28,7 @@ export const RemotionRoot: React.FC = () => (
       height={1080}
       fps={FPS}
       durationInFrames={DURACAO_FRAMES}
-      defaultProps={{ dataReferencia: "" }}
+      defaultProps={{ dataReferencia: DATA_REFERENCIA_PADRAO }}
       calculateMetadata={fixarData}
     />
   </>

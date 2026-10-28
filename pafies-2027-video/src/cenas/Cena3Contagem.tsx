@@ -131,7 +131,22 @@ export const Cena3Contagem: React.FC<{
             começou!
           </Titulo>
         </TextoSurge>
-        <div style={{ transform: `scale(${escalaNumero})`, marginTop: 20 * u }}>
+        <TextoSurge em={8}>
+          <div
+            style={{
+              marginTop: 24 * u,
+              fontFamily: FONTE_TEXTO,
+              fontWeight: 900,
+              fontSize: 56 * u,
+              letterSpacing: 16 * u,
+              color: CORES.dourado,
+              textShadow: `0 0 ${18 * u}px ${CORES.laranja}`,
+            }}
+          >
+            FALTAM
+          </div>
+        </TextoSurge>
+        <div style={{ transform: `scale(${escalaNumero})`, marginTop: 4 * u }}>
           <TextoSurge em={12} de="zoom">
             <Numero3D valor={String(valor)} tamanho={(vertical ? 420 : 380) * u} />
           </TextoSurge>
@@ -141,14 +156,14 @@ export const Cena3Contagem: React.FC<{
             style={{
               fontFamily: FONTE_TEXTO,
               fontWeight: 900,
-              fontSize: 52 * u,
-              letterSpacing: 14 * u,
+              fontSize: (vertical ? 50 : 46) * u,
+              letterSpacing: 8 * u,
               color: CORES.branco,
               textShadow: `0 0 ${20 * u}px ${CORES.azulLuz}`,
               marginTop: 10 * u,
             }}
           >
-            {dias === 1 ? "DIA" : "DIAS"}
+            {dias === 1 ? "DIA" : "DIAS"} PARA A GINCANA
           </div>
         </TextoSurge>
       </Centro>
@@ -218,7 +233,7 @@ export const Cena3Contagem: React.FC<{
               textShadow: `0 0 ${16 * u}px ${CORES.azulLuz}`,
             }}
           >
-            FALTAM <span style={{ color: CORES.dourado }}>{dias}</span> {dias === 1 ? "DIA" : "DIAS"}
+            FALTAM <span style={{ color: CORES.dourado }}>{dias}</span> {dias === 1 ? "DIA" : "DIAS"} PARA A GINCANA
           </div>
         </TextoSurge>
       </Centro>

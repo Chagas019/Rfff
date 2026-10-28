@@ -27,12 +27,13 @@ Se o Remotion não conseguir baixar o próprio Chrome, aponte um já instalado:
 
 ### Contagem regressiva
 
-Os dias são calculados entre a data de referência e 22/01/2027. Sem data informada, o vídeo
-usa **o dia da renderização** (fuso de Brasília). Para fixar a data do roteiro (28/10/2026 → **86 dias**):
+O vídeo mostra **"FALTAM 86 DIAS PARA A GINCANA"**: os dias são calculados entre a data de
+referência (padrão **28/10/2026**, em `src/config.ts`) e 22/01/2027. Para recalcular a partir
+de outra data, ou do dia do render (valor vazio):
 
 ```bash
 npx remotion render src/index.ts PafiesVertical out/pafies-2027-vertical-9x16.mp4 \
-  --props='{"dataReferencia":"2026-10-28"}'
+  --props='{"dataReferencia":"2026-11-15"}'   # ou '{"dataReferencia":""}' para usar hoje
 ```
 
 ## Como está organizado
