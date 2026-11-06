@@ -229,7 +229,7 @@ export function CinematicHero() {
 
             {/* número oficial flutuando */}
             {numberLogo && (
-              <motion.div className="pointer-events-none absolute right-[5%] top-[17%] w-[20vw] max-w-[220px] sm:left-[9%] sm:right-auto sm:top-[23%] sm:w-[11vw]" style={{ x: near.x, y: near.y }}>
+              <motion.div className="pointer-events-none absolute right-[5%] top-[17%] w-[20vw] max-w-[220px] sm:left-[9%] sm:right-auto sm:top-[max(23%,190px)] sm:w-[min(11vw,170px)]" style={{ x: near.x, y: near.y }}>
                 <motion.img src={numberLogo} alt="" className="hero-float w-full drop-shadow-[0_18px_24px_rgba(0,0,0,0.45)]" aria-hidden
                   initial={{ opacity: 0, y: y(60), rotate: -14 }} animate={{ opacity: 0.95, y: 0, rotate: -8, transition: { duration: 1, ease: EASE, delay: 0.35 } }} exit={{ opacity: 0, y: y(-80), transition: { duration: 0.4 } }} />
               </motion.div>
