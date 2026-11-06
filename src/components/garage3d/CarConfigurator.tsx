@@ -48,7 +48,13 @@ export function CarConfigurator({ initialTeam = 'ferrari' }: { initialTeam?: str
       if (cancelled || !holder.current) return;
       if (!studio.current) {
         const accent = getComputedStyle(document.documentElement).getPropertyValue('--ev-accent').trim() || '#EDB40B';
-        studio.current = createCarStudio(holder.current, { reducedMotion: reduce, accent, onProgress: setProgress });
+        // fundo do estúdio = cor de base do site (tingida pelo país do evento)
+        const probe = document.createElement('span');
+        probe.style.color = 'var(--c-950)';
+        document.body.appendChild(probe);
+        const background = getComputedStyle(probe).color;
+        probe.remove();
+        studio.current = createCarStudio(holder.current, { reducedMotion: reduce, accent, background, onProgress: setProgress });
       }
       try {
         await studio.current.load(file);
@@ -68,7 +74,7 @@ export function CarConfigurator({ initialTeam = 'ferrari' }: { initialTeam?: str
 
   return (
     <div className="grid gap-5 lg:grid-cols-[1fr_300px]">
-      <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-[#0b0f1d]" style={{ boxShadow: `inset 0 0 120px -40px ${team.color}` }}>
+      <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-carbon-950" style={{ boxShadow: `inset 0 0 120px -40px ${team.color}` }}>
         <div className="event-stripe absolute inset-x-0 top-0 z-10 h-0.5" aria-hidden />
         <div ref={holder} className="relative aspect-[16/10] w-full sm:aspect-[16/9]" role="img" aria-label={file ? `Modelo 3D do ${model?.title}. Arraste para girar.` : `Modelo 3D do ${team.car} pendente`} />
 

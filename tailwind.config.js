@@ -6,7 +6,8 @@ export default {
       colors: {
         race: { DEFAULT: '#e10600', 500: '#e10600', 400: '#ff2a1f', 600: '#b30500', glow: '#ff3b30' },
         // tons da landing: azul-noite #0a0e1c e vidro rgba(20,20,30)
-        carbon: { 950: '#0a0e1c', 900: '#0e1324', 850: '#121829', 800: '#161c2e', 700: '#20273b', 600: '#2c3449', 500: '#4a5268' },
+        // base escura tingida com a cor do país da etapa (variáveis em src/index.css)
+        carbon: { 950: 'color-mix(in srgb, var(--c-950) calc(<alpha-value> * 100%), transparent)', 900: 'color-mix(in srgb, var(--c-900) calc(<alpha-value> * 100%), transparent)', 850: 'color-mix(in srgb, var(--c-850) calc(<alpha-value> * 100%), transparent)', 800: 'color-mix(in srgb, var(--c-800) calc(<alpha-value> * 100%), transparent)', 700: 'color-mix(in srgb, var(--c-700) calc(<alpha-value> * 100%), transparent)', 600: 'color-mix(in srgb, var(--c-600) calc(<alpha-value> * 100%), transparent)', 500: 'color-mix(in srgb, var(--c-500) calc(<alpha-value> * 100%), transparent)' },
         // destaque dinâmico: segue o país da etapa atual/próxima (src/hooks/useEventTheme.tsx)
         gold: {
           DEFAULT: 'color-mix(in srgb, var(--ev-accent) calc(<alpha-value> * 100%), transparent)',

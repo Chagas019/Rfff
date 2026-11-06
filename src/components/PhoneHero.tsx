@@ -40,7 +40,7 @@ function PhoneMockup({ children }: { children: ReactNode }) {
         <span className="absolute -left-[3px] top-[26%] h-[7.3%] w-[3px] rounded-l bg-neutral-700" aria-hidden />
         <span className="absolute -left-[3px] top-[35.5%] h-[7.3%] w-[3px] rounded-l bg-neutral-700" aria-hidden />
         <span className="absolute -right-[3px] top-[30.8%] h-[11.4%] w-[3px] rounded-r bg-neutral-700" aria-hidden />
-        <div ref={screenRef} className="relative h-full w-full overflow-hidden rounded-[clamp(24px,3.2vw,44px)] bg-[#0a0e1c]">
+        <div ref={screenRef} className="relative h-full w-full overflow-hidden rounded-[clamp(24px,3.2vw,44px)] bg-carbon-950">
           <div className="absolute left-1/2 top-[3%] z-50 h-[4%] w-[30%] -translate-x-1/2 rounded-full bg-black" aria-hidden />
           <div className="absolute left-0 top-0" style={{ width: 390, height: contentH, transform: `scale(${scale})`, transformOrigin: 'top left' }}>
             {children}
@@ -300,7 +300,7 @@ export function PhoneHero() {
   const delays = ['anim-delay-300', 'anim-delay-500', 'anim-delay-700'];
 
   return (
-    <section className="relative w-full overflow-hidden bg-[#0a0e1c] font-albert antialiased" aria-label="Destaque: Lewis Hamilton, Silverstone e Ferrari">
+    <section className="relative w-full overflow-hidden bg-carbon-950 font-albert antialiased" aria-label="Destaque: Lewis Hamilton, Silverstone e Ferrari">
       <img src={IMG.bg} alt="" className="absolute inset-0 z-0 h-full w-full object-cover" />
       <div className="absolute inset-0 z-[1] bg-black/70" />
 

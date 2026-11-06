@@ -164,7 +164,7 @@ export function CinematicHero() {
         <motion.div
           key={team.id + driver.id}
           className="absolute inset-0 -z-20"
-          style={{ background: `radial-gradient(120% 90% at 50% 42%, ${bgA} 0%, ${bgB} 62%, #05070f 100%)` }}
+          style={{ background: `radial-gradient(120% 90% at 50% 42%, ${bgA} 0%, ${bgB} 62%, var(--c-950) 100%)` }}
           initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
           transition={{ duration: reduce ? 0.2 : 0.9, ease: 'easeInOut' }}
           aria-hidden

@@ -36,6 +36,17 @@ export function applyTheme(theme: EventTheme, countryCode = '') {
   root.style.setProperty('--ev-2', theme.c2);
   root.style.setProperty('--ev-3', theme.c3);
   root.dataset.event = countryCode;
+  // barra do navegador no celular acompanha a cor do site
+  const meta = document.querySelector('meta[name="theme-color"]') ?? document.head.appendChild(Object.assign(document.createElement('meta'), { name: 'theme-color' }));
+  meta.setAttribute('content', mixDark(theme.c1, 0.26));
+}
+
+/** Mesma mistura da base do site (cor do país 26% + quase preto), em hex para a meta tag. */
+export function mixDark(hex: string, amt: number): string {
+  const n = parseInt(hex.slice(1), 16);
+  const base = [5, 7, 13];
+  const c = [(n >> 16) & 255, (n >> 8) & 255, n & 255].map((v, i) => Math.round(base[i] + (v - base[i]) * amt));
+  return `#${c.map((v) => v.toString(16).padStart(2, '0')).join('')}`;
 }
 
 const Ctx = createContext<ActiveEvent>({ race: null, phase: 'none', theme: themeFor(), source: 'local', preview: false });

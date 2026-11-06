@@ -18,7 +18,7 @@ const VIEWS: Record<View, [number, number, number]> = {
   frontal: [1.2, 0.18, 0],
 };
 
-export interface StudioOptions { reducedMotion: boolean; accent: string; onProgress?: (p: number) => void }
+export interface StudioOptions { reducedMotion: boolean; accent: string; background?: string; onProgress?: (p: number) => void }
 
 /**
  * Estúdio 3D do configurador: iluminação de estúdio com reflexos (ambiente PMREM),
@@ -38,9 +38,10 @@ export function createCarStudio(container: HTMLElement, opts: StudioOptions) {
   renderer.domElement.style.touchAction = 'none';
 
   const scene = new Scene();
-  scene.background = new Color('#0b0f1d');
+  const bg = new Color(opts.background ?? '#0b0f1d');
+  scene.background = bg;
   // o piso some no fundo: sem linha de horizonte
-  scene.fog = new Fog('#0b0f1d', 9, 22);
+  scene.fog = new Fog(bg, 9, 22);
   const pmrem = new PMREMGenerator(renderer);
   scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
   scene.environmentIntensity = 0.9;
@@ -67,7 +68,7 @@ export function createCarStudio(container: HTMLElement, opts: StudioOptions) {
   scene.add(key, rim, new HemisphereLight('#bcd3ff', '#0b0f1d', 0.35));
 
   // piso de estúdio: brilho sutil e sombra de contato
-  const floor = new Mesh(new CircleGeometry(30, 64), new MeshStandardMaterial({ color: '#0f1426', roughness: 0.55, metalness: 0.1, envMapIntensity: 0.35 }));
+  const floor = new Mesh(new CircleGeometry(30, 64), new MeshStandardMaterial({ color: bg.clone().multiplyScalar(1.25), roughness: 0.55, metalness: 0.1, envMapIntensity: 0.35 }));
   floor.rotation.x = -Math.PI / 2;
   floor.receiveShadow = true;
   scene.add(floor);

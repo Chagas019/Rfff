@@ -39,12 +39,12 @@ function Step({ r, idx, prev }: { r: RaceResultRow; idx: number; prev?: RaceResu
   const winner = idx === 0;
   const gained = r.grid > 0 ? r.grid - r.position : 0;
   const card = (
-    <div className={`relative overflow-hidden rounded-t-2xl border border-b-0 border-white/10 ${winner ? 'ring-1 ring-telemetry-yellow/40' : ''}`} style={{ background: `linear-gradient(180deg, ${color}38 0%, ${color}12 55%, #0d0d12 100%)` }}>
+    <div className={`relative overflow-hidden rounded-t-2xl border border-b-0 border-white/10 ${winner ? 'ring-1 ring-telemetry-yellow/40' : ''}`} style={{ background: `linear-gradient(180deg, ${color}38 0%, ${color}12 55%, var(--c-900) 100%)` }}>
       <span className="absolute left-3 top-2 font-display text-5xl font-semibold leading-none text-white/90 sm:text-7xl" aria-hidden>{r.position}</span>
       {winner && <Trophy className="absolute right-3 top-3 h-5 w-5 text-telemetry-yellow" aria-hidden />}
       <div className={`relative mx-auto ${winner ? 'aspect-[4/5] w-[92%]' : 'aspect-[4/5] w-[86%]'} mt-6`}>
         {local && team ? <DriverPhoto driver={local} team={team} width={winner ? 560 : 420} className="h-full w-full" /> : <div className="h-full w-full" />}
-        <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-[#0d0d12] to-transparent" aria-hidden />
+        <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-carbon-900 to-transparent" aria-hidden />
       </div>
     </div>
   );

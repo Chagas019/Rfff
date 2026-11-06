@@ -85,7 +85,9 @@ export default function App() {
       {/* fundo da landing atrás de todas as páginas */}
       <div className="pointer-events-none fixed inset-0 -z-10" aria-hidden>
         <img src={LANDING_IMG.bg} alt="" className="h-full w-full object-cover" />
-        <div className="absolute inset-0 bg-[#0a0e1c]/85" />
+        <div className="absolute inset-0 bg-carbon-950/85" />
+        {/* luz nas cores do país da etapa, por cima da imagem de fundo */}
+        <div className="event-ambient absolute inset-0" />
       </div>
       <Navbar onSearch={() => setSearchOpen(true)} />
       <SearchBar open={searchOpen} onClose={() => setSearchOpen(false)} />

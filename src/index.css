@@ -17,39 +17,49 @@
     @apply bg-carbon-950 font-sans text-zinc-200 antialiased;
     /* luz ambiente nas cores do país da etapa — discreta, nunca uma bandeira */
     background-image:
-      radial-gradient(1100px 520px at 88% -8%, color-mix(in srgb, var(--ev-1) 22%, transparent), transparent 62%),
-      radial-gradient(900px 480px at -8% 18%, color-mix(in srgb, var(--ev-3) 14%, transparent), transparent 60%);
+      radial-gradient(1200px 640px at 88% -8%, color-mix(in srgb, var(--ev-1) 38%, transparent), transparent 62%),
+      radial-gradient(1000px 560px at -10% 22%, color-mix(in srgb, var(--ev-3) 24%, transparent), transparent 60%),
+      radial-gradient(900px 600px at 50% 110%, color-mix(in srgb, var(--ev-2) 10%, transparent), transparent 65%);
     background-attachment: scroll;
   }
   :root {
     --ev-accent: #EDB40B; --ev-1: #20273B; --ev-2: #EDB40B; --ev-3: #0E1324;
+    /* o site inteiro na cor do evento: fundos e cartões misturam a cor principal do país
+       com tons quase pretos (escuros o bastante para o texto continuar legível) */
+    --c-950: color-mix(in oklab, var(--ev-1) 26%, #05070d);
+    --c-900: color-mix(in oklab, var(--ev-1) 29%, #090c15);
+    --c-850: color-mix(in oklab, var(--ev-1) 32%, #0d111c);
+    --c-800: color-mix(in oklab, var(--ev-1) 34%, #111624);
+    --c-700: color-mix(in oklab, var(--ev-1) 36%, #1a2032);
+    --c-600: color-mix(in oklab, var(--ev-1) 36%, #252c40);
+    --c-500: color-mix(in oklab, var(--ev-1) 30%, #454d62);
     transition: --ev-accent 1.4s ease, --ev-1 1.4s ease, --ev-2 1.4s ease, --ev-3 1.4s ease;
   }
-  ::selection { background: var(--ev-accent); color: #0a0e1c; }
+  ::selection { background: var(--ev-accent); color: #05070d; }
   :focus-visible { outline: 2px solid var(--ev-accent); outline-offset: 3px; border-radius: 6px; }
   /* títulos como na landing: Albert Sans, letras bem juntas, entrelinha curta */
   h1, h2, h3 { @apply font-display font-semibold text-white; letter-spacing: -0.05em; line-height: 0.95; }
   h4, h5, h6 { @apply font-condensed font-semibold text-white; letter-spacing: -0.02em; }
   .font-mono { font-variant-numeric: tabular-nums; }
   ::-webkit-scrollbar { width: 10px; height: 10px; }
-  ::-webkit-scrollbar-track { background: #0a0e1c; }
-  ::-webkit-scrollbar-thumb { background: #2c3449; border-radius: 10px; border: 2px solid #0a0e1c; }
+  ::-webkit-scrollbar-track { background: var(--c-950); }
+  ::-webkit-scrollbar-thumb { background: var(--c-600); border-radius: 10px; border: 2px solid var(--c-950); }
   ::-webkit-scrollbar-thumb:hover { background: var(--ev-accent); }
 }
 
 @layer components {
   .container-grid { @apply mx-auto w-full max-w-7xl px-5 sm:px-6 lg:px-8; }
   /* vidro da landing (cartões dos pilotos) */
-  .glass { background: rgba(20, 20, 30, 0.8); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); }
+  .glass { background: color-mix(in srgb, var(--c-850) 82%, transparent); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); }
   .panel {
     @apply relative overflow-hidden rounded-2xl border border-white/10;
-    background: rgba(20, 20, 30, 0.8);
+    background: color-mix(in srgb, var(--c-850) 82%, transparent);
     backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
   }
   .panel-hover { @apply transition duration-300 hover:-translate-y-1 hover:border-gold/50; }
   .panel-hover:hover { box-shadow: 0 24px 60px -24px color-mix(in srgb, var(--ev-accent) 35%, transparent); }
   /* superfície editorial (cards de notícia, tabelas) — sem desfoque, para rolar leve */
-  .surface { @apply rounded-xl border border-white/10; background: rgba(20, 20, 30, 0.8); }
+  .surface { @apply rounded-xl border border-white/10; background: color-mix(in srgb, var(--c-850) 82%, transparent); }
   .kicker { @apply text-[11px] font-semibold uppercase tracking-[0.14em]; }
   .tabular { font-variant-numeric: tabular-nums; }
   .line-clamp-2 { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
@@ -90,6 +100,13 @@
 .hero-particle { animation: hero-particle 8s linear infinite; }
 .hero-speedline { animation: hero-speedline 4.5s cubic-bezier(0.4, 0, 0.2, 1) infinite; }
 .hero-name { letter-spacing: -0.045em; text-shadow: 0 30px 60px rgba(0, 0, 0, 0.25); }
+/* luz ambiente do evento sobre o fundo fixo do site */
+.event-ambient {
+  background:
+    radial-gradient(1200px 700px at 85% -10%, color-mix(in srgb, var(--ev-1) 42%, transparent), transparent 62%),
+    radial-gradient(1000px 640px at -10% 30%, color-mix(in srgb, var(--ev-3) 26%, transparent), transparent 60%),
+    radial-gradient(1100px 700px at 50% 115%, color-mix(in srgb, var(--ev-1) 28%, transparent), transparent 65%);
+}
 /* faixa fina com as cores do evento (sob a navegação e nos cards do GP) */
 .event-stripe { background: linear-gradient(90deg, var(--ev-1) 0 33.3%, var(--ev-2) 33.3% 66.6%, var(--ev-3) 66.6% 100%); }
 .event-glow { background: radial-gradient(60% 80% at 50% 0%, color-mix(in srgb, var(--ev-1) 45%, transparent), transparent 70%); }
