@@ -138,7 +138,7 @@ export function Navbar({ onSearch }: { onSearch: () => void }) {
           </button>
         </div>
       </nav>
-      <motion.div aria-hidden className="absolute inset-x-0 bottom-0 h-0.5 origin-left bg-gradient-to-r from-[#8B0000] via-[#E10600] to-gold" style={{ scaleX: progress }} />
+      <motion.div aria-hidden className="absolute inset-x-0 bottom-0 h-0.5 origin-left" style={{ scaleX: progress, background: "linear-gradient(90deg, var(--ev-1), var(--ev-2), var(--ev-3))" }} />
       <FullMenu open={open} onClose={() => setOpen(false)} favorites={count} />
     </header>
   );

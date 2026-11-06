@@ -26,7 +26,7 @@ export function raceHighlights(rows: RaceResultRow[]): Highlight[] {
 
 function Delta({ d }: { d: number }) {
   if (d > 0) return <span className="inline-flex items-center gap-0.5 font-mono text-xs text-telemetry-green"><ArrowUp className="h-3 w-3" aria-hidden />{d}<span className="sr-only"> posições ganhas</span></span>;
-  if (d < 0) return <span className="inline-flex items-center gap-0.5 font-mono text-xs text-gold"><ArrowDown className="h-3 w-3" aria-hidden />{-d}<span className="sr-only"> posições perdidas</span></span>;
+  if (d < 0) return <span className="inline-flex items-center gap-0.5 font-mono text-xs text-race-400"><ArrowDown className="h-3 w-3" aria-hidden />{-d}<span className="sr-only"> posições perdidas</span></span>;
   return <span className="inline-flex items-center text-zinc-600"><Minus className="h-3 w-3" aria-hidden /><span className="sr-only">sem mudança</span></span>;
 }
 

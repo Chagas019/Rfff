@@ -11,8 +11,8 @@ import { Flag } from '../Flag';
 import { resolveDriver, useSessionData } from '../live/SessionResults';
 import { useWeekendSessions, type WeekendSession } from '../live/useWeekend';
 
-function SessionRow({ s, meetingKey }: { s: WeekendSession; meetingKey?: number }) {
-  const { state } = useSessionData(s.state === 'upcoming' ? null : s.key, s.state === 'live', meetingKey);
+function SessionRow({ s, meetingKey, round }: { s: WeekendSession; meetingKey?: number; round?: number | null }) {
+  const { state } = useSessionData({ sessionKey: s.key, live: s.state === 'live', meetingKey, type: s.type, round, enabled: s.state !== 'upcoming' });
   const top = state.status === 'success' ? state.data.results.slice(0, 3) : [];
   const leader = top[0] ? resolveDriver(top[0].driver_number, state.status === 'success' ? state.data.drivers : []) : null;
   const team = leader?.local ? teamById(leader.local.teamId) : undefined;
@@ -38,7 +38,7 @@ function SessionRow({ s, meetingKey }: { s: WeekendSession; meetingKey?: number 
           <p className="ml-auto hidden shrink-0 font-mono text-[11px] text-zinc-500 sm:block">{top.slice(1).map((r) => resolveDriver(r.driver_number, state.status === 'success' ? state.data.drivers : []).acronym).join(' · ')}</p>
         </div>
       ) : (
-        <p className="text-sm text-zinc-500">{s.state === 'live' ? <span className="inline-flex items-center gap-2 text-gold"><Radio className="h-3.5 w-3.5" aria-hidden />Em andamento</span> : state.status === 'loading' || state.status === 'idle' ? 'Carregando…' : state.status === 'error' ? 'Indisponível agora — tentamos de novo em instantes' : 'Resultado ainda não publicado'}</p>
+        <p className="text-sm text-zinc-500">{s.state === 'live' ? <span className="inline-flex items-center gap-2 text-gold"><Radio className="h-3.5 w-3.5" aria-hidden />Em andamento</span> : state.status === 'loading' || state.status === 'idle' ? 'Carregando…' : state.status === 'error' ? 'Indisponível agora — tentamos de novo em instantes' : state.data.locked ? 'Tempos restritos durante a sessão ao vivo' : 'Resultado ainda não publicado'}</p>
       )}
     </li>
   );
@@ -53,7 +53,7 @@ export function WeekendPulse({ race, mode, now }: { race: Race; mode: 'live' | '
         {mode === 'live' ? <><span className="h-2 w-2 animate-pulse rounded-full bg-race" aria-hidden />GP em andamento</> : 'Última etapa'} · Rodada {race.round}
       </p>
       <h2 id="pulse-title" className="mt-2 text-3xl leading-none sm:text-4xl"><Flag code={race.countryCode} country={race.country} className="mr-2 align-middle" />{race.name}</h2>
-      <ol className="mt-4 divide-y divide-white/[0.06]">{sessions.map((s) => <SessionRow key={s.type} s={s} meetingKey={OPENF1_MEETING[race.id]} />)}</ol>
+      <ol className="mt-4 divide-y divide-white/[0.06]">{sessions.map((s) => <SessionRow key={s.type} s={s} meetingKey={OPENF1_MEETING[race.id]} round={race.round} />)}</ol>
       <div className="mt-auto pt-5">
         <Link to="/live" className="btn-primary">{mode === 'live' ? 'Acompanhar no F1 LIVE' : 'Ver resultados e direção de prova'} <ArrowRight className="h-4 w-4" aria-hidden /></Link>
       </div>

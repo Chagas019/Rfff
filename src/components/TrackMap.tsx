@@ -23,7 +23,7 @@ const TRAIL = [0, 0.07, 0.14, 0.21]; // atraso (s) de cada ponto do rastro do ca
  * espessura, bordas brancas, zebras vermelhas e brancas nas curvas, asfalto iluminado,
  * linha de corrida dourada, grid de largada, seta do sentido de corrida e um carro com rastro de luz.
  */
-export function TrackMap({ points, name, color = '#EDB40B', animated = true, interactive = true, className = '' }: Props) {
+export function TrackMap({ points, name, color = 'var(--ev-accent)', animated = true, interactive = true, className = '' }: Props) {
   const reduce = useReducedMotion();
   const d = useMemo(() => trackPath(points, 0.25), [points]);
   const kerbs = useMemo(() => cornerSegments(points), [points]);
@@ -128,7 +128,7 @@ export function TrackMap({ points, name, color = '#EDB40B', animated = true, int
         <motion.path
           d={d}
           fill="none"
-          stroke={color}
+          style={{ stroke: color }}
           strokeWidth="0.8"
           strokeLinejoin="round"
           strokeLinecap="round"
@@ -162,7 +162,7 @@ export function TrackMap({ points, name, color = '#EDB40B', animated = true, int
 
         {/* carro com rastro de luz */}
         {move && TRAIL.map((delay, i) => (
-          <circle key={i} r={1.35 - i * 0.25} fill={i === 0 ? '#fff' : color} opacity={1 - i * 0.22} filter={i === 0 ? `url(#glow${id})` : undefined}>
+          <circle key={i} r={1.35 - i * 0.25} style={{ fill: i === 0 ? '#fff' : color }} opacity={1 - i * 0.22} filter={i === 0 ? `url(#glow${id})` : undefined}>
             <animateMotion dur="8s" begin={`${delay}s`} repeatCount="indefinite" path={d} />
           </circle>
         ))}

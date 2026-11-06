@@ -36,7 +36,7 @@ export function PhotoCredit({ photo, className = '' }: { photo: Photo; className
 }
 
 /** Foto real do carro (Wikimedia Commons), com carregamento, erro e crédito. */
-export function CarPhoto({ photoKey, query, alt, searchTerm, color = '#EDB40B', className = '', imgClassName = '', credit = 'overlay', onLoaded }: Props) {
+export function CarPhoto({ photoKey, query, alt, searchTerm, color = 'var(--ev-accent)', className = '', imgClassName = '', credit = 'overlay', onLoaded }: Props) {
   const { state, retry } = useCarPhoto(photoKey, query);
   const [imgLoaded, setImgLoaded] = useState(false);
   const [imgError, setImgError] = useState(false);
@@ -71,7 +71,7 @@ export function CarPhoto({ photoKey, query, alt, searchTerm, color = '#EDB40B', 
         />
       )}
       {failed && (
-        <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 p-4 text-center" style={{ background: `radial-gradient(circle at 50% 40%, ${color}33, transparent 70%)` }}>
+        <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 p-4 text-center" style={{ background: `radial-gradient(circle at 50% 40%, color-mix(in srgb, ${color} 20%, transparent), transparent 70%)` }}>
           <ImageOff className="h-6 w-6 text-zinc-500" aria-hidden />
           <p className="text-xs text-zinc-400">
             {state.status === 'error' || imgError ? 'Não foi possível carregar a foto.' : 'Ainda não há foto livre deste carro no Wikimedia Commons.'}

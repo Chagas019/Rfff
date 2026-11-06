@@ -11,6 +11,14 @@ export const OPENF1_SOURCE = { label: 'OpenF1 (cronometragem oficial da F1)', ur
 
 const get = <T,>(path: string, signal?: AbortSignal, ttl = 60_000) => getJsonCached<T>(`${OPENF1_BASE}${path}`, { signal, ttl, label: 'OpenF1' });
 
+/**
+ * Durante sessões ao vivo a OpenF1 restringe TODO o acesso gratuito (inclusive a sessões
+ * passadas) a assinantes, respondendo 401. Nesses momentos o site usa a Jolpica-F1.
+ */
+export class OpenF1LockedError extends Error {
+  constructor() { super('A OpenF1 libera os dados só para assinantes enquanto uma sessão está ao vivo.'); }
+}
+
 /** A OpenF1 responde 404 com {detail} quando ainda não há dados — tratamos como lista vazia. */
 async function list<T>(path: string, signal?: AbortSignal, ttl?: number): Promise<T[]> {
   try {
@@ -18,6 +26,7 @@ async function list<T>(path: string, signal?: AbortSignal, ttl?: number): Promis
     return Array.isArray(data) ? data : [];
   } catch (err) {
     if (err instanceof Error && /erro 404/.test(err.message)) return [];
+    if (err instanceof Error && /erro 401/.test(err.message)) throw new OpenF1LockedError();
     throw err;
   }
 }

@@ -7,7 +7,17 @@ export default {
         race: { DEFAULT: '#e10600', 500: '#e10600', 400: '#ff2a1f', 600: '#b30500', glow: '#ff3b30' },
         // tons da landing: azul-noite #0a0e1c e vidro rgba(20,20,30)
         carbon: { 950: '#0a0e1c', 900: '#0e1324', 850: '#121829', 800: '#161c2e', 700: '#20273b', 600: '#2c3449', 500: '#4a5268' },
-        gold: { DEFAULT: '#EDB40B', 400: '#f5c63a', 600: '#c99608' },
+        // destaque dinâmico: segue o país da etapa atual/próxima (src/hooks/useEventTheme.tsx)
+        gold: {
+          DEFAULT: 'color-mix(in srgb, var(--ev-accent) calc(<alpha-value> * 100%), transparent)',
+          400: 'color-mix(in srgb, color-mix(in srgb, var(--ev-accent) 80%, white) calc(<alpha-value> * 100%), transparent)',
+          600: 'color-mix(in srgb, color-mix(in srgb, var(--ev-accent) 80%, black) calc(<alpha-value> * 100%), transparent)',
+        },
+        event: {
+          1: 'color-mix(in srgb, var(--ev-1) calc(<alpha-value> * 100%), transparent)',
+          2: 'color-mix(in srgb, var(--ev-2) calc(<alpha-value> * 100%), transparent)',
+          3: 'color-mix(in srgb, var(--ev-3) calc(<alpha-value> * 100%), transparent)',
+        },
         f1: { dark: 'rgb(41,41,41)', yellow: 'rgb(237,180,11)' },
         telemetry: { cyan: '#22d3ee', green: '#22c55e', yellow: '#EDB40B', purple: '#a855f7' },
       },

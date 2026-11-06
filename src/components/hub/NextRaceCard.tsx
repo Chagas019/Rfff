@@ -2,9 +2,10 @@ import { ArrowRight, CalendarDays, MapPin } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { races } from '../../data/calendar2026';
 import { circuits } from '../../data/circuits';
+import { useEventTheme } from '../../hooks/useEventTheme';
 import { useNow } from '../../hooks/useNow';
 import { SESSION_LABELS, getCountdown, pad2 } from '../../utils/race';
-import { nextSession } from '../../utils/season';
+import { nextSession, sessionState } from '../../utils/season';
 import { clock, dayShort } from '../../utils/time';
 import { formatWeekend } from '../../utils/format';
 import { Flag } from '../Flag';
@@ -14,7 +15,10 @@ import { TrackMap } from '../TrackMap';
 /** Próxima sessão (contagem ao segundo) e a corrida do fim de semana. */
 export function NextRaceCard() {
   const now = useNow(1000);
-  const ns = nextSession(races, now);
+  const ev = useEventTheme();
+  // a etapa do evento manda (calendário oficial conciliado); sem ela, o calendário local
+  const evSession = ev.race?.sessions.map((session) => ({ race: ev.race!, session, state: sessionState(session, now) })).find((x) => x.state !== 'done');
+  const ns = evSession ?? nextSession(races, now);
   if (!ns) return <div className="panel p-6 text-zinc-400">A temporada 2026 terminou. O calendário de 2027 aparece aqui quando for publicado.</div>;
   const { race, session, state } = ns;
   const circuit = circuits.find((c) => c.id === race.circuitId);

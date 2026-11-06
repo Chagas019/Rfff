@@ -68,14 +68,14 @@ export function WeekendCenter({ race, now, mode }: { race: Race; now: Date; mode
           ))}
         </div>
       </div>
-      {error && <p className="text-xs text-zinc-500">Horários do calendário oficial (a OpenF1 não respondeu: {error}).</p>}
+      {error && <p className="text-xs text-zinc-500">A OpenF1 não respondeu agora (durante sessões ao vivo ela fica restrita a assinantes). Horários do calendário oficial; resultados de classificação e corrida pela Jolpica-F1.</p>}
 
       {current && (
         current.state === 'upcoming' ? (
           <p className="surface p-6 text-sm text-zinc-400">{SESSION_LABELS[current.type]} começa {dayShort(current.start)} às {clock(current.start)} (seu fuso). Os tempos aparecem aqui assim que a OpenF1 publicar.</p>
         ) : (
           <div className="grid gap-6 xl:grid-cols-[1.4fr_1fr] [&>*]:min-w-0">
-            <SessionResults sessionKey={current.key} type={current.type} live={current.state === 'live'} meetingKey={OPENF1_MEETING[race.id]} />
+            <SessionResults sessionKey={current.key} type={current.type} live={current.state === 'live'} meetingKey={OPENF1_MEETING[race.id]} round={race.round} />
             <RaceControlFeed sessionKey={current.key} live={current.state === 'live'} />
           </div>
         )

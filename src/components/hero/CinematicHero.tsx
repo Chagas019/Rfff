@@ -9,6 +9,7 @@ import { drivers } from '../../data/drivers';
 import { teamById } from '../../data/teams';
 import { useAsync } from '../../hooks/useAsync';
 import { useDriverStandings } from '../../hooks/useStandings';
+import { useEventTheme } from '../../hooks/useEventTheme';
 import { LIVE_REFRESH_MS, fetchRaceResults } from '../../services/f1Api';
 import type { Driver, DriverStanding, RaceResultRow, Team } from '../../types';
 import { lastCompleted, findDriver, standingFor } from '../../utils/season';
@@ -72,6 +73,7 @@ function PointsGauge({ points, leader, color }: { points: number; leader: number
  */
 export function CinematicHero() {
   const reduce = useReducedMotion();
+  const ev = useEventTheme();
   const { state } = useDriverStandings();
   const last = lastCompleted(races, new Date());
   const lastRes = useAsync((s) => (last?.round ? fetchRaceResults(SEASON, last.round, s) : Promise.resolve([] as RaceResultRow[])), [last?.round], { refreshMs: LIVE_REFRESH_MS });
@@ -253,11 +255,23 @@ export function CinematicHero() {
             <p className="kicker text-white/70">GRID F1 · Temporada {SEASON}</p>
             <h1 className="mt-1 text-xl text-white sm:text-2xl">The race never stops.</h1>
           </div>
-          <p className="kicker hidden items-center gap-2 text-white/70 sm:flex" aria-live="polite">
-            <span className="font-mono text-white">{String(index + 1).padStart(2, '0')}</span>
-            <span className="h-px w-10 bg-white/40" aria-hidden />
-            <span>{String(slides.length).padStart(2, '0')}</span>
-          </p>
+          <div className="flex flex-col items-end gap-3">
+            {ev.race && (
+              <Link to={ev.phase === 'live' ? '/live' : `/calendario/${ev.race.id}`} className="pointer-events-auto group relative flex items-center gap-3 overflow-hidden rounded-full border border-white/20 bg-black/30 py-1.5 pl-2 pr-4 backdrop-blur-md transition hover:border-gold" aria-label={`${ev.phase === 'live' ? 'Ao vivo' : 'Próxima etapa'}: ${ev.race.name}`}>
+                <span className="event-stripe absolute inset-x-0 bottom-0 h-0.5" aria-hidden />
+                <Flag code={ev.race.countryCode} country={ev.race.country} className="text-2xl" />
+                <span className="text-left leading-tight">
+                  <span className="kicker block text-[9px] text-gold">{ev.phase === 'live' ? 'Ao vivo' : 'Próxima etapa'}</span>
+                  <span className="block text-sm font-semibold text-white">{ev.race.name}</span>
+                </span>
+              </Link>
+            )}
+            <p className="kicker hidden items-center gap-2 text-white/70 sm:flex" aria-live="polite">
+              <span className="font-mono text-white">{String(index + 1).padStart(2, '0')}</span>
+              <span className="h-px w-10 bg-white/40" aria-hidden />
+              <span>{String(slides.length).padStart(2, '0')}</span>
+            </p>
+          </div>
         </div>
 
         <div className="flex items-end justify-between gap-4">

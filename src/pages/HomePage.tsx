@@ -13,6 +13,7 @@ import { Reveal } from '../components/Reveal';
 import { FeaturedDrivers } from '../components/hub/FeaturedDrivers';
 import { NewsTicker } from '../components/hub/NewsTicker';
 import { NextRaceCard } from '../components/hub/NextRaceCard';
+import { EventBanner } from '../components/hub/EventBanner';
 import { ResultsHistory } from '../components/hub/ResultsHistory';
 import { SeasonStats } from '../components/hub/SeasonStats';
 import { SeasonStatus } from '../components/hub/SeasonStatus';
@@ -73,6 +74,7 @@ export function HomePage() {
             <Link to="/live" className="btn-primary py-2.5"><Radio className="h-4 w-4" aria-hidden />F1 Live</Link>
           </nav>
         </div>
+        <div className="mb-5"><EventBanner /></div>
         <div className="grid gap-5 lg:grid-cols-2 xl:grid-cols-[1.25fr_1fr_1fr]">
           {focus ? <WeekendPulse race={focus} mode={mode} now={now} /> : <div className="panel p-6 text-zinc-400">A temporada ainda não começou.</div>}
           <NextRaceCard />

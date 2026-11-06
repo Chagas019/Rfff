@@ -136,7 +136,7 @@ function StatNumber({ value, delay, caption, gold }: { value: number | null; del
         style={{
           fontSize: 110,
           lineHeight: 0.72,
-          ...(gold ? { color: '#EDB40B' } : { backgroundImage: 'linear-gradient(to bottom, white 0%, rgba(255,255,255,0.4) 50%, transparent 85%)' }),
+          ...(gold ? { color: 'var(--ev-accent)' } : { backgroundImage: 'linear-gradient(to bottom, white 0%, rgba(255,255,255,0.4) 50%, transparent 85%)' }),
         }}
       >
         {value === null ? '—' : n}
@@ -206,7 +206,7 @@ function ScreenFerrari({ onMenu }: { onMenu: () => void }) {
           <img src={IMG.chassis} alt="" className="h-5 w-5" />
           <span className="text-[15px] text-white/60">Chassis</span>
         </div>
-        <span className="mt-2 block font-semibold leading-[0.79] text-[#EDB40B]" style={{ fontSize: 120, letterSpacing: '-0.08em' }}>SF-26</span>
+        <span className="mt-2 block font-semibold leading-[0.79] text-gold" style={{ fontSize: 120, letterSpacing: '-0.08em' }}>SF-26</span>
       </div>
       <img src={IMG.car} alt="Ferrari SF-26" className="absolute left-3 right-3 top-[390px] z-10 h-auto w-[calc(100%-24px)] object-contain animate-fade-slide-left anim-delay-700" />
       <div className="absolute bottom-0 left-0 right-0 z-10 flex animate-fade-slide-up anim-delay-900">
@@ -249,7 +249,7 @@ function MenuOverlay({ open, onClose }: { open: boolean; onClose: () => void }) 
             to={l.to}
             onClick={onClose}
             tabIndex={open ? 0 : -1}
-            className="text-3xl font-bold tracking-tight text-white transition-colors hover:text-[#EDB40B]"
+            className="text-3xl font-bold tracking-tight text-white transition-colors hover:text-gold"
             style={{
               opacity: open ? 1 : 0,
               transform: open ? 'translateX(0)' : 'translateX(-20px)',

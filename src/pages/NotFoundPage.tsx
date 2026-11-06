@@ -194,7 +194,7 @@ export function NotFoundPage() {
             ref={pathRef}
             d={d}
             fill="none"
-            stroke="#EDB40B"
+            style={{ stroke: 'var(--ev-accent)' }}
             strokeWidth="1.2"
             strokeLinejoin="round"
             filter="url(#nf-glow)"
@@ -219,7 +219,7 @@ export function NotFoundPage() {
           {/* "você está aqui" */}
           {parkedAt && (
             <g transform={`translate(${parkedAt.x} ${parkedAt.y})`}>
-              <circle r="4" fill="none" stroke="#EDB40B" strokeWidth="0.5">
+              <circle r="4" fill="none" style={{ stroke: 'var(--ev-accent)' }} strokeWidth="0.5">
                 <animate attributeName="r" values="3;7;3" dur="1.8s" repeatCount="indefinite" />
                 <animate attributeName="opacity" values="1;0;1" dur="1.8s" repeatCount="indefinite" />
               </circle>

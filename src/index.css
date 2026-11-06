@@ -1,3 +1,9 @@
+/* cores do evento (país da etapa atual/próxima): registradas para interpolar suavemente */
+@property --ev-accent { syntax: '<color>'; inherits: true; initial-value: #EDB40B; }
+@property --ev-1 { syntax: '<color>'; inherits: true; initial-value: #20273B; }
+@property --ev-2 { syntax: '<color>'; inherits: true; initial-value: #EDB40B; }
+@property --ev-3 { syntax: '<color>'; inherits: true; initial-value: #0E1324; }
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -7,9 +13,20 @@
   html { position: relative; scroll-behavior: smooth; -webkit-tap-highlight-color: transparent; }
   /* brilhos e faixas decorativas nunca criam rolagem lateral (clip não quebra sticky/fixed) */
   html, body { overflow-x: clip; }
-  body { @apply bg-carbon-950 font-sans text-zinc-200 antialiased; }
-  ::selection { background: #EDB40B; color: #0a0e1c; }
-  :focus-visible { outline: 2px solid #EDB40B; outline-offset: 3px; border-radius: 6px; }
+  body {
+    @apply bg-carbon-950 font-sans text-zinc-200 antialiased;
+    /* luz ambiente nas cores do país da etapa — discreta, nunca uma bandeira */
+    background-image:
+      radial-gradient(1100px 520px at 88% -8%, color-mix(in srgb, var(--ev-1) 22%, transparent), transparent 62%),
+      radial-gradient(900px 480px at -8% 18%, color-mix(in srgb, var(--ev-3) 14%, transparent), transparent 60%);
+    background-attachment: scroll;
+  }
+  :root {
+    --ev-accent: #EDB40B; --ev-1: #20273B; --ev-2: #EDB40B; --ev-3: #0E1324;
+    transition: --ev-accent 1.4s ease, --ev-1 1.4s ease, --ev-2 1.4s ease, --ev-3 1.4s ease;
+  }
+  ::selection { background: var(--ev-accent); color: #0a0e1c; }
+  :focus-visible { outline: 2px solid var(--ev-accent); outline-offset: 3px; border-radius: 6px; }
   /* títulos como na landing: Albert Sans, letras bem juntas, entrelinha curta */
   h1, h2, h3 { @apply font-display font-semibold text-white; letter-spacing: -0.05em; line-height: 0.95; }
   h4, h5, h6 { @apply font-condensed font-semibold text-white; letter-spacing: -0.02em; }
@@ -17,7 +34,7 @@
   ::-webkit-scrollbar { width: 10px; height: 10px; }
   ::-webkit-scrollbar-track { background: #0a0e1c; }
   ::-webkit-scrollbar-thumb { background: #2c3449; border-radius: 10px; border: 2px solid #0a0e1c; }
-  ::-webkit-scrollbar-thumb:hover { background: #EDB40B; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--ev-accent); }
 }
 
 @layer components {
@@ -30,7 +47,7 @@
     backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
   }
   .panel-hover { @apply transition duration-300 hover:-translate-y-1 hover:border-gold/50; }
-  .panel-hover:hover { box-shadow: 0 24px 60px -24px rgba(237, 180, 11, 0.35); }
+  .panel-hover:hover { box-shadow: 0 24px 60px -24px color-mix(in srgb, var(--ev-accent) 35%, transparent); }
   /* superfície editorial (cards de notícia, tabelas) — sem desfoque, para rolar leve */
   .surface { @apply rounded-xl border border-white/10; background: rgba(20, 20, 30, 0.8); }
   .kicker { @apply text-[11px] font-semibold uppercase tracking-[0.14em]; }
@@ -73,7 +90,16 @@
 .hero-particle { animation: hero-particle 8s linear infinite; }
 .hero-speedline { animation: hero-speedline 4.5s cubic-bezier(0.4, 0, 0.2, 1) infinite; }
 .hero-name { letter-spacing: -0.045em; text-shadow: 0 30px 60px rgba(0, 0, 0, 0.25); }
+/* faixa fina com as cores do evento (sob a navegação e nos cards do GP) */
+.event-stripe { background: linear-gradient(90deg, var(--ev-1) 0 33.3%, var(--ev-2) 33.3% 66.6%, var(--ev-3) 66.6% 100%); }
+.event-glow { background: radial-gradient(60% 80% at 50% 0%, color-mix(in srgb, var(--ev-1) 45%, transparent), transparent 70%); }
+/* varredura de luz quando a identidade do evento muda */
+@keyframes event-sweep { from { transform: translateX(-100%); opacity: 0; } 20% { opacity: 1; } to { transform: translateX(100%); opacity: 0; } }
+.event-sweep { animation: event-sweep 1.6s cubic-bezier(0.16, 1, 0.3, 1) both; background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--ev-accent) 55%, transparent), transparent); }
+
 @media (prefers-reduced-motion: reduce) {
+  :root { transition: none; }
+  .event-sweep { display: none; }
   .hero-float, .hero-float-slow, .hero-particle, .hero-speedline { animation: none !important; }
 }
 

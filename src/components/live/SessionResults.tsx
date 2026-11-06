@@ -3,8 +3,10 @@ import { Link } from 'react-router-dom';
 import { drivers, formerDrivers } from '../../data/drivers';
 import { teamById } from '../../data/teams';
 import { useAsync } from '../../hooks/useAsync';
-import { LIVE_REFRESH_MS } from '../../services/f1Api';
-import { OPENF1_SOURCE, fetchMeetingDrivers, fetchSessionResult, resultTiming, type OF1Driver, type OF1Result } from '../../services/openf1';
+import { SEASON } from '../../data/calendar2026';
+import { API_SOURCE, LIVE_REFRESH_MS } from '../../services/f1Api';
+import { JOLPICA_TYPES, fetchJolpicaSession } from '../../services/jolpicaSessions';
+import { OPENF1_SOURCE, OpenF1LockedError, fetchMeetingDrivers, fetchSessionResult, resultTiming, type OF1Driver, type OF1Result } from '../../services/openf1';
 import type { Driver, SessionType } from '../../types';
 import { SESSION_LABELS } from '../../utils/race';
 import { hexColor } from '../../utils/season';
@@ -29,36 +31,61 @@ export function resolveDriver(number: number, of1: OF1Driver[]): ResolvedDriver 
   };
 }
 
-export function useSessionData(sessionKey: number | null, live: boolean, meetingKey?: number) {
-  return useAsync(
+export interface SessionData { results: OF1Result[]; drivers: OF1Driver[]; source: 'openf1' | 'jolpica' | 'none'; locked: boolean }
+
+/**
+ * Resultado da sessão: OpenF1 primeiro; se ela estiver restrita (sessão ao vivo) ou fora do ar,
+ * Jolpica-F1 para classificação, Sprint e corrida.
+ */
+export function useSessionData({ sessionKey, live, meetingKey, type, round, enabled = true }: { sessionKey: number | null; live: boolean; meetingKey?: number; type: SessionType; round?: number | null; enabled?: boolean }) {
+  return useAsync<SessionData>(
     async (signal) => {
-      if (!sessionKey) return { results: [] as OF1Result[], drivers: [] as OF1Driver[] };
-      const results = await fetchSessionResult(sessionKey, signal);
-      // só pergunta à OpenF1 pelos pilotos quando aparece um número que não conhecemos
-      const unknown = results.some((r) => !drivers.some((d) => d.number === r.driver_number));
-      const of1Drivers = unknown && meetingKey ? await fetchMeetingDrivers(meetingKey, signal).catch(() => []) : [];
-      return { results: [...results].sort((a, b) => (a.position ?? 99) - (b.position ?? 99)), drivers: of1Drivers };
+      const empty: SessionData = { results: [], drivers: [], source: 'none', locked: false };
+      if (!enabled) return empty;
+      let locked = false;
+      if (sessionKey) {
+        try {
+          const results = await fetchSessionResult(sessionKey, signal);
+          if (results.length) {
+            // só pergunta à OpenF1 pelos pilotos quando aparece um número que não conhecemos
+            const unknown = results.some((r) => !drivers.some((d) => d.number === r.driver_number));
+            const of1Drivers = unknown && meetingKey ? await fetchMeetingDrivers(meetingKey, signal).catch(() => []) : [];
+            return { results: [...results].sort((a, b) => (a.position ?? 99) - (b.position ?? 99)), drivers: of1Drivers, source: 'openf1', locked: false };
+          }
+        } catch (err) {
+          if (signal.aborted) throw err;
+          locked = err instanceof OpenF1LockedError;
+          if (!locked && !(round && JOLPICA_TYPES.includes(type))) throw err;
+        }
+      }
+      if (round && JOLPICA_TYPES.includes(type)) {
+        const j = await fetchJolpicaSession(SEASON, round, type, signal);
+        if (j.results.length) return { ...j, source: 'jolpica', locked };
+      }
+      return { ...empty, locked };
     },
-    [sessionKey],
+    [sessionKey, enabled, round, type],
     { refreshMs: live ? 60_000 : LIVE_REFRESH_MS },
   );
 }
 
 /** Classificação de uma sessão (treino, classificação, sprint ou corrida) com tempos e diferenças oficiais. */
-export function SessionResults({ sessionKey, type, live, meetingKey }: { sessionKey: number | null; type: SessionType; live: boolean; meetingKey?: number }) {
-  const { state, retry, refreshNow, updatedAt, refreshing } = useSessionData(sessionKey, live, meetingKey);
+export function SessionResults({ sessionKey, type, live, meetingKey, round }: { sessionKey: number | null; type: SessionType; live: boolean; meetingKey?: number; round?: number | null }) {
+  const { state, retry, refreshNow, updatedAt, refreshing } = useSessionData({ sessionKey, live, meetingKey, type, round });
   const [all, setAll] = useState(false);
 
-  if (!sessionKey) return <p className="surface p-6 text-sm text-zinc-400">A OpenF1 ainda não publicou esta sessão.</p>;
   if (state.status === 'loading' || state.status === 'idle') {
     return <div className="space-y-2" role="status" aria-label="Carregando resultados">{Array.from({ length: 6 }).map((_, i) => <div key={i} className="h-12 animate-pulse rounded-lg bg-white/[0.04]" />)}</div>;
   }
   if (state.status === 'error') return <ErrorState message={state.error} onRetry={retry} />;
-  const { results, drivers: of1 } = state.data;
+  const { results, drivers: of1, source, locked } = state.data;
   if (!results.length) {
     return (
       <div className="surface p-6 text-sm text-zinc-400">
-        {live ? 'Sessão em andamento. ' : ''}Os tempos oficiais desta sessão ainda não foram publicados pela OpenF1 — esta área se atualiza sozinha assim que eles saírem.
+        {live ? 'Sessão em andamento. ' : ''}
+        {locked
+          ? 'Enquanto há uma sessão ao vivo, a OpenF1 libera os tempos só para assinantes. ' + (JOLPICA_TYPES.includes(type) ? 'O resultado oficial aparece aqui assim que for publicado.' : 'Os tempos de treino livre voltam a aparecer quando a sessão terminar.')
+          : 'Os tempos oficiais desta sessão ainda não foram publicados — esta área se atualiza sozinha assim que eles saírem.'}
         <div className="mt-3"><LiveBadge updatedAt={updatedAt} refreshing={refreshing} onRefresh={refreshNow} /></div>
       </div>
     );
@@ -108,7 +135,11 @@ export function SessionResults({ sessionKey, type, live, meetingKey }: { session
       {results.length > 10 && (
         <button type="button" className="btn-ghost mt-3 w-full py-2 text-xs" onClick={() => setAll((a) => !a)}>{all ? 'Mostrar top 10' : `Ver todos os ${results.length} pilotos`}</button>
       )}
-      <p className="mt-2 text-[11px] text-zinc-500">Fonte: <a href={OPENF1_SOURCE.url} target="_blank" rel="noreferrer" className="underline-offset-2 hover:underline">{OPENF1_SOURCE.label}</a>.</p>
+      <p className="mt-2 text-[11px] text-zinc-500">
+        Fonte: {source === 'jolpica'
+          ? <>{API_SOURCE.label}{locked ? ' (a OpenF1 está restrita a assinantes durante a sessão ao vivo)' : ''}</>
+          : <a href={OPENF1_SOURCE.url} target="_blank" rel="noreferrer" className="underline-offset-2 hover:underline">{OPENF1_SOURCE.label}</a>}.
+      </p>
     </div>
   );
 }

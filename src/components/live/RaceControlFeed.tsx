@@ -4,7 +4,6 @@ import { useAsync } from '../../hooks/useAsync';
 import { LIVE_REFRESH_MS } from '../../services/f1Api';
 import { OPENF1_SOURCE, fetchRaceControl, type OF1RaceControl } from '../../services/openf1';
 import { clock } from '../../utils/time';
-import { ErrorState } from '../States';
 
 const FLAG_STYLE: Record<string, { label: string; cls: string }> = {
   GREEN: { label: 'Bandeira verde', cls: 'bg-telemetry-green text-black' },
@@ -35,14 +34,22 @@ function Icon({ m }: { m: OF1RaceControl }) {
 export function RaceControlFeed({ sessionKey, live, limit = 30 }: { sessionKey: number | null; live: boolean; limit?: number }) {
   const { state, retry } = useAsync((s) => (sessionKey ? fetchRaceControl(sessionKey, s) : Promise.resolve([])), [sessionKey], { refreshMs: live ? 60_000 : LIVE_REFRESH_MS });
   const [onlyKey, setOnlyKey] = useState(true);
+  const retryable = !!sessionKey;
   const list = useMemo(() => {
     if (state.status !== 'success') return [];
     return [...state.data].filter((m) => !onlyKey || isImportant(m)).reverse().slice(0, limit);
   }, [state, onlyKey, limit]);
 
-  if (!sessionKey) return null;
+  const unavailable = (
+    <div className="surface p-5 text-sm text-zinc-400">
+      <p className="kicker mb-2 text-zinc-400">Direção de prova</p>
+      As mensagens oficiais vêm da OpenF1, que no momento não está respondendo — durante sessões ao vivo ela libera os dados só para assinantes. Elas voltam a aparecer aqui sozinhas.
+      {retryable && <button type="button" onClick={retry} className="mt-3 block text-xs text-white underline-offset-2 hover:underline">Tentar agora</button>}
+    </div>
+  );
+  if (!sessionKey) return unavailable;
   if (state.status === 'loading' || state.status === 'idle') return <div className="h-40 animate-pulse rounded-xl bg-white/[0.04]" role="status" aria-label="Carregando direção de prova" />;
-  if (state.status === 'error') return <ErrorState message={state.error} onRetry={retry} />;
+  if (state.status === 'error') return unavailable;
 
   return (
     <div>
