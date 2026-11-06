@@ -151,3 +151,19 @@ export async function fetchRecentForm(season: number, rounds: number[], signal?:
   const all = await Promise.all(rounds.map(async (round) => ({ round, results: await fetchRaceResults(season, round, signal) })));
   return all.filter((r) => r.results.length);
 }
+
+/**
+ * Soma os pontos de todas as temporadas de um piloto (inclui Sprints).
+ * A Jolpica exige a temporada na consulta de classificação, então buscamos a lista de
+ * temporadas e a classificação final de cada uma; as já encerradas ficam em cache por mais tempo.
+ */
+export async function fetchCareerPoints(driverId: string, signal?: AbortSignal): Promise<number> {
+  const seasons = await getJsonCached<{ MRData: { SeasonTable: { Seasons: { season: string }[] } } }>(`${API_BASE}/drivers/${driverId}/seasons.json?limit=100`, { signal, ttl: 6 * 60 * 60_000, label: 'fonte de dados' });
+  const years = seasons.MRData.SeasonTable.Seasons.map((s) => Number(s.season));
+  const current = new Date().getFullYear();
+  const points = await Promise.all(years.map(async (y) => {
+    const json = await getJsonCached<StandingsTable<{ DriverStandings: ErgastDriverStanding[] }>>(`${API_BASE}/${y}/drivers/${driverId}/driverstandings.json`, { signal, ttl: y >= current ? 90_000 : 24 * 60 * 60_000, label: 'fonte de dados' });
+    return Number(json.MRData.StandingsTable.StandingsLists[0]?.DriverStandings[0]?.points ?? 0);
+  }));
+  return points.reduce((a, b) => a + b, 0);
+}

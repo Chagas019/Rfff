@@ -26,7 +26,7 @@ export function raceHighlights(rows: RaceResultRow[]): Highlight[] {
 
 function Delta({ d }: { d: number }) {
   if (d > 0) return <span className="inline-flex items-center gap-0.5 font-mono text-xs text-telemetry-green"><ArrowUp className="h-3 w-3" aria-hidden />{d}<span className="sr-only"> posições ganhas</span></span>;
-  if (d < 0) return <span className="inline-flex items-center gap-0.5 font-mono text-xs text-race-400"><ArrowDown className="h-3 w-3" aria-hidden />{-d}<span className="sr-only"> posições perdidas</span></span>;
+  if (d < 0) return <span className="inline-flex items-center gap-0.5 font-mono text-xs text-gold"><ArrowDown className="h-3 w-3" aria-hidden />{-d}<span className="sr-only"> posições perdidas</span></span>;
   return <span className="inline-flex items-center text-zinc-600"><Minus className="h-3 w-3" aria-hidden /><span className="sr-only">sem mudança</span></span>;
 }
 
@@ -48,7 +48,7 @@ export function RaceInsights({ round }: { round: number }) {
               {local && team ? <DriverPhoto driver={local} team={team} width={160} className="h-14 w-14 shrink-0 rounded-full bg-white/5" /> : <h.icon className="h-8 w-8 text-race" aria-hidden />}
               <div className="min-w-0">
                 <p className="kicker flex items-center gap-1.5 text-zinc-500"><h.icon className="h-3.5 w-3.5" aria-hidden />{h.label}</p>
-                <p className="truncate font-display text-lg font-black uppercase text-white">{h.value}</p>
+                <p className="truncate font-display text-lg font-semibold text-white">{h.value}</p>
                 <p className="text-xs text-zinc-400">{h.detail}</p>
               </div>
             </div>
@@ -64,9 +64,9 @@ export function RaceInsights({ round }: { round: number }) {
             const classified = /Finished|Lap/.test(r.status);
             return (
               <li key={r.driverId} className="flex items-center gap-3 px-4 py-2 sm:border-b sm:border-white/[0.05]">
-                <span className="w-6 font-display text-base font-black text-white tabular">{r.position}</span>
+                <span className="w-6 font-display text-base font-semibold text-white tabular">{r.position}</span>
                 <span className="h-5 w-1 rounded" style={{ background: team?.color ?? '#71717a' }} aria-hidden />
-                {local ? <Link to={`/pilotos/${local.id}`} className="flex-1 truncate text-sm font-semibold text-zinc-100 hover:text-race-400">{r.driver}</Link> : <span className="flex-1 truncate text-sm font-semibold text-zinc-100">{r.driver}</span>}
+                {local ? <Link to={`/pilotos/${local.id}`} className="flex-1 truncate text-sm font-semibold text-zinc-100 hover:text-gold">{r.driver}</Link> : <span className="flex-1 truncate text-sm font-semibold text-zinc-100">{r.driver}</span>}
                 <span className="font-mono text-[11px] text-zinc-500">{r.grid ? `P${r.grid}` : 'Box'}</span>
                 {classified && r.grid ? <Delta d={r.grid - r.position} /> : <span className="text-[11px] text-zinc-500">{classified ? '—' : 'Aband.'}</span>}
               </li>

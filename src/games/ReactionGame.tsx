@@ -77,7 +77,7 @@ export function ReactionGame() {
         onPointerDown={(e) => { e.preventDefault(); press(); }}
         onClick={(e) => { if (e.detail === 0) press(); /* leitores de tela */ }}
         onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); if (!e.repeat) press(); } }}
-        className={`panel relative flex min-h-[340px] select-none flex-col items-center justify-center gap-8 overflow-hidden p-6 outline-none transition-colors focus-visible:ring-2 focus-visible:ring-race sm:min-h-[400px] ${phase === 'jump' ? 'bg-race/10' : phase === 'armed' ? 'bg-telemetry-green/[0.06]' : ''}`}
+        className={`panel relative flex min-h-[340px] select-none flex-col items-center justify-center gap-8 overflow-hidden p-6 outline-none transition-colors focus-visible:ring-2 focus-visible:ring-gold sm:min-h-[400px] ${phase === 'jump' ? 'bg-gold/10' : phase === 'armed' ? 'bg-telemetry-green/[0.06]' : ''}`}
         style={{ touchAction: 'manipulation' }}
         aria-label="Área de largada. Toque quando as luzes apagarem."
       >
@@ -91,7 +91,7 @@ export function ReactionGame() {
                   key={row}
                   className="block h-9 w-9 rounded-full border border-black transition-[background,box-shadow] duration-75 sm:h-14 sm:w-14"
                   style={lit >= n
-                    ? { background: 'radial-gradient(circle at 35% 30%, #ff8a80, #e10600 45%, #7a0300)', boxShadow: '0 0 28px 6px rgba(225,6,0,0.75)' }
+                    ? { background: 'radial-gradient(circle at 35% 30%, #ff8a80, #e10600 45%, #7a0300)', boxShadow: '0 0 28px 6px rgba(237,180,11,0.75)' }
                     : { background: 'radial-gradient(circle at 35% 30%, #3f3f46, #18181b 60%)' }}
                 />
               ))}
@@ -102,12 +102,12 @@ export function ReactionGame() {
         <div className="relative text-center" aria-live="polite">
           <AnimatePresence mode="wait">
             {time !== null && phase === 'result' ? (
-              <motion.p key="t" initial={{ scale: 0.6, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="font-display text-6xl font-black tabular-nums text-white sm:text-7xl">
-                {time}<span className="ml-1 text-2xl text-race">ms</span>
+              <motion.p key="t" initial={{ scale: 0.6, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="font-display text-6xl font-semibold tabular-nums text-white sm:text-7xl">
+                {time}<span className="ml-1 text-2xl text-gold">ms</span>
               </motion.p>
             ) : null}
           </AnimatePresence>
-          <p className={`mt-2 font-condensed text-lg uppercase tracking-widest ${phase === 'jump' ? 'text-race' : phase === 'armed' ? 'text-telemetry-green' : rating?.tone === 'great' ? 'text-telemetry-purple' : 'text-zinc-300'}`}>
+          <p className={`mt-2 font-condensed text-lg ${phase === 'jump' ? 'text-gold' : phase === 'armed' ? 'text-telemetry-green' : rating?.tone === 'great' ? 'text-telemetry-purple' : 'text-zinc-300'}`}>
             {message}
           </p>
           {(phase === 'result' || phase === 'jump') && <p className="mt-1 text-xs text-zinc-500">Toque de novo para outra largada</p>}
@@ -117,7 +117,7 @@ export function ReactionGame() {
       <aside className="space-y-4">
         <div className="panel p-5">
           <p className="label flex items-center gap-2"><Trophy className="h-3.5 w-3.5 text-telemetry-yellow" aria-hidden />Seu recorde</p>
-          <p className="mt-1 font-display text-4xl font-black text-white">{best !== null ? <>{best}<span className="ml-1 text-lg text-race">ms</span></> : '—'}</p>
+          <p className="mt-1 font-display text-4xl font-semibold text-white">{best !== null ? <>{best}<span className="ml-1 text-lg text-gold">ms</span></> : '—'}</p>
           <p className="mt-1 text-xs text-zinc-500">Salvo só neste aparelho.</p>
           {best !== null && (
             <div className="mt-4 flex flex-wrap gap-2">
@@ -133,7 +133,7 @@ export function ReactionGame() {
               {history.map((h, i) => (
                 <li key={i} className="flex items-center gap-3 text-sm">
                   <span className="w-14 font-mono text-white">{h} ms</span>
-                  <span className="h-1.5 flex-1 overflow-hidden rounded-full bg-white/5"><span className="block h-full rounded-full bg-race" style={{ width: `${Math.max(8, 100 - (h - 150) / 4)}%` }} /></span>
+                  <span className="h-1.5 flex-1 overflow-hidden rounded-full bg-white/5"><span className="block h-full rounded-full bg-gold" style={{ width: `${Math.max(8, 100 - (h - 150) / 4)}%` }} /></span>
                 </li>
               ))}
             </ol>
@@ -141,7 +141,7 @@ export function ReactionGame() {
         </div>
         <div className="panel p-5 text-sm text-zinc-400">
           <p className="label mb-2">Como funciona</p>
-          As cinco luzes acendem uma a uma. Quando todas apagam, é largada — toque, clique ou aperte espaço. Antes disso é <strong className="text-race">queima de largada</strong>. O momento em que as luzes apagam é sorteado a cada tentativa, como na F1.
+          As cinco luzes acendem uma a uma. Quando todas apagam, é largada — toque, clique ou aperte espaço. Antes disso é <strong className="text-gold">queima de largada</strong>. O momento em que as luzes apagam é sorteado a cada tentativa, como na F1.
         </div>
       </aside>
     </div>

@@ -18,7 +18,7 @@ export function GamesPage() {
 
   return (
     <>
-      <PageHeader kicker="Área de diversão" title={<>Jogos do <span className="text-race">box</span></>}>
+      <PageHeader kicker="Área de diversão" title={<>Jogos do <span className="text-gold">box</span></>}>
         <p>Mostre que você tem reflexo de piloto, mãos de mecânico e cabeça de engenheiro. Seus recordes ficam salvos no aparelho — e dá para desafiar os amigos.</p>
       </PageHeader>
       <div className="container-grid py-10">
@@ -31,12 +31,12 @@ export function GamesPage() {
                 to={`/jogos/${g.id}`}
                 replace
                 aria-current={active ? 'page' : undefined}
-                className={`panel relative flex flex-col items-center gap-1 overflow-hidden p-3 text-center transition sm:flex-row sm:gap-4 sm:p-5 sm:text-left ${active ? 'border-race/60' : 'panel-hover'}`}
+                className={`panel relative flex flex-col items-center gap-1 overflow-hidden p-3 text-center transition sm:flex-row sm:gap-4 sm:p-5 sm:text-left ${active ? 'border-gold/60' : 'panel-hover'}`}
               >
-                {active && <motion.span layoutId="game-tab" className="absolute inset-0 bg-gradient-to-br from-race/20 to-transparent" aria-hidden />}
-                <g.icon className={`relative h-6 w-6 shrink-0 sm:h-8 sm:w-8 ${active ? 'text-race' : 'text-zinc-500'}`} aria-hidden />
+                {active && <motion.span layoutId="game-tab" className="absolute inset-0 bg-gradient-to-br from-gold/20 to-transparent" aria-hidden />}
+                <g.icon className={`relative h-6 w-6 shrink-0 sm:h-8 sm:w-8 ${active ? 'text-gold' : 'text-zinc-500'}`} aria-hidden />
                 <span className="relative">
-                  <span className="block font-display text-sm font-black uppercase text-white sm:text-xl">{g.title}</span>
+                  <span className="block font-display text-sm font-semibold text-white sm:text-xl">{g.title}</span>
                   <span className="hidden text-xs text-zinc-400 sm:block">{g.text}</span>
                 </span>
               </Link>

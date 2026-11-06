@@ -39,7 +39,7 @@ export function NewsCard({ item, variant = 'compact', isNew = false, now = new D
         </div>
         <div className="flex flex-1 flex-col gap-3 p-5 sm:p-6">
           <Meta item={item} isNew={isNew} now={now} />
-          <h3 className="font-sans text-xl font-bold normal-case leading-snug tracking-normal text-white group-hover:text-race-400 sm:text-2xl">{item.title}</h3>
+          <h3 className="font-sans text-xl font-bold normal-case leading-snug tracking-normal text-white group-hover:text-gold sm:text-2xl">{item.title}</h3>
           {item.summary && <p className="line-clamp-3 text-sm text-zinc-400">{item.summary}</p>}
           <span className="mt-auto inline-flex items-center gap-1 text-xs font-semibold text-zinc-300">Ler em {item.sourceName} <ArrowUpRight className="h-3.5 w-3.5" aria-hidden /></span>
         </div>
@@ -51,7 +51,7 @@ export function NewsCard({ item, variant = 'compact', isNew = false, now = new D
       <a {...common} className="group flex gap-4 border-b border-white/[0.06] py-4 last:border-0">
         <div className="min-w-0 flex-1">
           <Meta item={item} isNew={isNew} now={now} />
-          <h3 className="mt-1.5 line-clamp-2 font-sans text-[15px] font-semibold normal-case leading-snug tracking-normal text-zinc-100 group-hover:text-race-400">{item.title}</h3>
+          <h3 className="mt-1.5 line-clamp-2 font-sans text-[15px] font-semibold normal-case leading-snug tracking-normal text-zinc-100 group-hover:text-gold">{item.title}</h3>
         </div>
         {item.image && <Thumb src={item.image} className="h-16 w-24 shrink-0 rounded-lg object-cover sm:h-20 sm:w-32" />}
       </a>
@@ -66,7 +66,7 @@ export function NewsCard({ item, variant = 'compact', isNew = false, now = new D
       )}
       <div className="flex flex-1 flex-col gap-2 p-4">
         <Meta item={item} isNew={isNew} now={now} />
-        <h3 className="line-clamp-3 font-sans text-base font-semibold normal-case leading-snug tracking-normal text-white group-hover:text-race-400">{item.title}</h3>
+        <h3 className="line-clamp-3 font-sans text-base font-semibold normal-case leading-snug tracking-normal text-white group-hover:text-gold">{item.title}</h3>
         {!item.image && item.summary && <p className="line-clamp-3 text-sm text-zinc-400">{item.summary}</p>}
       </div>
     </a>

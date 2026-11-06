@@ -27,7 +27,7 @@ export function isImportant(m: OF1RaceControl): boolean {
 function Icon({ m }: { m: OF1RaceControl }) {
   if (m.category === 'SafetyCar') return <ShieldAlert className="h-4 w-4 text-telemetry-yellow" aria-hidden />;
   if (m.flag) return <Flag className="h-4 w-4 text-zinc-300" aria-hidden />;
-  if (/INVESTIGAT|PENALTY|STEWARDS/.test(m.message)) return <TriangleAlert className="h-4 w-4 text-race-400" aria-hidden />;
+  if (/INVESTIGAT|PENALTY|STEWARDS/.test(m.message)) return <TriangleAlert className="h-4 w-4 text-gold" aria-hidden />;
   return <Radio className="h-4 w-4 text-zinc-500" aria-hidden />;
 }
 

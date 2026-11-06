@@ -49,7 +49,7 @@ export function SearchBar({ open, onClose }: { open: boolean; onClose: () => voi
             onKeyDown={onKeyDown}
           >
             <div className="flex items-center gap-3 border-b border-white/10 px-4">
-              <Search className="h-5 w-5 text-race" aria-hidden />
+              <Search className="h-5 w-5 text-gold" aria-hidden />
               <input
                 ref={inputRef}
                 value={query}
@@ -70,7 +70,7 @@ export function SearchBar({ open, onClose }: { open: boolean; onClose: () => voi
                   <p className="label mb-3">Sugestões</p>
                   <div className="flex flex-wrap gap-2">
                     {SUGGESTIONS.map((s) => (
-                      <button key={s} type="button" className="chip hover:border-race/60 hover:text-white" onClick={() => setQuery(s)}>{s}</button>
+                      <button key={s} type="button" className="chip hover:border-gold/60 hover:text-white" onClick={() => setQuery(s)}>{s}</button>
                     ))}
                   </div>
                 </div>
@@ -87,9 +87,9 @@ export function SearchBar({ open, onClose }: { open: boolean; onClose: () => voi
                         type="button"
                         onMouseEnter={() => setActive(i)}
                         onClick={() => go(r.to)}
-                        className={`flex w-full items-center gap-3 rounded-xl px-3 py-3 text-left transition ${i === active ? 'bg-race/15 text-white' : 'text-zinc-300'}`}
+                        className={`flex w-full items-center gap-3 rounded-xl px-3 py-3 text-left transition ${i === active ? 'bg-gold/15 text-white' : 'text-zinc-300'}`}
                       >
-                        <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-white/5"><Icon className="h-4 w-4 text-race-400" aria-hidden /></span>
+                        <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-white/5"><Icon className="h-4 w-4 text-gold" aria-hidden /></span>
                         <span className="min-w-0 flex-1">
                           <span className="block truncate font-semibold">{r.title}</span>
                           <span className="block truncate text-xs text-zinc-500">{r.kind} · {r.subtitle}</span>

@@ -27,13 +27,13 @@ export function StandingsPreview() {
                 const max = d.state.status === 'success' ? d.state.data.items[0].points : 1;
                 return (
                   <li key={s.driverId} className="flex items-center gap-3 py-2.5">
-                    <span className="w-6 font-display text-xl font-black text-white tabular">{s.position}</span>
+                    <span className="w-6 font-display text-xl font-semibold text-white tabular">{s.position}</span>
                     {local && team ? <DriverPhoto driver={local} team={team} width={96} className="h-10 w-10 shrink-0 rounded-full bg-white/5" /> : <span className="h-10 w-10 rounded-full bg-white/5" />}
                     <div className="min-w-0 flex-1">
-                      {local ? <Link to={`/pilotos/${local.id}`} className="block truncate font-semibold text-white hover:text-race-400">{s.givenName} <span className="uppercase">{s.familyName}</span></Link> : <p className="truncate font-semibold text-white">{s.givenName} {s.familyName}</p>}
+                      {local ? <Link to={`/pilotos/${local.id}`} className="block truncate font-semibold text-white hover:text-gold">{s.givenName} {s.familyName}</Link> : <p className="truncate font-semibold text-white">{s.givenName} {s.familyName}</p>}
                       <div className="mt-1 h-1 overflow-hidden rounded-full bg-white/5" aria-hidden><div className="h-full rounded-full" style={{ width: `${(s.points / max) * 100}%`, background: team?.color }} /></div>
                     </div>
-                    <span className="w-16 text-right font-display text-lg font-black text-white tabular">{s.points}<span className="ml-0.5 text-[10px] text-zinc-500">pts</span></span>
+                    <span className="w-16 text-right font-display text-lg font-semibold text-white tabular">{s.points}<span className="ml-0.5 text-[10px] text-zinc-500">pts</span></span>
                   </li>
                 );
               })}
@@ -49,14 +49,14 @@ export function StandingsPreview() {
                 const max = c.state.status === 'success' ? c.state.data.items[0].points : 1;
                 return (
                   <li key={s.constructorId} className="flex items-center gap-3 py-2.5">
-                    <span className="w-6 font-display text-xl font-black text-white tabular">{s.position}</span>
+                    <span className="w-6 font-display text-xl font-semibold text-white tabular">{s.position}</span>
                     <span className="h-10 w-1.5 rounded" style={{ background: team?.color }} aria-hidden />
                     <div className="min-w-0 flex-1">
-                      {team ? <Link to={`/equipes/${team.id}`} className="block truncate font-semibold text-white hover:text-race-400">{s.name}</Link> : <p className="truncate font-semibold text-white">{s.name}</p>}
+                      {team ? <Link to={`/equipes/${team.id}`} className="block truncate font-semibold text-white hover:text-gold">{s.name}</Link> : <p className="truncate font-semibold text-white">{s.name}</p>}
                       <div className="mt-1 h-1 overflow-hidden rounded-full bg-white/5" aria-hidden><div className="h-full rounded-full" style={{ width: `${(s.points / max) * 100}%`, background: team?.color }} /></div>
                     </div>
                     <span className="text-right font-mono text-xs text-zinc-500">{s.wins} vit.</span>
-                    <span className="w-16 text-right font-display text-lg font-black text-white tabular">{s.points}<span className="ml-0.5 text-[10px] text-zinc-500">pts</span></span>
+                    <span className="w-16 text-right font-display text-lg font-semibold text-white tabular">{s.points}<span className="ml-0.5 text-[10px] text-zinc-500">pts</span></span>
                   </li>
                 );
               })}

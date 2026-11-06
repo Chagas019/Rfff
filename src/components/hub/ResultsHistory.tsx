@@ -32,7 +32,7 @@ export function ResultsHistory() {
                     <tr key={h.round} className="border-t border-white/[0.05] hover:bg-white/[0.02]">
                       <td className="px-4 py-2.5 font-mono text-zinc-500">{String(h.round).padStart(2, '0')}</td>
                       <td>
-                        {local ? <Link to={`/calendario/${local.id}`} className="flex items-center gap-2 font-semibold text-white hover:text-race-400"><Flag code={local.countryCode} country={local.country} />{local.name}</Link> : <span className="text-white">{h.raceName}</span>}
+                        {local ? <Link to={`/calendario/${local.id}`} className="flex items-center gap-2 font-semibold text-white hover:text-gold"><Flag code={local.countryCode} country={local.country} />{local.name}</Link> : <span className="text-white">{h.raceName}</span>}
                       </td>
                       {[0, 1, 2].map((p) => {
                         const d = h.drivers[p];

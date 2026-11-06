@@ -40,7 +40,7 @@ function Step({ r, idx, prev }: { r: RaceResultRow; idx: number; prev?: RaceResu
   const gained = r.grid > 0 ? r.grid - r.position : 0;
   const card = (
     <div className={`relative overflow-hidden rounded-t-2xl border border-b-0 border-white/10 ${winner ? 'ring-1 ring-telemetry-yellow/40' : ''}`} style={{ background: `linear-gradient(180deg, ${color}38 0%, ${color}12 55%, #0d0d12 100%)` }}>
-      <span className="absolute left-3 top-2 font-display text-5xl font-black leading-none text-white/90 sm:text-7xl" aria-hidden>{r.position}</span>
+      <span className="absolute left-3 top-2 font-display text-5xl font-semibold leading-none text-white/90 sm:text-7xl" aria-hidden>{r.position}</span>
       {winner && <Trophy className="absolute right-3 top-3 h-5 w-5 text-telemetry-yellow" aria-hidden />}
       <div className={`relative mx-auto ${winner ? 'aspect-[4/5] w-[92%]' : 'aspect-[4/5] w-[86%]'} mt-6`}>
         {local && team ? <DriverPhoto driver={local} team={team} width={winner ? 560 : 420} className="h-full w-full" /> : <div className="h-full w-full" />}
@@ -53,7 +53,7 @@ function Step({ r, idx, prev }: { r: RaceResultRow; idx: number; prev?: RaceResu
       <motion.div initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: '-60px' }} transition={{ duration: 0.6, delay: winner ? 0.15 : 0.3 + idx * 0.08, ease: [0.22, 1, 0.36, 1] }}>
         {local ? <Link to={`/pilotos/${local.id}`} aria-label={`${r.position}º lugar: ${r.driver}`} className="block transition hover:brightness-110">{card}</Link> : card}
         <div className="border-x border-white/10 bg-carbon-900 px-2 pb-3 pt-2 text-center sm:px-3">
-          <p className={`font-display font-black uppercase leading-tight text-white ${winner ? 'text-lg sm:text-2xl' : 'text-sm sm:text-xl'}`}>{r.driver}</p>
+          <p className={`font-display font-semibold leading-tight text-white ${winner ? 'text-lg sm:text-2xl' : 'text-sm sm:text-xl'}`}>{r.driver}</p>
           <p className="mt-0.5 flex items-center justify-center gap-1.5 truncate text-[11px] text-zinc-400 sm:text-xs"><span className="h-2 w-2 rounded-full" style={{ background: color }} aria-hidden />{r.constructor}</p>
           <p className="mt-2 font-mono text-xs text-white tabular sm:text-sm">{winner ? r.time ?? r.status : prev ? gapBetween(prev, r) ?? r.status : r.time}</p>
           <p className="text-[10px] text-zinc-500 sm:text-[11px]">{winner ? 'tempo total' : 'para o ' + (idx === 1 ? '1º' : '2º')}</p>
@@ -103,7 +103,7 @@ export function LastRacePodium({ race }: { race: Race }) {
     <section aria-labelledby="podium-title">
       <div className="mb-6 flex flex-wrap items-end justify-between gap-4 border-b border-white/[0.08] pb-3">
         <div>
-          <p className="kicker flex items-center gap-2 text-race-400"><Trophy className="h-3.5 w-3.5" aria-hidden />Pódio · Rodada {race.round} · {formatWeekend(race.weekendStart, race.weekendEnd)}</p>
+          <p className="kicker flex items-center gap-2 text-gold"><Trophy className="h-3.5 w-3.5" aria-hidden />Pódio · Rodada {race.round} · {formatWeekend(race.weekendStart, race.weekendEnd)}</p>
           <h2 id="podium-title" className="mt-1 text-2xl leading-none sm:text-3xl"><Flag code={race.countryCode} country={race.country} className="mr-2 align-middle" />{race.name}</h2>
         </div>
         <div className="flex flex-wrap items-center gap-3">

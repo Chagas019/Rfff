@@ -23,8 +23,8 @@ export function LivePage() {
       <header className="container-grid">
         <div className="flex flex-wrap items-end justify-between gap-4 border-b border-white/[0.08] pb-6">
           <div>
-            <p className="kicker flex items-center gap-2 text-race-400"><Radio className="h-3.5 w-3.5" aria-hidden />Central de informações</p>
-            <h1 className="mt-2 text-5xl leading-none sm:text-7xl">F1 <span className="text-race">Live</span></h1>
+            <p className="kicker flex items-center gap-2 text-gold"><Radio className="h-3.5 w-3.5" aria-hidden />Central de informações</p>
+            <h1 className="mt-2 text-5xl leading-none sm:text-7xl">F1 <span className="text-gold">Live</span></h1>
             <p className="mt-3 max-w-2xl text-zinc-400">
               {mode === 'live'
                 ? 'Fim de semana em andamento: tempos de cada sessão, comunicados da direção de prova e as notícias mais recentes.'

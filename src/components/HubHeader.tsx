@@ -5,7 +5,7 @@ export function HubHeader({ kicker, title, id, children, action }: { kicker?: st
   return (
     <div className="mb-5 flex flex-wrap items-end justify-between gap-3 border-b border-white/[0.08] pb-3">
       <div className="min-w-0">
-        {kicker && <p className="kicker mb-1 text-race-400">{kicker}</p>}
+        {kicker && <p className="kicker mb-1 text-gold">{kicker}</p>}
         <h2 id={id} className="text-2xl leading-none sm:text-3xl">{title}</h2>
         {children && <p className="mt-2 text-sm text-zinc-400">{children}</p>}
       </div>

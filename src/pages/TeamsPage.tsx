@@ -24,7 +24,7 @@ export function TeamsPage() {
 
   return (
     <>
-      <PageHeader kicker="Construtores 2026" title={<>Equipes &amp; <span className="text-race">carros</span></>}>
+      <PageHeader kicker="Construtores 2026" title={<>Equipes &amp; <span className="text-gold">carros</span></>}>
         <p>Onze equipes, cinco fabricantes de motor e um regulamento novo em folha. Passe o mouse nos carros para dar zoom.</p>
       </PageHeader>
       <div className="container-grid py-10">
@@ -45,7 +45,7 @@ export function TeamsPage() {
           <div>
             <div className="relative overflow-hidden p-6 pb-0 sm:p-8 sm:pb-0" style={{ background: `radial-gradient(700px 260px at 70% 10%, ${selected.color}44, transparent 70%)` }}>
               <p className="label" style={{ color: selected.color }}>{selected.fullName}</p>
-              <h2 className="pr-10 text-3xl font-black uppercase sm:text-5xl">{selected.name} <span className="text-xl text-zinc-400 sm:text-2xl">{selected.car}</span></h2>
+              <h2 className="pr-10 text-3xl font-semibold sm:text-5xl">{selected.name} <span className="text-xl text-zinc-400 sm:text-2xl">{selected.car}</span></h2>
               <motion.div initial={{ y: 30, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ type: 'spring', damping: 20 }} className="mt-4 overflow-hidden rounded-2xl border border-white/10">
                 {studioImageFor(selected.id) ? <StudioCar team={selected} className="aspect-[16/9]" /> : <CarPhoto photoKey={selected.id} query={teamPhotoQuery(selected.id)} alt={`Foto do carro ${selected.name} ${selected.car} de 2026`} searchTerm={`${selected.name} ${selected.car}`} color={selected.color} className="aspect-[16/9]" />}
               </motion.div>

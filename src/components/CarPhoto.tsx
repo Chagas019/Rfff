@@ -36,7 +36,7 @@ export function PhotoCredit({ photo, className = '' }: { photo: Photo; className
 }
 
 /** Foto real do carro (Wikimedia Commons), com carregamento, erro e crédito. */
-export function CarPhoto({ photoKey, query, alt, searchTerm, color = '#e10600', className = '', imgClassName = '', credit = 'overlay', onLoaded }: Props) {
+export function CarPhoto({ photoKey, query, alt, searchTerm, color = '#EDB40B', className = '', imgClassName = '', credit = 'overlay', onLoaded }: Props) {
   const { state, retry } = useCarPhoto(photoKey, query);
   const [imgLoaded, setImgLoaded] = useState(false);
   const [imgError, setImgError] = useState(false);

@@ -26,15 +26,15 @@ export function FavoritesPage() {
   const section = (title: string, n: number, children: React.ReactNode) =>
     n > 0 && (
       <section className="mb-12">
-        <h2 className="mb-4 flex items-center gap-3 text-xl font-bold uppercase">{title}<span className="chip">{n}</span></h2>
+        <h2 className="mb-4 flex items-center gap-3 text-xl font-bold">{title}<span className="chip">{n}</span></h2>
         {children}
       </section>
     );
 
   return (
     <>
-      <PageHeader kicker="Sua garagem" title={<>Meus <span className="text-race">favoritos</span></>}>
-        <p>Corridas, circuitos, pilotos e equipes que você marcou com <Heart className="inline h-4 w-4 fill-race text-race" aria-label="coração" />. Ficam salvos neste navegador.</p>
+      <PageHeader kicker="Sua garagem" title={<>Meus <span className="text-gold">favoritos</span></>}>
+        <p>Corridas, circuitos, pilotos e equipes que você marcou com <Heart className="inline h-4 w-4 fill-gold text-gold" aria-label="coração" />. Ficam salvos neste navegador.</p>
       </PageHeader>
       <div className="container-grid py-10">
         {count === 0 ? (

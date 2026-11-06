@@ -52,7 +52,7 @@ export function SeasonStats() {
         {stats.map((s) => (
           <li key={s.label} className="surface p-4">
             <p className="kicker flex items-center gap-1.5 text-zinc-500"><s.icon className="h-3.5 w-3.5 text-race" aria-hidden />{s.label}</p>
-            <p className="mt-2 font-display text-2xl font-black uppercase leading-tight text-white">{s.value}</p>
+            <p className="mt-2 font-display text-2xl font-semibold leading-tight text-white">{s.value}</p>
             <p className="mt-1 text-xs text-zinc-400">{s.detail}</p>
           </li>
         ))}

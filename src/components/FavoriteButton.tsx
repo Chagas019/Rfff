@@ -25,9 +25,9 @@ export function FavoriteButton({ kind, id, label, variant = 'icon', className = 
       aria-pressed={active}
       aria-label={`${text}: ${label}`}
       title={text}
-      className={variant === 'icon' ? `btn-icon ${active ? 'border-race/70 bg-race/15 text-race-400' : ''} ${className}` : `btn-ghost ${active ? 'border-race/70 bg-race/15' : ''} ${className}`}
+      className={variant === 'icon' ? `btn-icon ${active ? 'border-gold/70 bg-gold/15 text-gold' : ''} ${className}` : `btn-ghost ${active ? 'border-gold/70 bg-gold/15' : ''} ${className}`}
     >
-      <Heart className={`h-4 w-4 ${active ? 'fill-race text-race' : ''}`} aria-hidden />
+      <Heart className={`h-4 w-4 ${active ? 'fill-gold text-gold' : ''}`} aria-hidden />
       {variant === 'full' && <span>{active ? 'Favoritado' : 'Favoritar'}</span>}
     </motion.button>
   );

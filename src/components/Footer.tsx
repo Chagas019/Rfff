@@ -9,9 +9,14 @@ const CREATOR = { handle: 'chagas_catolico', url: 'https://www.instagram.com/cha
 
 export function Footer() {
   return (
-    <footer className="relative mt-24 border-t border-white/10 bg-carbon-950">
-      <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-race to-transparent" aria-hidden />
-      <div className="container-grid grid gap-10 py-14 md:grid-cols-[1.4fr_1fr_1.4fr]">
+    <footer className="relative mt-24 border-t border-white/10 bg-carbon-950/80">
+      <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-gold to-transparent" aria-hidden />
+      <div className="container-grid overflow-hidden pt-14">
+        <p className="text-[clamp(56px,11vw,150px)] font-semibold leading-[0.82] tracking-[-0.06em] text-white">
+          The race<br /><span className="text-gold">never stops.</span>
+        </p>
+      </div>
+      <div className="container-grid grid gap-10 pb-14 pt-12 md:grid-cols-[1.4fr_1fr_1.4fr]">
         <div>
           <Logo />
           <p className="mt-4 max-w-sm text-sm text-zinc-400">A experiência da velocidade. Uma plataforma de fãs para acompanhar a temporada 2026 da Fórmula 1.</p>
@@ -21,13 +26,13 @@ export function Footer() {
               href={CREATOR.url}
               target="_blank"
               rel="noreferrer"
-              className="group inline-flex items-center gap-3 rounded-full border border-white/10 bg-white/[0.03] py-2 pl-2 pr-4 transition hover:border-race/60 hover:bg-race/10"
+              className="group inline-flex items-center gap-3 rounded-full border border-white/10 bg-white/[0.03] py-2 pl-2 pr-4 transition hover:border-gold/60 hover:bg-gold/10"
               aria-label={`Instagram do criador do site: @${CREATOR.handle} (abre em nova aba)`}
             >
               <span className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-tr from-[#f58529] via-[#dd2a7b] to-[#8134af] text-white" aria-hidden>
                 <Instagram className="h-4 w-4" />
               </span>
-              <span className="font-condensed text-sm font-semibold uppercase tracking-wider text-zinc-200 group-hover:text-white">@{CREATOR.handle}</span>
+              <span className="font-condensed text-sm font-semibold text-zinc-200 group-hover:text-white">@{CREATOR.handle}</span>
             </a>
           </div>
         </div>
@@ -47,9 +52,9 @@ export function Footer() {
           <p className="mt-3">Site de fãs sem vínculo com a Formula One Group ou a FIA. “Formula 1”, “F1” e marcas relacionadas pertencem aos seus donos.</p>
         </div>
       </div>
-      <div className="border-t border-white/5 py-5 text-center font-mono text-[11px] uppercase tracking-[0.2em] text-zinc-600">
+      <div className="border-t border-white/5 py-5 text-center font-mono text-[11px] text-zinc-600">
         © {new Date().getFullYear()} GRID F1 — The race never stops · Criado por{' '}
-        <a href={CREATOR.url} target="_blank" rel="noreferrer" className="text-zinc-400 hover:text-race">@{CREATOR.handle}</a>
+        <a href={CREATOR.url} target="_blank" rel="noreferrer" className="text-zinc-400 hover:text-gold">@{CREATOR.handle}</a>
       </div>
     </footer>
   );

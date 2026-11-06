@@ -22,7 +22,7 @@ export function NextRaceCard() {
   return (
     <article className="panel flex h-full flex-col p-5 sm:p-6" aria-labelledby="next-race-title">
       <p className="kicker flex items-center gap-2 text-zinc-400">
-        {state === 'live' ? <span className="flex items-center gap-2 text-race-400"><span className="h-2 w-2 animate-pulse rounded-full bg-race" aria-hidden />Ao vivo agora</span> : 'Próxima sessão'}
+        {state === 'live' ? <span className="flex items-center gap-2 text-gold"><span className="h-2 w-2 animate-pulse rounded-full bg-race" aria-hidden />Ao vivo agora</span> : 'Próxima sessão'}
         <span className="text-zinc-600">·</span> Rodada {race.round}
       </p>
       <h2 id="next-race-title" className="mt-2 text-2xl leading-none sm:text-3xl"><Flag code={race.countryCode} country={race.country} className="mr-2 align-middle" />{race.name}</h2>
@@ -36,7 +36,7 @@ export function NextRaceCard() {
         {state === 'live' ? (
           <Link to="/live" className="mt-3 flex items-center justify-between rounded-lg bg-race px-4 py-3 font-condensed text-sm font-semibold uppercase tracking-wider text-white hover:bg-race-400">Acompanhar no F1 LIVE <ArrowRight className="h-4 w-4" aria-hidden /></Link>
         ) : (
-          <p className="mt-2 font-display text-4xl font-black text-white tabular" role="timer" aria-label={`Faltam ${cd.days} dias, ${cd.hours} horas e ${cd.minutes} minutos para ${SESSION_LABELS[session.type]}`}>
+          <p className="mt-2 font-display text-4xl font-semibold text-white tabular" role="timer" aria-label={`Faltam ${cd.days} dias, ${cd.hours} horas e ${cd.minutes} minutos para ${SESSION_LABELS[session.type]}`}>
             {cd.days > 0 && <>{cd.days}<span className="mr-2 text-base text-zinc-500">d</span></>}{pad2(cd.hours)}<span className="text-zinc-600">:</span>{pad2(cd.minutes)}<span className="text-zinc-600">:</span>{pad2(cd.seconds)}
           </p>
         )}
@@ -54,7 +54,7 @@ export function NextRaceCard() {
           <TrackMap points={circuit.layout} name={circuit.name} className="h-16 w-16 shrink-0" />
           <dl className="grid flex-1 grid-cols-3 gap-2 text-center">
             {[['km', circuit.lengthKm.toFixed(3)], ['curvas', circuit.turns], ['voltas', circuit.laps]].map(([k, v]) => (
-              <div key={k as string}><dt className="kicker text-[10px] text-zinc-500">{k}</dt><dd className="font-display text-lg font-black text-white">{v}</dd></div>
+              <div key={k as string}><dt className="kicker text-[10px] text-zinc-500">{k}</dt><dd className="font-display text-lg font-semibold text-white">{v}</dd></div>
             ))}
           </dl>
         </div>

@@ -61,9 +61,9 @@ export function SeasonStatus() {
         </div>
       </div>
       <dl className="grid grid-cols-3 gap-3 text-center">
-        <div className="rounded-lg bg-white/[0.03] p-3"><dt className="kicker text-[10px] text-zinc-500">Vantagem</dt><dd className="font-display text-2xl font-black text-white">+{tm.gap}</dd><dd className="truncate text-[11px] text-zinc-500">sobre {p2.familyName}</dd></div>
-        <div className="rounded-lg bg-white/[0.03] p-3"><dt className="kicker text-[10px] text-zinc-500">Em jogo</dt><dd className="font-display text-2xl font-black text-white">{tm.pointsLeft}</dd><dd className="text-[11px] text-zinc-500">pts · {tm.racesLeft} GPs</dd></div>
-        <div className="rounded-lg bg-white/[0.03] p-3"><dt className="kicker text-[10px] text-zinc-500">Título</dt><dd className={`font-display text-2xl font-black ${tm.decided ? 'text-telemetry-yellow' : 'text-telemetry-green'}`}>{tm.decided ? 'Decidido' : 'Aberto'}</dd><dd className="text-[11px] text-zinc-500">{tm.decided ? `${p1.familyName} garantido` : 'na matemática'}</dd></div>
+        <div className="rounded-lg bg-white/[0.03] p-3"><dt className="kicker text-[10px] text-zinc-500">Vantagem</dt><dd className="font-display text-2xl font-semibold text-white">+{tm.gap}</dd><dd className="truncate text-[11px] text-zinc-500">sobre {p2.familyName}</dd></div>
+        <div className="rounded-lg bg-white/[0.03] p-3"><dt className="kicker text-[10px] text-zinc-500">Em jogo</dt><dd className="font-display text-2xl font-semibold text-white">{tm.pointsLeft}</dd><dd className="text-[11px] text-zinc-500">pts · {tm.racesLeft} GPs</dd></div>
+        <div className="rounded-lg bg-white/[0.03] p-3"><dt className="kicker text-[10px] text-zinc-500">Título</dt><dd className={`font-display text-2xl font-semibold ${tm.decided ? 'text-telemetry-yellow' : 'text-telemetry-green'}`}>{tm.decided ? 'Decidido' : 'Aberto'}</dd><dd className="text-[11px] text-zinc-500">{tm.decided ? `${p1.familyName} garantido` : 'na matemática'}</dd></div>
       </dl>
       {c1 && (
         <div className="flex items-center gap-3 rounded-lg bg-white/[0.03] px-3 py-2.5 text-sm">

@@ -41,7 +41,7 @@ export function WeekendCenter({ race, now, mode }: { race: Race; now: Date; mode
     <section aria-labelledby="weekend-title" className="space-y-6">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <p className="kicker flex items-center gap-2 text-race-400">
+          <p className="kicker flex items-center gap-2 text-gold">
             {mode === 'live' ? <><Radio className="h-3.5 w-3.5" aria-hidden />Fim de semana em andamento</> : 'Última etapa disputada'} · Rodada {race.round}
           </p>
           <h2 id="weekend-title" className="mt-1 text-3xl sm:text-4xl"><Flag code={race.countryCode} country={race.country} className="mr-3 align-middle" />{race.name}</h2>
@@ -63,7 +63,7 @@ export function WeekendCenter({ race, now, mode }: { race: Race; now: Date; mode
             >
               <span className="flex items-center gap-2 font-condensed text-sm font-semibold uppercase tracking-wider text-white"><StateIcon s={s} />{SHORT[s.type]}</span>
               <span className="font-mono text-[11px] text-zinc-500">{dayShort(s.start)} · {clock(s.start)}</span>
-              <span className={`kicker text-[10px] ${s.state === 'live' ? 'text-race-400' : s.state === 'done' ? 'text-telemetry-green' : 'text-zinc-600'}`}>{s.state === 'live' ? 'Ao vivo' : s.state === 'done' ? 'Encerrada' : 'A seguir'}</span>
+              <span className={`kicker text-[10px] ${s.state === 'live' ? 'text-gold' : s.state === 'done' ? 'text-telemetry-green' : 'text-zinc-600'}`}>{s.state === 'live' ? 'Ao vivo' : s.state === 'done' ? 'Encerrada' : 'A seguir'}</span>
             </button>
           ))}
         </div>

@@ -1,4 +1,5 @@
 import type { Circuit } from '../types';
+import { trackShapes } from './trackShapes';
 
 /**
  * CIRCUITOS DA TEMPORADA 2026
@@ -8,10 +9,11 @@ import type { Circuit } from '../types';
  * Recordes registrados até o fim da temporada 2025. Os carros do regulamento
  * de 2026 podem ter alterado algum recorde: confira a fonte oficial.
  * `lapRecord: null` = sem dado verificado (ex.: circuito novo).
- * `layout` = traçado ESQUEMÁTICO desenhado para este projeto (ilustrativo,
- * não é a planta oficial do circuito).
+ * `layout` = traçado REAL do circuito (src/data/trackShapes.ts, gerado a partir do
+ * projeto aberto bacinger/f1-circuits, licença MIT). Os pontos escritos abaixo são
+ * o esboço antigo, usado só se um circuito não tiver traçado real.
  */
-export const circuits: Circuit[] = [
+const baseCircuits: Circuit[] = [
   {
     id: 'albert-park', name: 'Albert Park Circuit', city: 'Melbourne', country: 'Austrália', countryCode: 'AU',
     lengthKm: 5.278, turns: 14, laps: 58, raceDistanceKm: 306.124, firstGp: 1996, type: 'Semipermanente', direction: 'Horário',
@@ -155,7 +157,7 @@ export const circuits: Circuit[] = [
     characteristics: ['Duas retas paralelas ligadas por um grampo', 'Calor e chuvas tropicais', 'Curvas rápidas de alta carga'],
     description: 'Projetado por Hermann Tilke, recebeu a F1 de 1999 a 2017 e voltou em 2026 para sediar o GP do Bahrein, transferido por causa do conflito no Oriente Médio.',
     lapRecord: { time: '1:34.223', driver: 'Juan Pablo Montoya', year: 2004 },
-    // traçado a partir das posições reais do carro de Verstappen na volta 55 do GP de 2026 (OpenF1 /location)
+    // reserva: posições reais do carro de Verstappen na volta 55 do GP de 2026 (OpenF1 /location); o site usa trackShapes
     layout: [[51,51],[38,53],[22,54],[12,55],[10,51],[14,50],[17,49],[15,46],[14,37],[23,26],[36,22],[46,18],[49,21],[51,29],[58,40],[67,36],[77,36],[83,44],[90,51],[87,58],[78,60],[65,61],[56,62],[54,64],[58,67],[61,74],[58,82],[52,80],[44,74],[33,71],[21,72],[18,67],[22,64],[32,62],[47,60],[63,57],[75,55],[79,52],[76,49],[69,50],[56,51]],
   },
   {
@@ -215,6 +217,10 @@ export const circuits: Circuit[] = [
     layout: [[10,40],[30,30],[45,40],[60,22],[85,25],[90,45],[70,55],[75,70],[55,80],[35,72],[20,62]],
   },
 ];
+
+export const circuits: Circuit[] = baseCircuits.map((c) => ({ ...c, layout: trackShapes[c.id] ?? c.layout }));
+
+export const TRACKS_SOURCE = { label: 'bacinger/f1-circuits (MIT)', url: 'https://github.com/bacinger/f1-circuits' };
 
 export const CIRCUITS_SOURCE = {
   label: 'formula1.com — páginas oficiais de circuito (recordes até a temporada 2025)',

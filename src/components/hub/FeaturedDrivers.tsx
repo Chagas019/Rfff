@@ -57,9 +57,9 @@ export function FeaturedDrivers() {
                 </div>
                 <div className="relative -mt-10 p-4">
                   <p className="text-xs text-zinc-400">{local?.firstName ?? e.name.split(' ')[0]}</p>
-                  <p className="font-display text-xl font-black uppercase leading-none text-white">{local?.lastName ?? e.name.split(' ').slice(1).join(' ')}</p>
+                  <p className="font-display text-xl font-semibold leading-none text-white">{local?.lastName ?? e.name.split(' ').slice(1).join(' ')}</p>
                   <p className="mt-2 flex items-baseline justify-between gap-2">
-                    <span className="font-display text-2xl font-black text-white">{e.points}<span className="ml-1 text-xs text-zinc-500">pts</span></span>
+                    <span className="font-display text-2xl font-semibold text-white">{e.points}<span className="ml-1 text-xs text-zinc-500">pts</span></span>
                     <span className="font-mono text-[11px] text-zinc-400" aria-label={`Chegadas: ${e.finishes.join(', ')}`}>{e.finishes.map((p) => `P${p}`).join(' · ')}</span>
                   </p>
                 </div>

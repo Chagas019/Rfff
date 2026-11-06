@@ -6,6 +6,7 @@ import { HubHeader } from '../components/HubHeader';
 import { LastRacePodium } from '../components/LastRacePodium';
 import { Lazy } from '../components/Lazy';
 import { NewsHub } from '../components/NewsHub';
+import { PhoneHero } from '../components/PhoneHero';
 import { RaceCard } from '../components/RaceCard';
 import { Reveal } from '../components/Reveal';
 import { FeaturedDrivers } from '../components/hub/FeaturedDrivers';
@@ -56,10 +57,10 @@ export function HomePage() {
       <section className="container-grid pb-10 pt-24 sm:pt-28" aria-labelledby="hero-title">
         <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
           <div>
-            <p className="kicker flex items-center gap-2 text-race-400">
+            <p className="kicker flex items-center gap-2 text-gold">
               {mode === 'live' ? <><span className="h-2 w-2 animate-pulse rounded-full bg-race" aria-hidden />Fim de semana de corrida</> : 'Temporada 2026 · Nova era técnica'}
             </p>
-            <h1 id="hero-title" className="mt-2 text-5xl leading-[0.9] sm:text-6xl xl:text-7xl">The race <span className="text-race">never stops.</span></h1>
+            <h1 id="hero-title" className="mt-2 text-5xl leading-[0.9] sm:text-6xl xl:text-7xl">The race <span className="text-gold">never stops.</span></h1>
           </div>
           <nav className="flex flex-wrap gap-2" aria-label="Atalhos">
             <Link to="/calendario" className="btn-ghost py-2.5"><FlagIcon className="h-4 w-4" aria-hidden />Explorar temporada</Link>
@@ -113,7 +114,7 @@ export function HomePage() {
         <section aria-labelledby="games-title" className="panel p-6 sm:p-8">
           <div className="grid items-center gap-6 lg:grid-cols-[1fr_1.3fr]">
             <div>
-              <p className="kicker text-race-400">Área de diversão</p>
+              <p className="kicker text-gold">Área de diversão</p>
               <h2 id="games-title" className="mt-2 text-3xl">Jogos do box</h2>
               <p className="mt-2 text-sm text-zinc-400">Reflexo nas luzes de largada, o pit stop mais rápido e o quiz do grid 2026. Recordes salvos no seu aparelho.</p>
               <Link to="/jogos" className="btn-primary mt-5">Jogar agora <ArrowRight className="h-4 w-4" aria-hidden /></Link>
@@ -122,7 +123,7 @@ export function HomePage() {
               {GAMES.map((g) => (
                 <Link key={g.to} to={g.to} className="group flex flex-col items-center gap-2 rounded-xl border border-white/[0.07] bg-white/[0.02] p-4 text-center transition hover:-translate-y-0.5 hover:border-white/20">
                   <g.icon className="h-7 w-7 text-race transition group-hover:scale-110" aria-hidden />
-                  <span className="font-display text-sm font-black uppercase text-white sm:text-base">{g.title}</span>
+                  <span className="font-display text-sm font-semibold text-white sm:text-base">{g.title}</span>
                   <span className="kicker text-[10px] text-zinc-500">{g.text}</span>
                 </Link>
               ))}
@@ -130,7 +131,13 @@ export function HomePage() {
           </div>
         </section>
 
-        {/* 10. Garagem e regulamento */}
+      </div>
+
+      {/* 10. Vitrine: os três celulares (Hamilton, Silverstone, Ferrari) */}
+      <Lazy minHeight={700}><PhoneHero /></Lazy>
+
+      <div className="container-grid space-y-16 py-14 sm:space-y-20">
+        {/* 11. Garagem e regulamento */}
         <section aria-labelledby="garage-title">
           <HubHeader kicker="Showroom" title={<span id="garage-title">Garagem 2026</span>} action={<Link to="/equipes" className="btn-ghost py-2 text-xs">Todas as equipes <ArrowRight className="h-4 w-4" aria-hidden /></Link>}>
             Os carros da nova era, lado a lado. Arraste, use as setas ou deixe a garagem girar sozinha.
@@ -141,10 +148,10 @@ export function HomePage() {
         <section className="panel overflow-hidden p-6 sm:p-8" aria-labelledby="rules-title">
           <div className="grid items-center gap-6 lg:grid-cols-[1fr_1.4fr]">
             <div>
-              <p className="kicker text-race-400">Regulamento 2026</p>
+              <p className="kicker text-gold">Regulamento 2026</p>
               <h2 id="rules-title" className="mt-2 text-2xl sm:text-3xl">Carros menores, mais leves e mais elétricos</h2>
               <p className="mt-3 text-zinc-400">A nova geração usa combustível 100% sustentável, divide a potência quase igualmente entre motor a combustão e elétrico e substitui o DRS por asas móveis.</p>
-              <a href="https://www.fia.com/regulation/category/110" target="_blank" rel="noreferrer" className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-race-400 hover:text-white">Regulamentos na FIA <ArrowRight className="h-4 w-4" aria-hidden /></a>
+              <a href="https://www.fia.com/regulation/category/110" target="_blank" rel="noreferrer" className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-gold hover:text-white">Regulamentos na FIA <ArrowRight className="h-4 w-4" aria-hidden /></a>
             </div>
             <Lazy minHeight={240}>
               <div className="overflow-hidden rounded-xl border border-white/10">

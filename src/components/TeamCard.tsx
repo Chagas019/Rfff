@@ -18,7 +18,7 @@ export function TeamCard({ team, onOpen }: { team: Team; onOpen: () => void }) {
       <div className="relative flex items-start justify-between p-6 pb-0">
         <div>
           <p className="label" style={{ color: team.color }}>{team.powerUnit} · {team.base.split(',')[0]}</p>
-          <h3 className="mt-1 text-2xl font-black uppercase">{team.name}</h3>
+          <h3 className="mt-1 text-2xl font-semibold">{team.name}</h3>
           <p className="text-xs text-zinc-500">{team.fullName}</p>
         </div>
         <FavoriteButton kind="team" id={team.id} label={team.name} />
@@ -44,7 +44,7 @@ export function TeamCard({ team, onOpen }: { team: Team; onOpen: () => void }) {
           {lineup.map((d) => (
             <li key={d.id} className="flex items-center gap-2 text-zinc-300">
               <span className="w-7 font-display text-xs font-bold" style={{ color: team.color }}>#{d.number}</span>
-              {d.firstName} <strong className="uppercase text-white">{d.lastName}</strong>
+              {d.firstName} <strong className="text-white">{d.lastName}</strong>
             </li>
           ))}
         </ul>

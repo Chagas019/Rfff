@@ -79,7 +79,7 @@ export function NewsHub({ variant = 'home', query = '' }: { variant?: 'home' | '
           </select>
         </div>
         <div className="flex items-center gap-3">
-          {fresh > 0 && <span className="chip border-race/40 text-race-400">{fresh} desde sua última visita</span>}
+          {fresh > 0 && <span className="chip border-race/40 text-gold">{fresh} desde sua última visita</span>}
           {badge}
         </div>
       </div>

@@ -84,13 +84,13 @@ export function SessionResults({ sessionKey, type, live, meetingKey }: { session
               const team = d.local ? teamById(d.local.teamId) : undefined;
               return (
                 <tr key={r.driver_number} className="border-t border-white/[0.05] hover:bg-white/[0.02]">
-                  <td className="px-3 py-2 font-display text-lg font-black text-white tabular">{r.position ?? <span className="font-condensed text-xs text-zinc-500">{r.dsq ? 'DSQ' : r.dns ? 'NL' : 'AB'}</span>}</td>
+                  <td className="px-3 py-2 font-display text-lg font-semibold text-white tabular">{r.position ?? <span className="font-condensed text-xs text-zinc-500">{r.dsq ? 'DSQ' : r.dns ? 'NL' : 'AB'}</span>}</td>
                   <td>
                     <span className="flex items-center gap-3">
                       <span className="h-7 w-1 rounded" style={{ background: d.color }} aria-hidden />
                       {d.local && team && <DriverPhoto driver={d.local} team={team} width={96} className="hidden h-9 w-9 rounded-full bg-white/5 sm:block" />}
                       {d.local ? (
-                        <Link to={`/pilotos/${d.local.id}`} className="font-semibold text-white hover:text-race-400"><span className="sm:hidden">{d.local.lastName}</span><span className="hidden sm:inline">{d.name}</span></Link>
+                        <Link to={`/pilotos/${d.local.id}`} className="font-semibold text-white hover:text-gold"><span className="sm:hidden">{d.local.lastName}</span><span className="hidden sm:inline">{d.name}</span></Link>
                       ) : <span className="font-semibold text-white">{d.name}</span>}
                       <span className="hidden font-mono text-[11px] text-zinc-500 sm:inline">{d.acronym}</span>
                     </span>
