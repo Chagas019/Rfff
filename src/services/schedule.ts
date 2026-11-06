@@ -1,6 +1,7 @@
 import { SEASON, races as localRaces } from '../data/calendar2026';
 import type { Race, RaceSession, SessionType } from '../types';
 import { API_BASE } from './f1Api';
+import { getJsonCached } from './http';
 
 /**
  * Calendário oficial ao vivo (Jolpica-F1) conciliado com os dados locais.
@@ -89,9 +90,7 @@ export async function fetchSchedule(signal?: AbortSignal): Promise<{ races: Race
   const cached = readCache();
   if (cached && Date.now() - cached.at < TTL) return { races: reconcile(localRaces, cached.races), source: 'cache', updatedAt: cached.at };
   try {
-    const res = await fetch(`${API_BASE}/${SEASON}.json?limit=100`, { signal });
-    if (!res.ok) throw new Error(String(res.status));
-    const json = (await res.json()) as { MRData: { RaceTable: { Races: ApiRace[] } } };
+    const json = await getJsonCached<{ MRData: { RaceTable: { Races: ApiRace[] } } }>(`${API_BASE}/${SEASON}.json?limit=100`, { signal, ttl: 0, label: 'fonte do calendário' });
     const api = json.MRData.RaceTable.Races;
     if (!api.length) throw new Error('vazio');
     try { localStorage.setItem(CACHE_KEY, JSON.stringify({ at: Date.now(), races: api })); } catch { /* sem armazenamento */ }

@@ -21,7 +21,7 @@ function SessionRow({ s, meetingKey, round }: { s: WeekendSession; meetingKey?: 
 
   return (
     <li className="flex items-center gap-3 py-3">
-      <div className="w-28 shrink-0 sm:w-36">
+      <div className="w-24 shrink-0 sm:w-36">
         <p className="font-condensed text-sm font-semibold uppercase tracking-wider text-white">{SESSION_LABELS[s.type]}</p>
         <p className="font-mono text-[11px] text-zinc-500">{dayShort(s.start)} · {clock(s.start)}</p>
       </div>
@@ -48,11 +48,11 @@ function SessionRow({ s, meetingKey, round }: { s: WeekendSession; meetingKey?: 
 export function WeekendPulse({ race, mode, now }: { race: Race; mode: 'live' | 'recent'; now: Date }) {
   const { sessions } = useWeekendSessions(race, now);
   return (
-    <article className="panel flex h-full flex-col p-5 sm:p-6" aria-labelledby="pulse-title">
+    <article className="panel flex h-full min-w-0 flex-col p-5 sm:p-6" aria-labelledby="pulse-title">
       <p className="kicker flex items-center gap-2 text-gold">
         {mode === 'live' ? <><span className="h-2 w-2 animate-pulse rounded-full bg-race" aria-hidden />GP em andamento</> : 'Última etapa'} · Rodada {race.round}
       </p>
-      <h2 id="pulse-title" className="mt-2 text-3xl leading-none sm:text-4xl"><Flag code={race.countryCode} country={race.country} className="mr-2 align-middle" />{race.name}</h2>
+      <h2 id="pulse-title" className="mt-2 break-words text-3xl leading-none sm:text-4xl"><Flag code={race.countryCode} country={race.country} className="mr-2 align-middle" />{race.name}</h2>
       <ol className="mt-4 divide-y divide-white/[0.06]">{sessions.map((s) => <SessionRow key={s.type} s={s} meetingKey={OPENF1_MEETING[race.id]} round={race.round} />)}</ol>
       <div className="mt-auto pt-5">
         <Link to="/live" className="btn-primary">{mode === 'live' ? 'Acompanhar no F1 LIVE' : 'Ver resultados e direção de prova'} <ArrowRight className="h-4 w-4" aria-hidden /></Link>

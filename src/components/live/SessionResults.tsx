@@ -71,7 +71,7 @@ export function useSessionData({ sessionKey, live, meetingKey, type, round, enab
 
 /** Classificação de uma sessão (treino, classificação, sprint ou corrida) com tempos e diferenças oficiais. */
 export function SessionResults({ sessionKey, type, live, meetingKey, round }: { sessionKey: number | null; type: SessionType; live: boolean; meetingKey?: number; round?: number | null }) {
-  const { state, retry, refreshNow, updatedAt, refreshing } = useSessionData({ sessionKey, live, meetingKey, type, round });
+  const { state, retry, refreshNow, updatedAt, refreshing, lastError } = useSessionData({ sessionKey, live, meetingKey, type, round });
   const [all, setAll] = useState(false);
 
   if (state.status === 'loading' || state.status === 'idle') {
@@ -86,7 +86,7 @@ export function SessionResults({ sessionKey, type, live, meetingKey, round }: { 
         {locked
           ? 'Enquanto há uma sessão ao vivo, a OpenF1 libera os tempos só para assinantes. ' + (JOLPICA_TYPES.includes(type) ? 'O resultado oficial aparece aqui assim que for publicado.' : 'Os tempos de treino livre voltam a aparecer quando a sessão terminar.')
           : 'Os tempos oficiais desta sessão ainda não foram publicados — esta área se atualiza sozinha assim que eles saírem.'}
-        <div className="mt-3"><LiveBadge updatedAt={updatedAt} refreshing={refreshing} onRefresh={refreshNow} /></div>
+        <div className="mt-3"><LiveBadge updatedAt={updatedAt} refreshing={refreshing} error={lastError} onRefresh={refreshNow} /></div>
       </div>
     );
   }
@@ -96,7 +96,7 @@ export function SessionResults({ sessionKey, type, live, meetingKey, round }: { 
     <div>
       <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
         <p className="kicker text-zinc-400">{SESSION_LABELS[type]} · resultado {live ? 'parcial' : 'oficial'}</p>
-        <LiveBadge updatedAt={updatedAt} refreshing={refreshing} onRefresh={refreshNow} />
+        <LiveBadge updatedAt={updatedAt} refreshing={refreshing} error={lastError} onRefresh={refreshNow} />
       </div>
       <div className="overflow-x-auto rounded-xl border border-white/[0.06]">
         <table className="w-full text-left text-sm">

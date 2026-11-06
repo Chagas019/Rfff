@@ -24,7 +24,7 @@ function NewsSkeleton({ lead = true }: { lead?: boolean }) {
  * `variant="full"`: filtros por idioma e fonte, lista completa.
  */
 export function NewsHub({ variant = 'home', query = '' }: { variant?: 'home' | 'full'; query?: string }) {
-  const { state, retry, refreshNow, updatedAt, refreshing } = useAsync((s) => fetchNews(s), [], { refreshMs: NEWS_REFRESH_MS });
+  const { state, retry, refreshNow, updatedAt, refreshing, lastError } = useAsync((s) => fetchNews(s), [], { refreshMs: NEWS_REFRESH_MS });
   const [lang, setLang] = useState<Lang>('all');
   const [source, setSource] = useState('');
   const [limit, setLimit] = useState(18);
@@ -40,7 +40,7 @@ export function NewsHub({ variant = 'home', query = '' }: { variant?: 'home' | '
   if (state.status === 'error') return <ErrorState message={`${state.error} As notícias vêm direto das fontes jornalísticas.`} onRetry={retry} />;
 
   const sources = state.data.sources;
-  const badge = <LiveBadge updatedAt={updatedAt} refreshing={refreshing} onRefresh={refreshNow} />;
+  const badge = <LiveBadge updatedAt={updatedAt} refreshing={refreshing} error={lastError} onRefresh={refreshNow} />;
 
   if (variant === 'home') {
     // manchete: a notícia mais recente com imagem, de preferência em português

@@ -15,7 +15,7 @@ export function StandingsPreview() {
   const c = useConstructorStandings();
   return (
     <section aria-labelledby="rank-title">
-      <HubHeader kicker="Campeonato" title={<span id="rank-title">Ranking atualizado</span>} action={<><LiveBadge updatedAt={d.updatedAt} refreshing={d.refreshing} onRefresh={() => { d.refreshNow(); c.refreshNow(); }} /><Link to="/classificacao" className="btn-ghost py-2 text-xs">Tabela completa <ArrowRight className="h-4 w-4" aria-hidden /></Link></>} />
+      <HubHeader kicker="Campeonato" title={<span id="rank-title">Ranking atualizado</span>} action={<><LiveBadge updatedAt={d.updatedAt} refreshing={d.refreshing} error={d.lastError ?? c.lastError} onRefresh={() => { d.refreshNow(); c.refreshNow(); }} /><Link to="/classificacao" className="btn-ghost py-2 text-xs">Tabela completa <ArrowRight className="h-4 w-4" aria-hidden /></Link></>} />
       <div className="grid gap-6 lg:grid-cols-2">
         <div className="panel p-4 sm:p-5">
           <p className="kicker mb-3 text-zinc-400">Pilotos</p>

@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { LIVE_SLOW_MS, liveIntervalMs } from '../services/refreshPolicy';
 import type { AsyncState } from '../types';
 
 interface Options {
@@ -15,6 +16,8 @@ export function useAsync<T>(fn: (signal: AbortSignal) => Promise<T>, deps: unkno
   const [state, setState] = useState<AsyncState<T>>({ status: 'loading' });
   const [updatedAt, setUpdatedAt] = useState<Date | null>(null);
   const [refreshing, setRefreshing] = useState(false);
+  /** Erro da última tentativa de atualização (os dados na tela são da última busca bem-sucedida). */
+  const [lastError, setLastError] = useState<string | null>(null);
   const [attempt, setAttempt] = useState(0);
   const fnRef = useRef(fn);
   fnRef.current = fn;
@@ -31,10 +34,13 @@ export function useAsync<T>(fn: (signal: AbortSignal) => Promise<T>, deps: unkno
         hasData.current = true;
         setState({ status: 'success', data });
         setUpdatedAt(new Date());
+        setLastError(null);
       })
       .catch((err: unknown) => {
         if (controller.signal.aborted) return;
-        setState({ status: 'error', error: err instanceof Error ? err.message : 'Erro inesperado.' });
+        const msg = err instanceof Error ? err.message : 'Erro inesperado.';
+        setLastError(msg);
+        setState({ status: 'error', error: msg });
       });
     return () => controller.abort();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -57,10 +63,13 @@ export function useAsync<T>(fn: (signal: AbortSignal) => Promise<T>, deps: unkno
           hasData.current = true;
           setState({ status: 'success', data });
           setUpdatedAt(new Date());
+          setLastError(null);
         })
-        .catch(() => {
-          // falha temporária: mantém o que já está na tela; se ainda não havia nada, tenta de novo
-          if (!c.signal.aborted && !hasData.current) setAttempt((a) => a + 1);
+        .catch((err: unknown) => {
+          if (c.signal.aborted) return;
+          // falha temporária: mantém o que já está na tela (avisando que é de antes); sem nada ainda, tenta de novo
+          setLastError(err instanceof Error ? err.message : 'Erro inesperado.');
+          if (!hasData.current) setAttempt((a) => a + 1);
         })
         .finally(() => {
           if (controller === c) controller = null;
@@ -68,12 +77,18 @@ export function useAsync<T>(fn: (signal: AbortSignal) => Promise<T>, deps: unkno
         });
     };
     refreshRef.current = refresh;
-    const id = setInterval(refresh, refreshMs);
+    // dados ao vivo (intervalo padrão de 3 min) aceleram para 45 s durante sessões
+    let id = 0;
+    const schedule = () => {
+      const ms = refreshMs === LIVE_SLOW_MS ? liveIntervalMs() : refreshMs;
+      id = window.setTimeout(() => { refresh(); schedule(); }, ms);
+    };
+    schedule();
     const onWake = () => { if (Date.now() - last > Math.min(refreshMs, 60_000)) refresh(); };
     document.addEventListener('visibilitychange', onWake);
     window.addEventListener('online', refresh);
     return () => {
-      clearInterval(id);
+      clearTimeout(id);
       document.removeEventListener('visibilitychange', onWake);
       window.removeEventListener('online', refresh);
       controller?.abort();
@@ -84,5 +99,5 @@ export function useAsync<T>(fn: (signal: AbortSignal) => Promise<T>, deps: unkno
   const retry = useCallback(() => setAttempt((a) => a + 1), []);
   /** Atualiza agora sem esconder os dados atuais (só funciona com `refreshMs`). */
   const refreshNow = useCallback(() => (refreshRef.current ? refreshRef.current() : setAttempt((a) => a + 1)), []);
-  return { state, retry, refreshNow, updatedAt, refreshing };
+  return { state, retry, refreshNow, updatedAt, refreshing, lastError };
 }

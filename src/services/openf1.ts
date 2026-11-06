@@ -6,7 +6,8 @@ import { getJsonCached } from './http';
  * gratuitos e com CORS liberado. Sessões, resultados e mensagens da direção de prova
  * ficam disponíveis assim que a OpenF1 os publica (normalmente logo após cada sessão).
  */
-export const OPENF1_BASE = 'https://api.openf1.org/v1';
+/** Via camada de dados do site (api/f1.js), que detecta a restrição durante sessões ao vivo. */
+export const OPENF1_BASE = '/api/f1/openf1';
 export const OPENF1_SOURCE = { label: 'OpenF1 (cronometragem oficial da F1)', url: 'https://openf1.org' };
 
 const get = <T,>(path: string, signal?: AbortSignal, ttl = 60_000) => getJsonCached<T>(`${OPENF1_BASE}${path}`, { signal, ttl, label: 'OpenF1' });
@@ -26,7 +27,7 @@ async function list<T>(path: string, signal?: AbortSignal, ttl?: number): Promis
     return Array.isArray(data) ? data : [];
   } catch (err) {
     if (err instanceof Error && /erro 404/.test(err.message)) return [];
-    if (err instanceof Error && /erro 401/.test(err.message)) throw new OpenF1LockedError();
+    if (err instanceof Error && (/erro 401/.test(err.message) || (err as { status?: number }).status === 423)) throw new OpenF1LockedError();
     throw err;
   }
 }

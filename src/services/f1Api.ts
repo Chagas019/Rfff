@@ -7,10 +7,11 @@ import { ApiError, getJsonCached } from './http';
  * A base pode ser trocada por VITE_F1_API_BASE (ex.: um proxy próprio).
  * Nenhuma chave secreta é usada no frontend.
  */
-export const API_BASE: string = (import.meta.env?.VITE_F1_API_BASE as string | undefined) ?? 'https://api.jolpi.ca/ergast/f1';
+/** Tudo passa pela camada de dados do site (api/f1.js); ela consulta a Jolpica e guarda em cache. */
+export const API_BASE: string = (import.meta.env?.VITE_F1_API_BASE as string | undefined) ?? '/api/f1/jolpica';
 export const API_SOURCE = { label: 'Jolpica-F1 API (dados da FIA/F1)', url: 'https://github.com/jolpica/jolpica-f1' };
 
-/** Intervalo da atualização automática dos dados ao vivo. */
+/** Intervalo base da atualização automática (acelera sozinho durante sessões: veja refreshPolicy.ts). */
 export const LIVE_REFRESH_MS = 3 * 60 * 1000;
 
 export { ApiError };
@@ -166,4 +167,16 @@ export async function fetchCareerPoints(driverId: string, signal?: AbortSignal):
     return Number(json.MRData.StandingsTable.StandingsLists[0]?.DriverStandings[0]?.points ?? 0);
   }));
   return points.reduce((a, b) => a + b, 0);
+}
+
+/** Rodadas com resultado oficial publicado (corrida e Sprint) — base da matemática do campeonato. */
+export async function fetchPublishedRounds(season: number, signal?: AbortSignal): Promise<{ races: Set<number>; sprints: Set<number> }> {
+  const [race, sprint] = await Promise.all([
+    getJson<RaceTable>(`/${season}/results/1.json?limit=100`, signal),
+    getJson<{ MRData: { RaceTable: { Races: { round: string }[] } } }>(`/${season}/sprint/1.json?limit=100`, signal),
+  ]);
+  return {
+    races: new Set(race.MRData.RaceTable.Races.map((r) => Number(r.round))),
+    sprints: new Set(sprint.MRData.RaceTable.Races.map((r) => Number(r.round))),
+  };
 }

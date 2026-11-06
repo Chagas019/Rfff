@@ -75,7 +75,7 @@ export function HomePage() {
           </nav>
         </div>
         <div className="mb-5"><EventBanner /></div>
-        <div className="grid gap-5 lg:grid-cols-2 xl:grid-cols-[1.25fr_1fr_1fr]">
+        <div className="grid gap-5 lg:grid-cols-2 xl:grid-cols-[1.25fr_1fr_1fr] [&>*]:min-w-0">
           {focus ? <WeekendPulse race={focus} mode={mode} now={now} /> : <div className="panel p-6 text-zinc-400">A temporada ainda não começou.</div>}
           <NextRaceCard />
           <div className="lg:col-span-2 xl:col-span-1"><SeasonStatus /></div>

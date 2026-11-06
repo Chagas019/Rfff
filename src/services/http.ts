@@ -1,5 +1,20 @@
 /** Busca JSON com cache curto em sessionStorage, tempo limite e mensagens de erro amigáveis. */
-export class ApiError extends Error {}
+export class ApiError extends Error {
+  constructor(message: string, public status?: number) { super(message); }
+}
+
+/**
+ * Camada de dados do site (/api/f1/...) → endereço direto do provedor, usado como reserva
+ * quando a camada não responde (ex.: servidor local sem a função).
+ */
+const DIRECT: Record<string, string> = {
+  '/api/f1/jolpica': 'https://api.jolpi.ca/ergast/f1',
+  '/api/f1/openf1': 'https://api.openf1.org/v1',
+};
+export function directUrl(url: string): string | null {
+  for (const [prefix, base] of Object.entries(DIRECT)) if (url.startsWith(prefix)) return base + url.slice(prefix.length);
+  return null;
+}
 
 /**
  * Fila por servidor: limita pedidos simultâneos e espaça os disparos para respeitar
@@ -50,7 +65,8 @@ export async function getJsonCached<T>(url: string, { signal, ttl = 90_000, time
   }
 
   let host = '';
-  try { host = new URL(url, 'http://local').host; } catch { /* URL relativa */ }
+  // a fila respeita o limite do provedor final, mesmo passando pela camada do site
+  try { host = new URL(directUrl(url) ?? url, 'http://local').host; } catch { /* URL inválida */ }
   let res: Response | undefined;
   for (let attempt = 0; attempt < 3; attempt++) {
     const release = await slot(host);
@@ -62,6 +78,8 @@ export async function getJsonCached<T>(url: string, { signal, ttl = 90_000, time
       res = await fetch(url, { signal: controller.signal });
     } catch (err) {
       if (signal?.aborted) throw err;
+      const direct = directUrl(url);
+      if (direct) return getJsonCached<T>(direct, { signal, ttl, timeoutMs, label });
       throw new ApiError(`Não foi possível conectar à ${label}. Verifique sua conexão e tente novamente.`);
     } finally {
       clearTimeout(timeout);
@@ -75,7 +93,12 @@ export async function getJsonCached<T>(url: string, { signal, ttl = 90_000, time
     if (signal?.aborted) throw new DOMException('Aborted', 'AbortError');
   }
   if (!res) throw new ApiError(`Não foi possível conectar à ${label}.`);
-  if (!res.ok) throw new ApiError(res.status === 429 ? `A ${label} está recebendo muitos pedidos agora. Tentamos de novo em instantes.` : `A ${label} respondeu com erro ${res.status}.`);
+  // camada própria fora do ar (rede, 404 de servidor sem a função ou erro 5xx): vai direto ao provedor
+  const direct = directUrl(url);
+  if (direct && (res.status === 404 || res.status >= 500) && res.status !== 423) {
+    return getJsonCached<T>(direct, { signal, ttl, timeoutMs, label });
+  }
+  if (!res.ok) throw new ApiError(res.status === 429 ? `A ${label} está recebendo muitos pedidos agora. Tentamos de novo em instantes.` : res.status === 423 ? `A ${label} está restrita durante a sessão ao vivo.` : `A ${label} respondeu com erro ${res.status}.`, res.status);
   const data = (await res.json()) as T;
   if (ttl > 0) {
     try {

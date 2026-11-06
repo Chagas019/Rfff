@@ -43,16 +43,6 @@ export function nextSession(races: Race[], now: Date): { race: Race; session: Ra
   return null;
 }
 
-/** Situação do campeonato: quantos pontos ainda estão em jogo e se o título está aberto. */
-export function titleMath(races: Race[], now: Date, leaderPoints: number, secondPoints: number) {
-  const remaining = active(races).filter((r) => getBaseStatus(r, now) !== 'completed');
-  const remainingSprints = remaining.filter((r) => r.sprint && r.sessions.some((s) => s.type === 'sprint' && sessionState(s, now) !== 'done')).length;
-  // 25 pontos por vitória em corrida e 8 por vitória em Sprint (regulamento esportivo vigente)
-  const pointsLeft = remaining.length * 25 + remainingSprints * 8;
-  const gap = leaderPoints - secondPoints;
-  return { racesLeft: remaining.length, sprintsLeft: remainingSprints, pointsLeft, gap, decided: gap > pointsLeft };
-}
-
 const allDrivers = [...drivers, ...formerDrivers];
 
 /** Encontra o piloto local que corresponde a um registro da API (ID, sigla ou número). */

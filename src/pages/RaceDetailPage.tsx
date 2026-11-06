@@ -3,7 +3,7 @@ import { ArrowLeft, ArrowRight, CalendarPlus, MapPin, Zap } from 'lucide-react';
 import { Link, useParams } from 'react-router-dom';
 import { FavoriteButton } from '../components/FavoriteButton';
 import { Flag } from '../components/Flag';
-import { RaceCountdown } from '../components/RaceCountdown';
+import { SessionSchedule } from '../components/SessionSchedule';
 import { ShareButton } from '../components/ShareButton';
 import { EmptyState, ErrorState, LoadingState } from '../components/States';
 import { StatusBadge } from '../components/StatusBadge';
@@ -14,7 +14,7 @@ import { useAsync } from '../hooks/useAsync';
 import { useNow } from '../hooks/useNow';
 import { API_SOURCE, LIVE_REFRESH_MS, fetchRaceResults } from '../services/f1Api';
 import type { Race } from '../types';
-import { formatDateTime, formatWeekend, userTimeZone } from '../utils/format';
+import { formatWeekend } from '../utils/format';
 import { RACE_DURATION_MS, SESSION_LABELS, getRaceStatus } from '../utils/race';
 
 function icsFor(race: Race): string {
@@ -99,11 +99,11 @@ export function RaceDetailPage() {
             {race.round && <span className="chip">Rodada {race.round}</span>}
             {race.sprint && <span className="chip border-telemetry-yellow/40 text-telemetry-yellow"><Zap className="h-3 w-3" aria-hidden />Sprint</span>}
           </div>
-          <h1 className="mt-4 text-4xl font-semibold leading-none sm:text-6xl">
+          <h1 className="mt-4 break-words text-4xl font-semibold leading-none sm:text-6xl">
             <Flag code={race.countryCode} country={race.country} className="mr-3 align-middle" />{race.name}
           </h1>
           <p className="mt-2 text-sm text-zinc-500">{race.officialName}</p>
-          <p className="mt-3 flex items-center gap-2 text-zinc-300"><MapPin className="h-4 w-4 text-gold" aria-hidden />{circuit.name} · {race.city}, {race.country} · {formatWeekend(race.weekendStart, race.weekendEnd)} 2026</p>
+          <p className="mt-3 flex items-start gap-2 text-zinc-300"><MapPin className="mt-1 h-4 w-4 shrink-0 text-gold" aria-hidden />{circuit.name} · {race.city}, {race.country} · {formatWeekend(race.weekendStart, race.weekendEnd)} 2026</p>
           <div className="mt-6 flex flex-wrap gap-3">
             <FavoriteButton kind="race" id={race.id} label={race.name} variant="full" />
             <ShareButton title={race.name} text={`${race.name} — ${formatWeekend(race.weekendStart, race.weekendEnd)} 2026`} path={`/calendario/${race.id}`} />
@@ -119,31 +119,10 @@ export function RaceDetailPage() {
             <p className="mt-2 text-zinc-400">{race.cancelledNote}</p>
           </div>
         ) : (
-          <div className="mt-10 grid gap-6 lg:grid-cols-[1.2fr_1fr]">
-            <section className="panel p-6" aria-labelledby="schedule-title">
+          <div className="mt-10 grid gap-6 lg:grid-cols-[1.2fr_1fr] [&>*]:min-w-0">
+            <section className="panel min-w-0 p-4 sm:p-6" aria-labelledby="schedule-title">
               <h2 id="schedule-title" className="text-xl font-bold">Programação</h2>
-              <p className="mt-1 text-xs text-zinc-500">No seu fuso ({userTimeZone()}). {!race.timesConfirmed && 'Horários estimados — confirme em formula1.com.'}</p>
-              <ol className="mt-5 space-y-2">
-                {race.sessions.map((s) => {
-                  const start = new Date(s.start);
-                  const done = now.getTime() > start.getTime() + (s.type === 'race' ? RACE_DURATION_MS : 60 * 60 * 1000);
-                  const live = !done && now >= start;
-                  return (
-                    <li key={s.type} className={`flex items-center justify-between rounded-xl border px-4 py-3 ${s.type === 'race' ? 'border-gold/40 bg-gold/10' : 'border-white/5 bg-white/[0.02]'} ${done ? 'opacity-50' : ''}`}>
-                      <span className="flex items-center gap-3">
-                        <span className={`h-2 w-2 rounded-full ${live ? 'animate-pulse bg-telemetry-green' : done ? 'bg-zinc-600' : 'bg-gold'}`} aria-hidden />
-                        <span className="font-semibold text-white">{SESSION_LABELS[s.type]}</span>
-                        {live && <span className="chip border-telemetry-green/40 text-telemetry-green">Ao vivo</span>}
-                      </span>
-                      <time dateTime={s.start} className="font-mono text-sm text-zinc-300">{formatDateTime(s.start)}</time>
-                    </li>
-                  );
-                })}
-              </ol>
-              <div className="mt-6">
-                <p className="label mb-2">Largada em</p>
-                <RaceCountdown race={race} />
-              </div>
+              <div className="mt-2"><SessionSchedule race={race} /></div>
             </section>
 
             <section className="panel relative overflow-hidden p-6" aria-labelledby="circuit-title">

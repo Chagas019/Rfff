@@ -27,10 +27,19 @@ function newsApi(): Plugin {
     res.setHeader('Content-Type', 'application/json; charset=utf-8');
     res.end(JSON.stringify(data));
   };
+  // camada de dados da F1 (na Vercel é a função em api/f1.js)
+  const f1 = async (req: { originalUrl?: string; url?: string }, res: { statusCode: number; setHeader: (k: string, v: string) => void; end: (b: string) => void }) => {
+    const { parseRequest, proxy } = await import('./api/_lib/f1proxy.js');
+    const { provider, path, search } = parseRequest(req.originalUrl ?? req.url ?? '');
+    const out = await proxy(provider, path, search);
+    res.statusCode = out.status;
+    for (const [k, v] of Object.entries(out.headers)) res.setHeader(k, v as string);
+    res.end(out.body);
+  };
   return {
     name: 'gridf1-news-api',
-    configureServer(server) { server.middlewares.use('/api/news', handle); },
-    configurePreviewServer(server) { server.middlewares.use('/api/news', handle); },
+    configureServer(server) { server.middlewares.use('/api/news', handle); server.middlewares.use('/api/f1', f1); },
+    configurePreviewServer(server) { server.middlewares.use('/api/news', handle); server.middlewares.use('/api/f1', f1); },
   };
 }
 

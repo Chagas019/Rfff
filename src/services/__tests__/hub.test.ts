@@ -10,7 +10,7 @@ import { rankForm } from '../../components/hub/FeaturedDrivers';
 import { buildPodiumHistory } from '../f1Api';
 import { isNew } from '../news';
 import { formatSeconds, resultTiming } from '../openf1';
-import { findDriver, nextSession, titleMath } from '../../utils/season';
+import { findDriver, nextSession } from '../../utils/season';
 import type { RaceResultRow } from '../../types';
 
 const SRC = { id: 'x', name: 'Fonte X', lang: 'pt' as const };
@@ -69,14 +69,6 @@ describe('dados da temporada', () => {
     const ns = nextSession(races, new Date('2026-11-06T13:00:00Z'));
     expect(ns?.race.id).toBe('brazil');
     expect(ns?.session.type).toBe('fp1');
-  });
-  it('título decidido quando a vantagem supera os pontos em jogo', () => {
-    const now = new Date('2026-11-06T13:00:00Z');
-    const t = titleMath(races, now, 380, 261);
-    expect(t.racesLeft).toBe(4);
-    expect(t.pointsLeft).toBe(100);
-    expect(t.decided).toBe(true);
-    expect(titleMath(races, now, 300, 261).decided).toBe(false);
   });
 });
 

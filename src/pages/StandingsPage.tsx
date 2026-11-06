@@ -64,7 +64,7 @@ function Leaders({ items }: { items: { key: string; first: string; last: string;
 }
 
 function DriversTable() {
-  const { state, retry, refreshNow, updatedAt, refreshing } = useAsync((signal) => fetchDriverStandings(SEASON, signal), [], { refreshMs: LIVE_REFRESH_MS });
+  const { state, retry, refreshNow, updatedAt, refreshing, lastError } = useAsync((signal) => fetchDriverStandings(SEASON, signal), [], { refreshMs: LIVE_REFRESH_MS });
   if (state.status === 'loading' || state.status === 'idle') return <LoadingState label="Carregando classificação de pilotos…" rows={8} />;
   if (state.status === 'error') return <ErrorState message={state.error} onRetry={retry}><Unavailable /></ErrorState>;
   const items = state.data.items;
@@ -78,7 +78,7 @@ function DriversTable() {
     <div>
       <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
         <p className="label">Após a rodada {state.data.round} · temporada {state.data.season}</p>
-        <LiveBadge updatedAt={updatedAt} refreshing={refreshing} onRefresh={refreshNow} />
+        <LiveBadge updatedAt={updatedAt} refreshing={refreshing} error={lastError} onRefresh={refreshNow} />
       </div>
       <Leaders items={leaders} />
       <div className="panel overflow-x-auto">
@@ -122,7 +122,7 @@ function DriversTable() {
 }
 
 function ConstructorsTable() {
-  const { state, retry, refreshNow, updatedAt, refreshing } = useAsync((signal) => fetchConstructorStandings(SEASON, signal), [], { refreshMs: LIVE_REFRESH_MS });
+  const { state, retry, refreshNow, updatedAt, refreshing, lastError } = useAsync((signal) => fetchConstructorStandings(SEASON, signal), [], { refreshMs: LIVE_REFRESH_MS });
   if (state.status === 'loading' || state.status === 'idle') return <LoadingState label="Carregando classificação de construtores…" rows={8} />;
   if (state.status === 'error') return <ErrorState message={state.error} onRetry={retry}><Unavailable /></ErrorState>;
   const items = state.data.items;
@@ -136,7 +136,7 @@ function ConstructorsTable() {
     <div>
       <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
         <p className="label">Após a rodada {state.data.round} · temporada {state.data.season}</p>
-        <LiveBadge updatedAt={updatedAt} refreshing={refreshing} onRefresh={refreshNow} />
+        <LiveBadge updatedAt={updatedAt} refreshing={refreshing} error={lastError} onRefresh={refreshNow} />
       </div>
       <Leaders items={leaders} />
       <div className="panel overflow-x-auto">

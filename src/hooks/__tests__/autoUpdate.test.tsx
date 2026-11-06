@@ -39,3 +39,14 @@ describe('atualização automática', () => {
     expect(onRefresh).toHaveBeenCalled();
   });
 });
+
+describe('estado da conexão', () => {
+  it('distingue conectado, desatualizado, fonte fora e sem internet', async () => {
+    const { connectionState } = await import('../../components/LiveBadge');
+    const now = new Date('2026-11-06T20:00:00Z');
+    expect(connectionState({ updatedAt: new Date('2026-11-06T19:58:00Z'), online: true, now })).toBe('ok');
+    expect(connectionState({ updatedAt: new Date('2026-11-06T19:30:00Z'), online: true, now })).toBe('stale');
+    expect(connectionState({ updatedAt: new Date('2026-11-06T19:58:00Z'), error: 'Fonte fora', online: true, now })).toBe('error');
+    expect(connectionState({ updatedAt: null, online: false, now })).toBe('offline');
+  });
+});

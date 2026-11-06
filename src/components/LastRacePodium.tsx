@@ -79,7 +79,7 @@ function Step({ r, idx, prev }: { r: RaceResultRow; idx: number; prev?: RaceResu
 
 /** Pódio da última corrida concluída — resultado oficial, atualizado sozinho. */
 export function LastRacePodium({ race }: { race: Race }) {
-  const { state, refreshNow, updatedAt, refreshing } = useAsync((signal) => fetchRaceResults(SEASON, race.round!, signal), [race.round], { refreshMs: LIVE_REFRESH_MS });
+  const { state, refreshNow, updatedAt, refreshing, lastError } = useAsync((signal) => fetchRaceResults(SEASON, race.round!, signal), [race.round], { refreshMs: LIVE_REFRESH_MS });
 
   let body;
   if (state.status === 'loading' || state.status === 'idle') {
@@ -107,7 +107,7 @@ export function LastRacePodium({ race }: { race: Race }) {
           <h2 id="podium-title" className="mt-1 text-2xl leading-none sm:text-3xl"><Flag code={race.countryCode} country={race.country} className="mr-2 align-middle" />{race.name}</h2>
         </div>
         <div className="flex flex-wrap items-center gap-3">
-          <LiveBadge updatedAt={updatedAt} refreshing={refreshing} onRefresh={refreshNow} />
+          <LiveBadge updatedAt={updatedAt} refreshing={refreshing} error={lastError} onRefresh={refreshNow} />
           <Link to={`/calendario/${race.id}`} className="btn-ghost py-2 text-xs">Resultado completo <ArrowRight className="h-4 w-4" aria-hidden /></Link>
         </div>
       </div>
