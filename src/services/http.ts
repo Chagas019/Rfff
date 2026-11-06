@@ -93,9 +93,9 @@ export async function getJsonCached<T>(url: string, { signal, ttl = 90_000, time
     if (signal?.aborted) throw new DOMException('Aborted', 'AbortError');
   }
   if (!res) throw new ApiError(`Não foi possível conectar à ${label}.`);
-  // camada própria fora do ar (rede, 404 de servidor sem a função ou erro 5xx): vai direto ao provedor
+  // camada própria fora do ar (rede, 400/404 da camada ou erro 5xx): vai direto ao provedor
   const direct = directUrl(url);
-  if (direct && (res.status === 404 || res.status >= 500) && res.status !== 423) {
+  if (direct && (res.status === 400 || res.status === 404 || res.status >= 500) && res.status !== 423) {
     return getJsonCached<T>(direct, { signal, ttl, timeoutMs, label });
   }
   if (!res.ok) throw new ApiError(res.status === 429 ? `A ${label} está recebendo muitos pedidos agora. Tentamos de novo em instantes.` : res.status === 423 ? `A ${label} está restrita durante a sessão ao vivo.` : `A ${label} respondeu com erro ${res.status}.`, res.status);

@@ -88,5 +88,6 @@ export function parseRequest(rawUrl) {
     const m = u.pathname.match(/^\/api\/f1\/(jolpica|openf1)(\/.*)$/);
     if (m) { provider = m[1]; path = m[2]; }
   }
-  return { provider, path: path ?? '', search: u.searchParams.toString() };
+  path = (path ?? '').replace(/%2f/gi, '/');
+  return { provider, path, search: u.searchParams.toString() };
 }

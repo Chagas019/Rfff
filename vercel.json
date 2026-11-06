@@ -1,8 +1,8 @@
 {
   "rewrites": [
     {
-      "source": "/api/f1/:provider/:path*",
-      "destination": "/api/f1?provider=:provider&p=/:path*"
+      "source": "/api/f1/(jolpica|openf1)/(.*)",
+      "destination": "/api/f1?provider=$1&p=/$2"
     },
     {
       "source": "/((?!api/|version\\.json$).*)",
