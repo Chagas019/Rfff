@@ -84,7 +84,7 @@ export function CarConfigurator({ initialTeam = 'ferrari', initialDriver }: { in
   const driver = lineup.find((d) => d.id === driverId);
   const model = modelFor(teamId, season);
   const mobile = typeof window !== 'undefined' && matchMedia('(max-width: 768px)').matches;
-  const file = testFile() ?? (model?.status === 'available' ? (mobile && model.fileMobile) || model.file : undefined);
+  const file = testFile() ?? (model?.status === 'available' ? `${(mobile && model.fileMobile) || model.file}?v=${model.version}` : undefined);
   const supported = typeof document !== 'undefined' && webglOk();
 
   // carrega só quando o palco chega perto da tela
