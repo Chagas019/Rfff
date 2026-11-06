@@ -8,8 +8,9 @@
  *  - `unzip` no sistema; o otimizador roda via `npx @gltf-transform/cli`.
  *
  * Uso: node tools/fetch-car-models.mjs [teamId ...]
- * Saída: public/models/<teamId>.glb (geometria meshopt, texturas WebP até 2048 px).
- * Depois, marque o modelo como `status: 'available', file: '/models/<teamId>.glb'` no manifesto.
+ * Saída: public/models/<teamId>.glb (geometria meshopt, texturas WebP até 2048 px) e
+ * public/models/<teamId>-mobile.glb (50% dos polígonos, texturas de 1024 px).
+ * Depois, marque no manifesto: `status: 'available', file: '/models/<teamId>.glb', fileMobile: '/models/<teamId>-mobile.glb'`.
  */
 import { execFileSync } from 'node:child_process';
 import { mkdirSync, mkdtempSync, readdirSync, readFileSync, writeFileSync, statSync } from 'node:fs';
@@ -43,7 +44,13 @@ for (const e of entries.filter((x) => !only.length || only.includes(x.teamId))) 
   execFileSync('unzip', ['-q', zip, '-d', join(tmp, 'x')]);
   const src = findFile(join(tmp, 'x'), /\.gltf$/i);
   if (!src) { console.log('arquivo .gltf não encontrado'); continue; }
+  // peças continuam separadas (sem juntar malhas) para a vista explodida funcionar
+  const base = ['--yes', '@gltf-transform/cli@4.1.0', 'optimize', src];
+  const keep = ['--join', 'false', '--flatten', 'false', '--compress', 'meshopt', '--texture-compress', 'webp'];
   const out = join(outDir, `${e.teamId}.glb`);
-  execFileSync('npx', ['--yes', '@gltf-transform/cli@4.1.0', 'optimize', src, out, '--compress', 'meshopt', '--texture-compress', 'webp', '--texture-size', '2048'], { stdio: 'ignore' });
-  console.log(`ok (${(statSync(out).size / 1e6).toFixed(1)} MB)`);
+  const outMobile = join(outDir, `${e.teamId}-mobile.glb`);
+  execFileSync('npx', [...base, out, ...keep, '--texture-size', '2048', '--simplify', 'false'], { stdio: 'ignore' });
+  // nível de detalhe para celular: metade dos polígonos e texturas de 1024 px
+  execFileSync('npx', [...base, outMobile, ...keep, '--texture-size', '1024', '--simplify-ratio', '0.5'], { stdio: 'ignore' });
+  console.log(`ok (${(statSync(out).size / 1e6).toFixed(1)} MB · celular ${(statSync(outMobile).size / 1e6).toFixed(1)} MB)`);
 }
