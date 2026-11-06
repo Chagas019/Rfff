@@ -145,7 +145,7 @@ export function HomePage() {
       <div className="container-grid space-y-16 py-14 sm:space-y-20">
         {/* 11. Garagem e regulamento */}
         <section aria-labelledby="garage-title">
-          <HubHeader kicker="Showroom" title={<span id="garage-title">Garagem 2026</span>} action={<><Link to="/garagem" className="btn-primary py-2 text-xs">Garagem 3D <ArrowRight className="h-4 w-4" aria-hidden /></Link><Link to="/equipes" className="btn-ghost py-2 text-xs">Todas as equipes</Link></>}>
+          <HubHeader kicker="Showroom" title={<span id="garage-title">Garagem 2026</span>} action={<Link to="/equipes" className="btn-ghost py-2 text-xs">Todas as equipes <ArrowRight className="h-4 w-4" aria-hidden /></Link>}>
             Os carros da nova era, lado a lado. Arraste, use as setas ou deixe a garagem girar sozinha.
           </HubHeader>
           <Lazy minHeight={480}><Garage /></Lazy>

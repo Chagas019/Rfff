@@ -19,7 +19,6 @@ const DriversPage = lazy(() => import('./pages/DriversPage').then((m) => ({ defa
 const FavoritesPage = lazy(() => import('./pages/FavoritesPage').then((m) => ({ default: m.FavoritesPage })));
 const GamesPage = lazy(() => import('./pages/GamesPage').then((m) => ({ default: m.GamesPage })));
 const LivePage = lazy(() => import('./pages/LivePage').then((m) => ({ default: m.LivePage })));
-const GaragePage = lazy(() => import('./pages/GaragePage').then((m) => ({ default: m.GaragePage })));
 const NotFoundPage = lazy(() => import('./pages/NotFoundPage').then((m) => ({ default: m.NotFoundPage })));
 const RaceDetailPage = lazy(() => import('./pages/RaceDetailPage').then((m) => ({ default: m.RaceDetailPage })));
 const StandingsPage = lazy(() => import('./pages/StandingsPage').then((m) => ({ default: m.StandingsPage })));
@@ -27,11 +26,11 @@ const TeamsPage = lazy(() => import('./pages/TeamsPage').then((m) => ({ default:
 
 const TITLES: Record<string, string> = {
   calendario: 'Calendário 2026', circuitos: 'Circuitos', pilotos: 'Pilotos', equipes: 'Equipes',
-  classificacao: 'Classificação', favoritos: 'Favoritos', jogos: 'Jogos', live: 'F1 Live', garagem: 'Garagem 3D',
+  classificacao: 'Classificação', favoritos: 'Favoritos', jogos: 'Jogos', live: 'F1 Live',
 };
 
 /** Rotas conhecidas: o que não casar com nenhuma é a 404, que ocupa a tela inteira sem rodapé. */
-const KNOWN_ROUTES = ['/', '/calendario', '/calendario/:id', '/circuitos', '/circuitos/:id', '/pilotos', '/pilotos/:id', '/equipes', '/equipes/:id', '/classificacao', '/live', '/garagem', '/jogos', '/jogos/:game', '/favoritos'].map((path) => ({ path }));
+const KNOWN_ROUTES = ['/', '/calendario', '/calendario/:id', '/circuitos', '/circuitos/:id', '/pilotos', '/pilotos/:id', '/equipes', '/equipes/:id', '/classificacao', '/live', '/jogos', '/jogos/:game', '/favoritos'].map((path) => ({ path }));
 
 /** Seção da URL usada como chave de transição (abrir um modal não troca de página). */
 const sectionOf = (path: string) => {
@@ -117,7 +116,6 @@ export default function App() {
             <Route path="/equipes/:id" element={<TeamsPage />} />
             <Route path="/classificacao" element={<StandingsPage />} />
             <Route path="/live" element={<LivePage />} />
-            <Route path="/garagem" element={<GaragePage />} />
             <Route path="/jogos" element={<GamesPage />} />
             <Route path="/jogos/:game" element={<GamesPage />} />
             <Route path="/favoritos" element={<FavoritesPage />} />

@@ -164,7 +164,6 @@ export function DriversPage() {
               <div className="flex flex-wrap gap-3 lg:col-span-2">
                 <FavoriteButton kind="driver" id={selected.id} label={`${selected.firstName} ${selected.lastName}`} variant="full" />
                 <button type="button" className="btn-ghost" onClick={() => navigate(`/equipes/${selTeam.id}`)}>Ver equipe {selTeam.name}</button>
-                <button type="button" className="btn-ghost" onClick={() => navigate(`/garagem?equipe=${selTeam.id}&piloto=${selected.id}`)}>Ver o {selTeam.car} em 3D</button>
               </div>
             </div>
           </div>

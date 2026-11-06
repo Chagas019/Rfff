@@ -3,6 +3,3 @@ dist
 *.log
 .DS_Store
 coverage
-
-# modelo de teste local do configurador (não publicar)
-public/__test__/

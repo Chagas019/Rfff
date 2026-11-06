@@ -88,10 +88,7 @@ export function TeamsPage() {
                   <span className="h-8 flex-1 rounded" style={{ background: selected.color }} title={`Cor principal ${selected.color}`} />
                   <span className="h-8 w-16 rounded" style={{ background: selected.accent }} title={`Cor secundária ${selected.accent}`} />
                 </div>
-                <div className="mt-4 flex flex-wrap gap-2">
-                  <FavoriteButton kind="team" id={selected.id} label={selected.name} variant="full" />
-                  <Link to={`/garagem?equipe=${selected.id}`} className="btn-ghost">Ver o {selected.car} em 3D</Link>
-                </div>
+                <div className="mt-4"><FavoriteButton kind="team" id={selected.id} label={selected.name} variant="full" /></div>
               </div>
             </div>
           </div>
