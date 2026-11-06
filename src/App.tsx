@@ -1,6 +1,6 @@
 import { AnimatePresence, MotionConfig, motion } from 'framer-motion';
 import { RefreshCw } from 'lucide-react';
-import { useEffect, useRef, useState } from 'react';
+import { Suspense, lazy, useEffect, useRef, useState } from 'react';
 import { Route, Routes, useLocation } from 'react-router-dom';
 import { BackToTop } from './components/BackToTop';
 import { Footer } from './components/Footer';
@@ -9,20 +9,23 @@ import { useAppUpdate } from './hooks/useAppUpdate';
 import { playPassSound, preloadPassSound } from './services/sound';
 import { PageTransition } from './components/PageTransition';
 import { SearchBar } from './components/SearchBar';
-import { CalendarPage } from './pages/CalendarPage';
-import { CircuitsPage } from './pages/CircuitsPage';
-import { DriversPage } from './pages/DriversPage';
-import { FavoritesPage } from './pages/FavoritesPage';
-import { GamesPage } from './pages/GamesPage';
 import { HomePage } from './pages/HomePage';
-import { NotFoundPage } from './pages/NotFoundPage';
-import { RaceDetailPage } from './pages/RaceDetailPage';
-import { StandingsPage } from './pages/StandingsPage';
-import { TeamsPage } from './pages/TeamsPage';
+
+/* páginas carregadas sob demanda (a inicial vem no pacote principal) */
+const CalendarPage = lazy(() => import('./pages/CalendarPage').then((m) => ({ default: m.CalendarPage })));
+const CircuitsPage = lazy(() => import('./pages/CircuitsPage').then((m) => ({ default: m.CircuitsPage })));
+const DriversPage = lazy(() => import('./pages/DriversPage').then((m) => ({ default: m.DriversPage })));
+const FavoritesPage = lazy(() => import('./pages/FavoritesPage').then((m) => ({ default: m.FavoritesPage })));
+const GamesPage = lazy(() => import('./pages/GamesPage').then((m) => ({ default: m.GamesPage })));
+const LivePage = lazy(() => import('./pages/LivePage').then((m) => ({ default: m.LivePage })));
+const NotFoundPage = lazy(() => import('./pages/NotFoundPage').then((m) => ({ default: m.NotFoundPage })));
+const RaceDetailPage = lazy(() => import('./pages/RaceDetailPage').then((m) => ({ default: m.RaceDetailPage })));
+const StandingsPage = lazy(() => import('./pages/StandingsPage').then((m) => ({ default: m.StandingsPage })));
+const TeamsPage = lazy(() => import('./pages/TeamsPage').then((m) => ({ default: m.TeamsPage })));
 
 const TITLES: Record<string, string> = {
   calendario: 'Calendário 2026', circuitos: 'Circuitos', pilotos: 'Pilotos', equipes: 'Equipes',
-  classificacao: 'Classificação', favoritos: 'Favoritos', jogos: 'Jogos',
+  classificacao: 'Classificação', favoritos: 'Favoritos', jogos: 'Jogos', live: 'F1 Live',
 };
 
 /** Seção da URL usada como chave de transição (abrir um modal não troca de página). */
@@ -85,6 +88,7 @@ export default function App() {
           animate={{ opacity: 1, x: 0, transition: { duration: 0.45, delay: 0.1, ease: [0.16, 1, 0.3, 1] } }}
           exit={{ opacity: 0, x: -40, transition: { duration: 0.3, ease: [0.7, 0, 0.84, 0] } }}
         >
+          <Suspense fallback={<div className="container-grid pt-32" role="status"><div className="h-64 animate-pulse rounded-2xl bg-white/[0.04]" /><span className="sr-only">Carregando página…</span></div>}>
           <Routes location={location}>
             <Route path="/" element={<HomePage />} />
             <Route path="/calendario" element={<CalendarPage />} />
@@ -96,11 +100,13 @@ export default function App() {
             <Route path="/equipes" element={<TeamsPage />} />
             <Route path="/equipes/:id" element={<TeamsPage />} />
             <Route path="/classificacao" element={<StandingsPage />} />
+            <Route path="/live" element={<LivePage />} />
             <Route path="/jogos" element={<GamesPage />} />
             <Route path="/jogos/:game" element={<GamesPage />} />
             <Route path="/favoritos" element={<FavoritesPage />} />
             <Route path="*" element={<NotFoundPage />} />
           </Routes>
+          </Suspense>
         </motion.main>
       </AnimatePresence>
       <Footer />

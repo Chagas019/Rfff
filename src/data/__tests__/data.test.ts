@@ -4,10 +4,10 @@ import { drivers } from '../drivers';
 import { teams } from '../teams';
 
 describe('integridade dos dados', () => {
-  it('tem 22 etapas ativas numeradas de 1 a 22 em ordem cronológica', () => {
+  it('tem 23 etapas ativas numeradas de 1 a 23 em ordem cronológica', () => {
     const active = races.filter((r) => !r.cancelled);
-    expect(active).toHaveLength(22);
-    expect(active.map((r) => r.round)).toEqual(Array.from({ length: 22 }, (_, i) => i + 1));
+    expect(active).toHaveLength(23);
+    expect(active.map((r) => r.round)).toEqual(Array.from({ length: 23 }, (_, i) => i + 1));
     const dates = active.map((r) => r.weekendStart);
     expect([...dates].sort()).toEqual(dates);
   });

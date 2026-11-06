@@ -14,6 +14,16 @@ Uma plataforma interativa para fãs da Fórmula 1 (temporada 2026), feita com **
 - **Favoritos** de corridas, circuitos, pilotos e equipes (salvos no `localStorage`).
 - **Pesquisa global** (`Ctrl/⌘ + K` ou `/`), menu para celular, botão de voltar ao topo, animações ao rolar, estados de carregamento, erro e vazio, navegação por teclado (foco preso nos modais, Esc para fechar, link "pular para o conteúdo") e respeito a `prefers-reduced-motion`.
 
+## Central de informações (atualização de nov/2026)
+
+- **Página inicial** em ordem de prioridade: GP atual ou último (sessão por sessão, com o mais rápido/pole/vencedor), próxima sessão com contagem regressiva, situação da temporada (líder, vantagem, pontos em jogo, título aberto ou decidido), manchetes, pódio, rankings, pilotos em destaque, curiosidades, próximas corridas e histórico.
+- **F1 LIVE (`/live`)**: linha do tempo das sessões do fim de semana, resultado oficial de cada sessão (OpenF1), mensagens da direção de prova, mudanças de posição e destaques da corrida, e a central de notícias com filtros.
+- **Notícias**: a função `api/news.js` (Vercel) lê os feeds RSS de Motorsport.com Brasil, Grande Prêmio, Formula 1, BBC Sport e Autosport no servidor e devolve JSON com cache de 10 min. Cada card abre a matéria original; "Novo" marca o que saiu desde a última visita.
+- **Fotos dos pilotos**: retratos oficiais de 2026 do CDN da F1 (`src/data/driverPhotos.ts`, © Formula 1). O capacete real aparece quando existe imagem dele.
+- **Nada é simulado**: sem sessão acontecendo, a área ao vivo mostra a última etapa e a próxima. Todo bloco ao vivo mostra quando foi atualizado.
+- **Correções de dados**: calendário com o GP do Bahrein transferido para Sepang (rodada 16) e rodadas conferidas com a Jolpica; horários oficiais das sessões (OpenF1); Rafael Câmara (#51) no lugar de Esteban Ocon na Haas; Ryo Hirakawa (México) no histórico.
+- **Desempenho**: páginas carregadas sob demanda, seções da home montadas ao chegar perto da tela e uma fila de pedidos por API (evita o erro 429 da OpenF1).
+
 ## Jogos (`/jogos`)
 
 - **Luzes de largada**: as 5 luzes acendem e apagam num momento sorteado; mede o tempo de reação em ms e detecta queima de largada. Funciona com toque, clique, espaço ou Enter.

@@ -27,7 +27,7 @@ describe('filterRaces', () => {
   it('filtra por status', () => {
     expect(filterRaces(races, { ...EMPTY_FILTERS, status: 'live' }, now).map((x) => x.id)).toEqual(['singapore']);
     expect(filterRaces(races, { ...EMPTY_FILTERS, status: 'cancelled' }, now)).toHaveLength(2);
-    expect(filterRaces(races, { ...EMPTY_FILTERS, status: 'completed' }, now)).toHaveLength(15);
+    expect(filterRaces(races, { ...EMPTY_FILTERS, status: 'completed' }, now)).toHaveLength(16);
     // "Em breve" inclui a próxima etapa
     expect(filterRaces(races, { ...EMPTY_FILTERS, status: 'upcoming' }, now)).toHaveLength(6);
   });

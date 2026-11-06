@@ -150,6 +150,15 @@ export const circuits: Circuit[] = [
     layout: [[10,60],[10,35],[30,30],[35,20],[50,18],[55,30],[45,38],[60,45],[90,45],[92,70],[60,72],[30,72]],
   },
   {
+    id: 'sepang', name: 'Sepang International Circuit', city: 'Sepang', country: 'Malásia', countryCode: 'MY',
+    lengthKm: 5.543, turns: 15, laps: 56, raceDistanceKm: 310.408, firstGp: 1999, type: 'Permanente', direction: 'Horário',
+    characteristics: ['Duas retas paralelas ligadas por um grampo', 'Calor e chuvas tropicais', 'Curvas rápidas de alta carga'],
+    description: 'Projetado por Hermann Tilke, recebeu a F1 de 1999 a 2017 e voltou em 2026 para sediar o GP do Bahrein, transferido por causa do conflito no Oriente Médio.',
+    lapRecord: { time: '1:34.223', driver: 'Juan Pablo Montoya', year: 2004 },
+    // traçado a partir das posições reais do carro de Verstappen na volta 55 do GP de 2026 (OpenF1 /location)
+    layout: [[51,51],[38,53],[22,54],[12,55],[10,51],[14,50],[17,49],[15,46],[14,37],[23,26],[36,22],[46,18],[49,21],[51,29],[58,40],[67,36],[77,36],[83,44],[90,51],[87,58],[78,60],[65,61],[56,62],[54,64],[58,67],[61,74],[58,82],[52,80],[44,74],[33,71],[21,72],[18,67],[22,64],[32,62],[47,60],[63,57],[75,55],[79,52],[76,49],[69,50],[56,51]],
+  },
+  {
     id: 'singapore', name: 'Marina Bay Street Circuit', city: 'Singapura', country: 'Singapura', countryCode: 'SG',
     lengthKm: 4.94, turns: 19, laps: 62, raceDistanceKm: 306.143, firstGp: 2008, type: 'Rua', direction: 'Anti-horário',
     characteristics: ['Corrida noturna', 'Calor e umidade extremos', 'Exigência física máxima'],

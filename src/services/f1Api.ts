@@ -1,4 +1,5 @@
-import type { ConstructorStanding, DriverStanding, RaceResultRow, StandingsResult } from '../types';
+import type { ConstructorStanding, DriverStanding, PodiumEntry, RaceResultRow, StandingsResult } from '../types';
+import { ApiError, getJsonCached } from './http';
 
 /**
  * Cliente da API pública Jolpica-F1 (sucessora da Ergast).
@@ -9,48 +10,13 @@ import type { ConstructorStanding, DriverStanding, RaceResultRow, StandingsResul
 export const API_BASE: string = (import.meta.env?.VITE_F1_API_BASE as string | undefined) ?? 'https://api.jolpi.ca/ergast/f1';
 export const API_SOURCE = { label: 'Jolpica-F1 API (dados da FIA/F1)', url: 'https://github.com/jolpica/jolpica-f1' };
 
-/** Cache curto: só evita pedidos repetidos entre componentes; a atualização automática busca dados novos. */
-const CACHE_TTL = 90 * 1000;
-
 /** Intervalo da atualização automática dos dados ao vivo. */
 export const LIVE_REFRESH_MS = 3 * 60 * 1000;
 
-export class ApiError extends Error {}
+export { ApiError };
 
-async function getJson<T>(path: string, signal?: AbortSignal): Promise<T> {
-  const url = `${API_BASE}${path}`;
-  const key = `gridf1:api:${url}`;
-  try {
-    const cached = sessionStorage.getItem(key);
-    if (cached) {
-      const { at, data } = JSON.parse(cached) as { at: number; data: T };
-      if (Date.now() - at < CACHE_TTL) return data;
-    }
-  } catch {
-    /* sessionStorage indisponível */
-  }
-
-  const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 12000);
-  signal?.addEventListener('abort', () => controller.abort());
-  let res: Response;
-  try {
-    res = await fetch(url, { signal: controller.signal });
-  } catch (err) {
-    if (signal?.aborted) throw err;
-    throw new ApiError('Não foi possível conectar à fonte de dados. Verifique sua conexão e tente novamente.');
-  } finally {
-    clearTimeout(timeout);
-  }
-  if (!res.ok) throw new ApiError(`A fonte de dados respondeu com erro ${res.status}.`);
-  const data = (await res.json()) as T;
-  try {
-    sessionStorage.setItem(key, JSON.stringify({ at: Date.now(), data }));
-  } catch {
-    /* ignora cota cheia */
-  }
-  return data;
-}
+/** Cache curto: só evita pedidos repetidos entre componentes; a atualização automática busca dados novos. */
+const getJson = <T,>(path: string, signal?: AbortSignal) => getJsonCached<T>(`${API_BASE}${path}`, { signal, ttl: 90_000, label: 'fonte de dados' });
 
 /* ---------- Tipos mínimos da resposta Ergast/Jolpica ---------- */
 interface ErgastDriver { driverId: string; code?: string; givenName: string; familyName: string; nationality: string; permanentNumber?: string }
@@ -58,8 +24,12 @@ interface ErgastConstructor { constructorId: string; name: string; nationality: 
 interface ErgastDriverStanding { position?: string; positionText: string; points: string; wins: string; Driver: ErgastDriver; Constructors: ErgastConstructor[] }
 interface ErgastConstructorStanding { position?: string; positionText: string; points: string; wins: string; Constructor: ErgastConstructor }
 interface StandingsTable<T> { MRData: { StandingsTable: { season: string; round?: string; StandingsLists: (T & { season: string; round: string })[] } } }
-interface ErgastResult { position: string; points: string; grid: string; laps: string; status: string; Driver: ErgastDriver; Constructor: ErgastConstructor; Time?: { time: string } }
-interface RaceTable { MRData: { RaceTable: { Races: { round: string; raceName: string; Results: ErgastResult[] }[] } } }
+interface ErgastResult {
+  position: string; points: string; grid: string; laps: string; status: string; number?: string;
+  Driver: ErgastDriver; Constructor: ErgastConstructor; Time?: { time: string };
+  FastestLap?: { rank?: string; Time?: { time: string } };
+}
+interface RaceTable { MRData: { RaceTable: { Races: { round: string; raceName: string; date?: string; Results: ErgastResult[] }[] } } }
 
 export function parseDriverStandings(json: StandingsTable<{ DriverStandings: ErgastDriverStanding[] }>): StandingsResult<DriverStanding> {
   const list = json.MRData.StandingsTable.StandingsLists[0];
@@ -78,6 +48,7 @@ export function parseDriverStandings(json: StandingsTable<{ DriverStandings: Erg
       nationality: s.Driver.nationality,
       constructorId: s.Constructors[s.Constructors.length - 1]?.constructorId ?? '',
       constructorName: s.Constructors[s.Constructors.length - 1]?.name ?? '',
+      permanentNumber: s.Driver.permanentNumber ? Number(s.Driver.permanentNumber) : undefined,
     })),
   };
 }
@@ -110,14 +81,29 @@ export function countPodiums(tables: RaceTable[]): Record<string, number> {
   return out;
 }
 
+/** Junta as listas de 1º, 2º e 3º lugares em um pódio por etapa. */
+export function buildPodiumHistory(tables: RaceTable[]): PodiumEntry[] {
+  const byRound = new Map<number, PodiumEntry>();
+  tables.forEach((t, place) => {
+    for (const race of t.MRData.RaceTable.Races) {
+      const round = Number(race.round);
+      const entry = byRound.get(round) ?? { round, raceName: race.raceName, date: race.date ?? '', drivers: [] };
+      const r = race.Results[0];
+      if (r) entry.drivers[place] = { driverId: r.Driver.driverId, code: r.Driver.code ?? '', name: `${r.Driver.givenName} ${r.Driver.familyName}`, constructorId: r.Constructor.constructorId, constructor: r.Constructor.name };
+      byRound.set(round, entry);
+    }
+  });
+  return [...byRound.values()].sort((a, b) => a.round - b.round);
+}
+
+const podiumTables = (season: number, signal?: AbortSignal) =>
+  Promise.all([1, 2, 3].map((p) => getJson<RaceTable>(`/${season}/results/${p}.json?limit=100`, signal)));
+
 export async function fetchDriverStandings(season: number, signal?: AbortSignal): Promise<StandingsResult<DriverStanding>> {
   const json = await getJson<StandingsTable<{ DriverStandings: ErgastDriverStanding[] }>>(`/${season}/driverstandings.json`, signal);
   const standings = parseDriverStandings(json);
   try {
-    const podiumTables = await Promise.all(
-      [1, 2, 3].map((p) => getJson<RaceTable>(`/${season}/results/${p}.json?limit=100`, signal)),
-    );
-    const podiums = countPodiums(podiumTables);
+    const podiums = countPodiums(await podiumTables(season, signal));
     standings.items = standings.items.map((d) => ({ ...d, podiums: podiums[d.driverId] ?? 0 }));
   } catch {
     // Pódios são complementares: se falhar, a tabela continua sem essa coluna.
@@ -130,18 +116,38 @@ export async function fetchConstructorStandings(season: number, signal?: AbortSi
   return parseConstructorStandings(json);
 }
 
-export async function fetchRaceResults(season: number, round: number, signal?: AbortSignal): Promise<RaceResultRow[]> {
-  const json = await getJson<RaceTable>(`/${season}/${round}/results.json`, signal);
+/** Pódio de todas as etapas já disputadas na temporada. */
+export async function fetchPodiumHistory(season: number, signal?: AbortSignal): Promise<PodiumEntry[]> {
+  return buildPodiumHistory(await podiumTables(season, signal));
+}
+
+export function parseRaceResults(json: RaceTable): RaceResultRow[] {
   const race = json.MRData.RaceTable.Races[0];
   if (!race) return [];
   return race.Results.map((r) => ({
     position: Number(r.position),
     driver: `${r.Driver.givenName} ${r.Driver.familyName}`,
+    driverId: r.Driver.driverId,
+    code: r.Driver.code ?? '',
+    number: r.number ? Number(r.number) : r.Driver.permanentNumber ? Number(r.Driver.permanentNumber) : null,
     constructor: r.Constructor.name,
+    constructorId: r.Constructor.constructorId,
     grid: Number(r.grid),
     laps: Number(r.laps),
     status: r.status,
     points: Number(r.points),
     time: r.Time?.time,
+    fastestLapRank: r.FastestLap?.rank ? Number(r.FastestLap.rank) : undefined,
+    fastestLapTime: r.FastestLap?.Time?.time,
   }));
+}
+
+export async function fetchRaceResults(season: number, round: number, signal?: AbortSignal): Promise<RaceResultRow[]> {
+  return parseRaceResults(await getJson<RaceTable>(`/${season}/${round}/results.json`, signal));
+}
+
+/** Pontos de cada piloto nas últimas etapas (forma recente). */
+export async function fetchRecentForm(season: number, rounds: number[], signal?: AbortSignal): Promise<{ round: number; results: RaceResultRow[] }[]> {
+  const all = await Promise.all(rounds.map(async (round) => ({ round, results: await fetchRaceResults(season, round, signal) })));
+  return all.filter((r) => r.results.length);
 }

@@ -30,7 +30,7 @@ export function CalendarPage() {
   return (
     <>
       <PageHeader kicker="Temporada 2026" title={<>Calendário <span className="text-race">interativo</span></>}>
-        <p>22 Grandes Prêmios confirmados. Filtre por país, mês ou status, busque pelo nome e alterne entre cards e lista. Horários exibidos no seu fuso ({userTimeZone()}).</p>
+        <p>{races.filter((r) => !r.cancelled).length} Grandes Prêmios confirmados. Filtre por país, mês ou status, busque pelo nome e alterne entre cards e lista. Horários exibidos no seu fuso ({userTimeZone()}).</p>
       </PageHeader>
 
       <div className="container-grid py-10">

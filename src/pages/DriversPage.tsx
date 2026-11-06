@@ -6,6 +6,10 @@ import { DriverCard } from '../components/DriverCard';
 import { FavoriteButton } from '../components/FavoriteButton';
 import { Flag } from '../components/Flag';
 import { DriverHelmet } from '../components/DriverHelmet';
+import { DriverPhoto } from '../components/DriverPhoto';
+import { helmetImages } from '../data/carImages';
+import { useDriverStandings } from '../hooks/useStandings';
+import { standingFor } from '../utils/season';
 import { Modal } from '../components/Modal';
 import { PageHeader } from '../components/PageHeader';
 import { Reveal } from '../components/Reveal';
@@ -14,18 +18,17 @@ import { EmptyState, ErrorState } from '../components/States';
 import { SEASON } from '../data/calendar2026';
 import { DRIVERS_SOURCE, drivers } from '../data/drivers';
 import { teamById, teams } from '../data/teams';
-import { useAsync } from '../hooks/useAsync';
-import { API_SOURCE, LIVE_REFRESH_MS, fetchDriverStandings } from '../services/f1Api';
+import { API_SOURCE } from '../services/f1Api';
 import type { Driver } from '../types';
 import { age, normalize } from '../utils/format';
 
 function SeasonStats({ driver }: { driver: Driver }) {
-  const { state, retry } = useAsync((signal) => fetchDriverStandings(SEASON, signal), [], { refreshMs: LIVE_REFRESH_MS });
+  const { state, retry } = useDriverStandings();
   if (state.status === 'loading' || state.status === 'idle') {
     return <div className="grid grid-cols-4 gap-2" role="status" aria-label="Carregando estatísticas">{[0, 1, 2, 3].map((i) => <div key={i} className="h-16 animate-pulse rounded-xl bg-white/5" />)}</div>;
   }
   if (state.status === 'error') return <ErrorState message={`${state.error} As estatísticas da temporada vêm da ${API_SOURCE.label}.`} onRetry={retry} />;
-  const row = state.data.items.find((s) => s.driverId === driver.apiId || s.code === driver.code);
+  const row = standingFor(driver, state.data.items);
   if (!row) return <p className="text-sm text-zinc-400">Este piloto ainda não aparece na classificação publicada pela fonte de dados.</p>;
   return (
     <div>
@@ -47,12 +50,16 @@ export function DriversPage() {
   const navigate = useNavigate();
   const [query, setQuery] = useState('');
   const [team, setTeam] = useState('');
-  const [sort, setSort] = useState<'team' | 'number' | 'name'>('team');
+  const [sort, setSort] = useState<'standing' | 'team' | 'number' | 'name'>('standing');
+  const standings = useDriverStandings();
+  const items = standings.state.status === 'success' ? standings.state.data.items : [];
+  const pos = (d: Driver) => standingFor(d, items)?.position ?? 99;
 
   const list = drivers
     .filter((d) => (!team || d.teamId === team) && (!query || normalize(`${d.firstName} ${d.lastName} ${d.code} ${d.number} ${d.nationality}`).includes(normalize(query))))
     .sort((a, b) =>
-      sort === 'number' ? a.number - b.number
+      sort === 'standing' ? pos(a) - pos(b) || a.lastName.localeCompare(b.lastName, 'pt-BR')
+      : sort === 'number' ? a.number - b.number
       : sort === 'name' ? a.lastName.localeCompare(b.lastName, 'pt-BR')
       : teams.findIndex((t) => t.id === a.teamId) - teams.findIndex((t) => t.id === b.teamId));
 
@@ -81,6 +88,7 @@ export function DriversPage() {
           <label>
             <span className="sr-only">Ordenar</span>
             <select className="input" value={sort} onChange={(e) => setSort(e.target.value as typeof sort)}>
+              <option value="standing">Ordenar por campeonato</option>
               <option value="team">Ordenar por equipe</option>
               <option value="number">Ordenar por número</option>
               <option value="name">Ordenar por sobrenome</option>
@@ -91,15 +99,15 @@ export function DriversPage() {
         {list.length === 0 ? (
           <EmptyState title="Nenhum piloto encontrado" message="Tente outro nome ou equipe." />
         ) : (
-          <motion.div layout className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          <motion.div layout className="grid grid-cols-2 gap-3 sm:gap-5 lg:grid-cols-3 xl:grid-cols-4">
             {list.map((d, i) => (
               <Reveal key={d.id} delay={(i % 4) * 0.05}>
-                <DriverCard driver={d} onOpen={() => navigate(`/pilotos/${d.id}`)} />
+                <DriverCard driver={d} standing={standingFor(d, items)} standingsLoading={standings.state.status === 'loading'} onOpen={() => navigate(`/pilotos/${d.id}`)} />
               </Reveal>
             ))}
           </motion.div>
         )}
-        <SourceNote label={DRIVERS_SOURCE.label} url={DRIVERS_SOURCE.url}>Capacetes são artes geradas nas cores das equipes, não fotos oficiais.</SourceNote>
+        <SourceNote label={DRIVERS_SOURCE.label} url={DRIVERS_SOURCE.url}>Fotos oficiais de 2026: © Formula 1. Posição e pontos ao vivo: {API_SOURCE.label}. Capacete real exibido quando há imagem dele; nos demais casos não usamos capacetes genéricos.</SourceNote>
       </div>
 
       <Modal open={!!selected} onClose={() => navigate('/pilotos')} title={selected ? `${selected.firstName} ${selected.lastName}` : 'Piloto'} accent={selTeam?.color} wide>
@@ -108,8 +116,9 @@ export function DriversPage() {
             <div className="relative overflow-hidden p-6 sm:p-8" style={{ background: `linear-gradient(120deg, ${selTeam.color}33, transparent 60%)` }}>
               <span className="pointer-events-none absolute -right-4 -top-8 font-display text-[10rem] font-black leading-none opacity-15" style={{ color: selTeam.color }} aria-hidden>{selected.number}</span>
               <div className="relative flex flex-col gap-6 sm:flex-row sm:items-center">
-                <motion.div initial={{ rotate: -10, scale: 0.8, opacity: 0 }} animate={{ rotate: 0, scale: 1, opacity: 1 }} transition={{ type: 'spring', damping: 14 }}>
-                  <DriverHelmet driver={selected} team={selTeam} className="h-40 w-40" />
+                <motion.div initial={{ y: 16, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ type: 'spring', damping: 18 }} className="relative h-56 w-44 shrink-0 overflow-hidden rounded-xl" style={{ background: `linear-gradient(180deg, ${selTeam.color}55, transparent)` }}>
+                  <DriverPhoto driver={selected} team={selTeam} width={720} priority className="h-full w-full object-cover object-top" />
+                  {helmetImages[selected.id] && <DriverHelmet driver={selected} team={selTeam} className="absolute -bottom-2 -right-2 h-20 w-20" />}
                 </motion.div>
                 <div>
                   <p className="label" style={{ color: selTeam.color }}>#{selected.number} · {selTeam.name}</p>

@@ -7,8 +7,8 @@ import type { Driver } from '../types';
  * Biografias e títulos referem-se à carreira até o fim da temporada 2025.
  * Estatísticas da temporada atual (pontos, vitórias, pódios) NÃO ficam aqui:
  * são buscadas em tempo real na API Jolpica (veja src/services/f1Api.ts).
- * Não há fotos oficiais no projeto: o card usa uma arte gerada (capacete).
- * Para usar fotos, preencha `photoUrl` e `photoCredit` com imagens licenciadas.
+ * Fotos: retratos oficiais de 2026 publicados pela Formula 1 em media.formula1.com
+ * (veja src/data/driverPhotos.ts). Grid atualizado em 2026-11-06.
  */
 export const drivers: Driver[] = [
   {
@@ -108,10 +108,10 @@ export const drivers: Driver[] = [
     career: ['Vencedor de corridas na F3 e na F2', 'Estreia na F1 pela Racing Bulls em 2026'],
   },
   {
-    id: 'ocon', apiId: 'ocon', firstName: 'Esteban', lastName: 'Ocon', number: 31, code: 'OCO', teamId: 'haas',
-    nationality: 'Francês', countryCode: 'FR', birthDate: '1996-09-17', birthPlace: 'Évreux, França', debutYear: 2016, worldTitles: 0,
-    bio: 'Vencedor do GP da Hungria de 2021, corre pela Haas desde 2025.',
-    career: ['Campeão da F3 Europeia em 2014', 'Vitória no GP da Hungria de 2021 pela Alpine', 'Haas desde 2025'],
+    id: 'camara', apiId: 'rafael_camara', firstName: 'Rafael', lastName: 'Câmara', number: 51, code: 'CAM', teamId: 'haas',
+    nationality: 'Brasileiro', countryCode: 'BR', birthDate: '2005-05-05', birthPlace: 'Recife, Brasil', debutYear: 2026, worldTitles: 0,
+    bio: 'Piloto da Academia Ferrari desde 2022, foi campeão da Fórmula Regional Europeia em 2024 e da F3 em 2025. Estreia pela Haas no GP de São Paulo de 2026, no lugar de Esteban Ocon, antes de assumir o carro em 2027.',
+    career: ['Academia de pilotos da Ferrari desde 2022', 'Campeão da Fórmula Regional Europeia em 2024', 'Campeão da F3 em 2025', 'Estreia na F1 pela Haas no GP de São Paulo de 2026'],
   },
   {
     id: 'bearman', apiId: 'bearman', firstName: 'Oliver', lastName: 'Bearman', number: 87, code: 'BEA', teamId: 'haas',
@@ -142,6 +142,28 @@ export const drivers: Driver[] = [
     nationality: 'Finlandês', countryCode: 'FI', birthDate: '1989-08-28', birthPlace: 'Nastola, Finlândia', debutYear: 2013, worldTitles: 0,
     bio: 'Vencedor de corridas pela Mercedes, retorna como titular pela Cadillac após um ano como reserva.',
     career: ['Estreia pela Williams em 2013', 'Mercedes de 2017 a 2021', 'Sauber de 2022 a 2024', 'Cadillac em 2026'],
+  },
+];
+
+/**
+ * Pilotos que deixaram o grid durante a temporada (mantidos para o histórico de resultados).
+ * Ocon foi afastado pela Haas antes do GP da Cidade do México de 2026; Ryo Hirakawa correu
+ * essa prova e Rafael Câmara assume o carro a partir do GP de São Paulo
+ * (Autosport, 03/11/2026: https://www.autosport.com/f1/news/ocon-to-skip-the-rest-of-f1-2026-with-camara-to-debut-for-haas-in-brazil/;
+ *  dados de Câmara: https://www.formula1.com/en/drivers/rafael-camara).
+ */
+export const formerDrivers: Driver[] = [
+  {
+    id: 'hirakawa', apiId: 'ryo_hirakawa', firstName: 'Ryo', lastName: 'Hirakawa', number: 50, code: 'HIR', teamId: 'haas',
+    nationality: 'Japonês', countryCode: 'JP', birthDate: '1994-03-07', birthPlace: 'Japão', debutYear: 2026, worldTitles: 0,
+    bio: 'Correu pela Haas no GP da Cidade do México de 2026, no lugar de Esteban Ocon, e estreou em corridas da F1 nessa prova.',
+    career: ['Estreia em corridas da F1 no GP da Cidade do México de 2026 (10º lugar)', 'Substituiu Esteban Ocon na Haas no GP da Cidade do México de 2026'],
+  },
+  {
+    id: 'ocon', apiId: 'ocon', firstName: 'Esteban', lastName: 'Ocon', number: 31, code: 'OCO', teamId: 'haas',
+    nationality: 'Francês', countryCode: 'FR', birthDate: '1996-09-17', birthPlace: 'Évreux, França', debutYear: 2016, worldTitles: 0,
+    bio: 'Vencedor do GP da Hungria de 2021, correu pela Haas em 2025 e até o GP dos Estados Unidos de 2026, quando deixou a equipe.',
+    career: ['Campeão da F3 Europeia em 2014', 'Vitória no GP da Hungria de 2021 pela Alpine', 'Haas de 2025 até o GP dos Estados Unidos de 2026'],
   },
 ];
 

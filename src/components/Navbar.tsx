@@ -8,6 +8,7 @@ import { SoundToggle } from './SoundToggle';
 
 export const NAV_LINKS = [
   { to: '/', label: 'Início' },
+  { to: '/live', label: 'F1 Live' },
   { to: '/calendario', label: 'Calendário' },
   { to: '/circuitos', label: 'Circuitos' },
   { to: '/pilotos', label: 'Pilotos' },

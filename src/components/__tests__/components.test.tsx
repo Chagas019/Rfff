@@ -30,11 +30,11 @@ describe('favoritos', () => {
 
 describe('RaceCountdown', () => {
   afterEach(() => vi.useRealTimers());
-  const race = races.find((r) => r.id === 'united-states')!; // largada 25/10/2026 19:00 UTC
+  const race = races.find((r) => r.id === 'united-states')!; // largada 25/10/2026 20:00 UTC (horário oficial)
 
   it('mostra o tempo restante e atualiza a cada segundo', () => {
     vi.useFakeTimers();
-    vi.setSystemTime(new Date('2026-10-24T19:00:00Z'));
+    vi.setSystemTime(new Date('2026-10-24T20:00:00Z'));
     wrap(<RaceCountdown race={race} />);
     expect(screen.getByRole('timer')).toHaveAccessibleName(/Faltam 1 dias, 0 horas, 0 minutos e 0 segundos/);
     act(() => { vi.advanceTimersByTime(5000); });

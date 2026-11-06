@@ -116,6 +116,7 @@ export interface DriverStanding {
   nationality: string;
   constructorId: string;
   constructorName: string;
+  permanentNumber?: number;
   podiums?: number;
 }
 
@@ -137,12 +138,30 @@ export interface StandingsResult<T> {
 export interface RaceResultRow {
   position: number;
   driver: string;
+  /** ID do piloto na Jolpica (ex.: max_verstappen). */
+  driverId: string;
+  code: string;
+  number: number | null;
   constructor: string;
+  constructorId: string;
   grid: number;
   laps: number;
   status: string;
   points: number;
+  /** Tempo total do vencedor ou diferença para ele (ex.: +4.006). */
   time?: string;
+  /** Posição no ranking de voltas mais rápidas (1 = volta mais rápida da prova). */
+  fastestLapRank?: number;
+  fastestLapTime?: string;
+}
+
+/** Pódio de uma etapa, para o histórico de resultados. */
+export interface PodiumEntry {
+  round: number;
+  raceName: string;
+  date: string;
+  /** Até 3 pilotos, em ordem. */
+  drivers: { driverId: string; code: string; name: string; constructorId: string; constructor: string }[];
 }
 
 export type AsyncState<T> =

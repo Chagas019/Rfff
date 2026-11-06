@@ -6,7 +6,10 @@ import { PageHeader } from '../components/PageHeader';
 import { SourceNote } from '../components/SourceNote';
 import { EmptyState, ErrorState, LoadingState } from '../components/States';
 import { SEASON } from '../data/calendar2026';
+import { DriverPhoto } from '../components/DriverPhoto';
 import { drivers } from '../data/drivers';
+import { teamById } from '../data/teams';
+import { findDriver } from '../utils/season';
 import { teams } from '../data/teams';
 import { useAsync } from '../hooks/useAsync';
 import { API_BASE, API_SOURCE, LIVE_REFRESH_MS, fetchConstructorStandings, fetchDriverStandings } from '../services/f1Api';
@@ -49,7 +52,8 @@ function DriversTable() {
           <tbody>
             {items.map((s, i) => {
               const team = teamFor(s.constructorId, s.constructorName);
-              const local = drivers.find((d) => d.apiId === s.driverId || d.code === s.code);
+              const local = findDriver({ driverId: s.driverId, code: s.code, number: s.permanentNumber });
+              const localTeam = local ? teamById(local.teamId) : undefined;
               const color = team?.color ?? '#71717a';
               return (
                 <motion.tr key={s.driverId} initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: Math.min(i * 0.025, 0.5) }} className="border-t border-white/5 hover:bg-white/[0.03]">
@@ -57,6 +61,7 @@ function DriversTable() {
                   <td>
                     <span className="flex items-center gap-3">
                       <span className="h-6 w-1 rounded" style={{ background: color }} aria-hidden />
+                      {local && localTeam && <DriverPhoto driver={local} team={localTeam} width={96} className="hidden h-9 w-9 rounded-full bg-white/5 sm:block" />}
                       {local ? <Link to={`/pilotos/${local.id}`} className="font-semibold text-white hover:text-race-400">{s.givenName} <strong className="uppercase">{s.familyName}</strong></Link>
                         : <span className="font-semibold text-white">{s.givenName} <strong className="uppercase">{s.familyName}</strong></span>}
                     </span>
