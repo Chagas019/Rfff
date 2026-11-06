@@ -14,6 +14,17 @@ Uma plataforma interativa para fãs da Fórmula 1 (temporada 2026), feita com **
 - **Favoritos** de corridas, circuitos, pilotos e equipes (salvos no `localStorage`).
 - **Pesquisa global** (`Ctrl/⌘ + K` ou `/`), menu para celular, botão de voltar ao topo, animações ao rolar, estados de carregamento, erro e vazio, navegação por teclado (foco preso nos modais, Esc para fechar, link "pular para o conteúdo") e respeito a `prefers-reduced-motion`.
 
+## Hero cinematográfico (home)
+
+Carrossel vertical dos 22 pilotos, na ordem do campeonato, inspirado na referência de motion enviada:
+- fundo em tela cheia na cor da equipe, com transição suave entre pilotos;
+- sobrenome gigante com letras animadas e o retrato oficial à frente (efeito de profundidade e zoom de entrada);
+- elementos flutuantes reais: número pessoal oficial, carro 2026 da equipe (imagens oficiais da F1) e o capacete real quando existe imagem dele;
+- partículas, linhas de velocidade e grade de telemetria em CSS (sem custo de JavaScript por quadro);
+- painel com posição, pontos, vitórias e resultado do último GP (Jolpica-F1), com indicador circular de pontos em relação ao líder;
+- setas, indicadores de posição, teclado, arrastar para os lados no celular, pausa e troca automática a cada 7 s;
+- parallax discreto com o ponteiro e com a rolagem; com `prefers-reduced-motion` não há troca automática nem flutuação.
+
 ## Central de informações (atualização de nov/2026)
 
 - **Página inicial** em ordem de prioridade: GP atual ou último (sessão por sessão, com o mais rápido/pole/vencedor), próxima sessão com contagem regressiva, situação da temporada (líder, vantagem, pontos em jogo, título aberto ou decidido), manchetes, pódio, rankings, pilotos em destaque, curiosidades, próximas corridas e histórico.

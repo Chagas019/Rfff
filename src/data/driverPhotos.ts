@@ -25,3 +25,29 @@ export function driverPhotoUrl(driverId: string, teamId: string, width = 480): s
   if (!code || !slug) return null;
   return `https://media.formula1.com/image/upload/c_fill,w_${width}/q_auto/v1740000001/common/f1/2026/${slug}/${code}/2026${slug}${code}right.webp`;
 }
+
+const BASE = 'https://media.formula1.com/image/upload';
+const V = 'v1740000001/common/f1/2026';
+
+/** Retrato recortado na altura do tronco (rosto + macacão), para o hero cinematográfico. */
+export function driverPortraitUrl(driverId: string, teamId: string, width = 900): string | null {
+  const code = CODE[driverId];
+  const slug = TEAM_SLUG[teamId];
+  if (!code || !slug) return null;
+  const h = Math.round(width * 1.25);
+  return `${BASE}/c_fill,g_north,w_${width},h_${h}/q_auto/${V}/${slug}/${code}/2026${slug}${code}right.webp`;
+}
+
+/** Número pessoal do piloto no desenho oficial da F1 (branco, fundo transparente). */
+export function driverNumberLogoUrl(driverId: string, teamId: string, width = 360): string | null {
+  const code = CODE[driverId];
+  const slug = TEAM_SLUG[teamId];
+  if (!code || !slug || driverId === 'hirakawa') return null;
+  return `${BASE}/c_fill,w_${width}/q_auto/${V}/${slug}/${code}/2026${slug}${code}numberwhitefrless.webp`;
+}
+
+/** Carro 2026 da equipe, visto de lado, recortado (imagem oficial da F1). */
+export function teamCarUrl(teamId: string, width = 1200): string | null {
+  const slug = TEAM_SLUG[teamId];
+  return slug ? `${BASE}/c_fill,w_${width}/q_auto/${V}/${slug}/2026${slug}carright.webp` : null;
+}

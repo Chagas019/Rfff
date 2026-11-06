@@ -2,6 +2,7 @@ import { ArrowRight, Brain, Flag as FlagIcon, Lightbulb, Radio, Timer, Users, Wr
 import { Link } from 'react-router-dom';
 import { CarPhoto } from '../components/CarPhoto';
 import { Garage } from '../components/Garage';
+import { CinematicHero } from '../components/hero/CinematicHero';
 import { HubHeader } from '../components/HubHeader';
 import { LastRacePodium } from '../components/LastRacePodium';
 import { Lazy } from '../components/Lazy';
@@ -53,14 +54,17 @@ export function HomePage() {
 
   return (
     <>
+      {/* 0. Hero cinematográfico: carrossel dos pilotos */}
+      <CinematicHero />
+
       {/* 1. Agora: GP atual/último, próxima sessão e campeonato */}
-      <section className="container-grid pb-10 pt-24 sm:pt-28" aria-labelledby="hero-title">
+      <section className="container-grid pb-10 pt-10 sm:pt-14" aria-labelledby="hero-title">
         <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
           <div>
             <p className="kicker flex items-center gap-2 text-gold">
               {mode === 'live' ? <><span className="h-2 w-2 animate-pulse rounded-full bg-race" aria-hidden />Fim de semana de corrida</> : 'Temporada 2026 · Nova era técnica'}
             </p>
-            <h1 id="hero-title" className="mt-2 text-5xl leading-[0.9] sm:text-6xl xl:text-7xl">The race <span className="text-gold">never stops.</span></h1>
+            <h2 id="hero-title" className="mt-2 text-4xl leading-[0.9] sm:text-5xl">Agora na <span className="text-gold">Fórmula 1</span></h2>
           </div>
           <nav className="flex flex-wrap gap-2" aria-label="Atalhos">
             <Link to="/calendario" className="btn-ghost py-2.5"><FlagIcon className="h-4 w-4" aria-hidden />Explorar temporada</Link>
